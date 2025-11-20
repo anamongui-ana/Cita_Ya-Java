@@ -1,0 +1,131 @@
+<link rel="stylesheet" href="{{ asset('Assets/CSS/table.css') }}">
+
+@extends('layouts.app')
+
+@section('content')
+<div class="container">
+    <h1>Administradores</h1>
+    
+    <div class="mb-3 d-flex gap-2">
+        <a href="{{ route('administradores.create') }}" class="btn-new">Nuevo Administrador</a>
+        <a href="{{ route('administradores.reporte.pdf', request()->all()) }}" target="_blank" class="btn-report">
+            Generar Reporte PDF{{ request()->anyFilled(['buscar', 'tipo_doc', 'genero']) ? ' (Filtrado)' : '' }}
+        </a>
+    </div>
+
+    <!-- FORMULARIO DE FILTROS -->
+    <div class="card mb-3">
+        <div class="card-header">
+            <strong>Filtros de Búsqueda</strong>
+        </div>
+        <div class="card-body">
+            <form action="{{ route('administradores.index') }}" method="GET">
+                <div class="row g-3">
+                    <!-- Búsqueda General -->
+                    <div class="col-md-5">
+                        <label class="form-label">Búsqueda General</label>
+                        <input type="text" name="buscar" class="form-control" 
+                               placeholder="Nombre, documento, correo..." 
+                               value="{{ request('buscar') }}">
+                    </div>
+
+                    <!-- Tipo de Documento -->
+                    <div class="col-md-2">
+                        <label class="form-label">Tipo Doc.</label>
+                        <select name="tipo_doc" class="form-select">
+                            <option value="">Todos</option>
+                            <option value="CC" {{ request('tipo_doc') == 'CC' ? 'selected' : '' }}>CC</option>
+                            <option value="TI" {{ request('tipo_doc') == 'TI' ? 'selected' : '' }}>TI</option>
+                            <option value="CE" {{ request('tipo_doc') == 'CE' ? 'selected' : '' }}>CE</option>
+                        </select>
+                    </div>
+
+                    <!-- Género -->
+                    <div class="col-md-2">
+                        <label class="form-label">Género</label>
+                        <select name="genero" class="form-select">
+                            <option value="">Todos</option>
+                            <option value="M" {{ request('genero') == 'M' ? 'selected' : '' }}>Masculino</option>
+                            <option value="F" {{ request('genero') == 'F' ? 'selected' : '' }}>Femenino</option>
+                            <option value="Otro" {{ request('genero') == 'Otro' ? 'selected' : '' }}>Otro</option>
+                        </select>
+                    </div>
+
+                    <!-- Ordenamiento -->
+                    <div class="col-md-2">
+                        <label class="form-label">Orden</label>
+                        <select name="orden" class="form-select">
+                            <option value="desc" {{ request('orden') == 'desc' ? 'selected' : '' }}>Más recientes</option>
+                            <option value="asc" {{ request('orden') == 'asc' ? 'selected' : '' }}>Más antiguos</option>
+                        </select>
+                    </div>
+
+                    <!-- Botones -->
+                    <div class="col-md-12 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            Filtrar
+                        </button>
+                        <a href="{{ route('administradores.index') }}" class="btn btn-secondary">
+                            Limpiar Filtros
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Información de resultados -->
+    @if(request()->anyFilled(['buscar', 'tipo_doc', 'genero']))
+    <div class="alert alert-info">
+        <strong>Filtros activos:</strong> 
+        Mostrando {{ $admins->total() }} resultados
+    </div>
+    @endif
+
+    <!-- TABLA DE ADMINISTRADORES -->
+    <table class="table mt-3">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Documento</th>
+                <th>Nombre</th>
+                <th>Género</th>
+                <th>Correo</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse ($admins as $admin)
+            <tr>
+                <td>{{ $admin->id_admin }}</td>
+                <td>{{ $admin->tipo_doc }} {{ $admin->numero_doc }}</td>
+                <td>{{ $admin->nombre }} {{ $admin->apellido }}</td>
+                <td>{{ $admin->genero }}</td>
+                <td>{{ $admin->correo }}</td>
+                <td>
+                    <a href="{{ route('administradores.show', $admin->id_admin) }}" class="btn btn-info btn-sm">Ver</a>
+                    <a href="{{ route('administradores.edit', $admin->id_admin) }}" class="btn btn-warning btn-sm">Editar</a>
+                    <form action="{{ route('administradores.destroy', $admin->id_admin) }}" method="POST" style="display:inline;">
+                        @csrf @method('DELETE')
+                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar este administrador?')">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+            @empty
+            <tr>
+                <td colspan="6" class="text-center">
+                    <em>No se encontraron administradores con los filtros aplicados</em>
+                </td>
+            </tr>
+            @endforelse
+        </tbody>
+    </table>
+
+    <!-- PAGINACIÓN -->
+    <div class="d-flex justify-content-center">
+        @if(method_exists($admins, 'links'))
+            {{ $admins->links() }}
+        @endif
+    </div>
+</div>
+@endsection
