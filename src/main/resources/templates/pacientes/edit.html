@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/Assets/CSS/edit.css}">
+    <title>Editar Paciente</title>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>Editar Paciente</h1>
+
+    <!-- Mostrar errores -->
+    <div th:if="${#fields.hasErrors()}" class="alert alert-danger">
+        <ul>
+            <li th:each="err : ${#fields.errors('*')}"
+                th:text="${err}"></li>
+        </ul>
+    </div>
+
+    <form th:action="@{'/pacientes/update/' + ${paciente.id_paciente}}" method="post">
+
+        <input type="hidden" name="_method" value="put"/>
+
+        <!-- Tipo Documento -->
+        <div class="mb-3">
+            <label class="form-label">Tipo de Documento</label>
+            <select name="tipo_doc" class="form-select" required>
+                <option value="">-- Selecciona --</option>
+                <option value="CC" th:selected="${paciente.tipo_doc=='CC'}">CC</option>
+                <option value="TI" th:selected="${paciente.tipo_doc=='TI'}">TI</option>
+                <option value="RC" th:selected="${paciente.tipo_doc=='RC'}">RC</option>
+                <option value="CE" th:selected="${paciente.tipo_doc=='CE'}">CE</option>
+                <option value="PA" th:selected="${paciente.tipo_doc=='PA'}">PA</option>
+                <option value="DNI" th:selected="${paciente.tipo_doc=='DNI'}">DNI</option>
+                <option value="PEP" th:selected="${paciente.tipo_doc=='PEP'}">PEP</option>
+                <option value="PPT" th:selected="${paciente.tipo_doc=='PPT'}">PPT</option>
+            </select>
+        </div>
+
+        <!-- Número Documento -->
+        <div class="mb-3">
+            <label class="form-label">Número de Documento</label>
+            <input type="text" name="numero_doc" maxlength="10"
+                   class="form-control"
+                   th:value="${paciente.numero_doc}"
+                   oninput="soloNumeros(this)"
+                   required>
+        </div>
+
+        <!-- Nombre -->
+        <div class="mb-3">
+            <label class="form-label">Nombre</label>
+            <input type="text" name="nombre" maxlength="50"
+                   class="form-control"
+                   th:value="${paciente.nombre}"
+                   oninput="soloLetras(this)"
+                   required>
+        </div>
+
+        <!-- Apellido -->
+        <div class="mb-3">
+            <label class="form-label">Apellido</label>
+            <input type="text" name="apellido" maxlength="100"
+                   class="form-control"
+                   th:value="${paciente.apellido}"
+                   oninput="soloLetras(this)"
+                   required>
+        </div>
+
+        <!-- Género -->
+        <div class="mb-3">
+            <label class="form-label">Género</label>
+            <select name="genero" class="form-select" required>
+                <option value="">-- Selecciona --</option>
+                <option value="M" th:selected="${paciente.genero=='M'}">Masculino</option>
+                <option value="F" th:selected="${paciente.genero=='F'}">Femenino</option>
+                <option value="Otro" th:selected="${paciente.genero=='Otro'}">Otro</option>
+            </select>
+        </div>
+
+        <!-- Fecha nacimiento -->
+        <div class="mb-3">
+            <label class="form-label">Fecha de Nacimiento</label>
+            <input type="date"
+                   class="form-control"
+                   name="fecha_nacimiento"
+                   th:value="${paciente.fecha_nacimiento}"
+                   required>
+        </div>
+
+        <!-- Tipo sangre -->
+        <div class="mb-3">
+            <label class="form-label">Tipo de Sangre</label>
+            <select name="tipo_sangre" class="form-select">
+                <option value="">-- Selecciona --</option>
+                <option th:selected="${paciente.tipo_sangre=='O+'}">O+</option>
+                <option th:selected="${paciente.tipo_sangre=='O-'}">O-</option>
+                <option th:selected="${paciente.tipo_sangre=='A+'}">A+</option>
+                <option th:selected="${paciente.tipo_sangre=='A-'}">A-</option>
+                <option th:selected="${paciente.tipo_sangre=='B+'}">B+</option>
+                <option th:selected="${paciente.tipo_sangre=='B-'}">B-</option>
+                <option th:selected="${paciente.tipo_sangre=='AB+'}">AB+</option>
+                <option th:selected="${paciente.tipo_sangre=='AB-'}">AB-</option>
+            </select>
+        </div>
+
+        <!-- Dirección -->
+        <div class="mb-3">
+            <label class="form-label">Dirección</label>
+            <input type="text" maxlength="255"
+                   class="form-control"
+                   name="direccion"
+                   th:value="${paciente.direccion}">
+        </div>
+
+        <!-- Teléfono -->
+        <div class="mb-3">
+            <label class="form-label">Teléfono</label>
+            <input type="text" maxlength="10"
+                   class="form-control"
+                   name="telefono"
+                   th:value="${paciente.telefono}"
+                   oninput="soloNumeros(this)">
+        </div>
+
+        <!-- Correo -->
+        <div class="mb-3">
+            <label class="form-label">Correo</label>
+            <input type="email" maxlength="100"
+                   class="form-control"
+                   name="correo"
+                   th:value="${paciente.correo}"
+                   required>
+        </div>
+
+        <!-- Contraseña -->
+        <div class="mb-3">
+            <label class="form-label">Contraseña (deja en blanco si no quieres cambiarla)</label>
+            <input type="password" name="contraseña" minlength="8" class="form-control">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Actualizar</button>
+        <a th:href="@{/pacientes}" class="btn btn-secondary">Cancelar</a>
+
+    </form>
+</div>
+
+<script>
+function soloNumeros(i){i.value=i.value.replace(/\D/g,'');}
+function soloLetras(i){i.value=i.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g,'');}
+</script>
+
+</body>
+</html>

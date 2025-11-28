@@ -1,0 +1,55 @@
+<link rel="stylesheet" href="{{ asset('Assets/CSS/create.css') }}">
+
+@extends('layouts.app')
+
+@section('content')
+<div class="container">
+    <h1>Nuevo Historial Clínico</h1>
+
+    <form action="{{ route('historiales.store') }}" method="POST">
+        @csrf
+
+        <div class="mb-3">
+            <label for="fecha_creacion" class="form-label">Fecha de Creación</label>
+            <input type="date" name="fecha_creacion" class="form-control" value="{{ old('fecha_creacion') }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="antecedentes" class="form-label">Antecedentes</label>
+            <textarea name="antecedentes" class="form-control">{{ old('antecedentes') }}</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="diagnostico" class="form-label">Diagnóstico</label>
+            <textarea name="diagnostico" class="form-control">{{ old('diagnostico') }}</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="id_paciente" class="form-label">Paciente</label>
+            <select name="id_paciente" class="form-select" required>
+                <option value="">-- Selecciona Paciente --</option>
+                @foreach($pacientes as $p)
+                    <option value="{{ $p->id_paciente }}" {{ old('id_paciente') == $p->id_paciente ? 'selected' : '' }}>
+                        {{ $p->nombre }} {{ $p->apellido }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="id_medico" class="form-label">Médico</label>
+            <select name="id_medico" class="form-select" required>
+                <option value="">-- Selecciona Médico --</option>
+                @foreach($medicos as $m)
+                    <option value="{{ $m->id_medico }}" {{ old('id_medico') == $m->id_medico ? 'selected' : '' }}>
+                        {{ $m->nombre }} {{ $m->apellido }} ({{ $m->especialidad }})
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-success">Guardar</button>
+        <a href="{{ route('historiales.index') }}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+@endsection

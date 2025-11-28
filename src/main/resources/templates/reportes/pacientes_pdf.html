@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reporte de Pacientes</title>
+    <style>
+        body { font-family: sans-serif; font-size: 12px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid black; padding: 5px; text-align: left; }
+        th { background-color: #ddd; }
+    </style>
+</head>
+<body>
+
+    <h2>Reporte de Pacientes</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Documento</th>
+                <th>Género</th>
+                <th>Fecha de Nacimiento</th>
+                <th>Tipo de Sangre</th>
+                <th>Correo</th>
+                <th>Teléfono</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr th:each="p : ${pacientes}">
+                <td th:text="${p.id_paciente}"></td>
+
+                <td>
+                    <span th:text="${p.nombre}"></span>
+                    <span th:text="${p.apellido}"></span>
+                </td>
+
+                <td>
+                    <span th:text="${p.tipo_doc}"></span>
+                    <span th:text="${p.numero_doc}"></span>
+                </td>
+
+                <td th:text="${p.genero}"></td>
+
+                <td th:text="${p.fecha_nacimiento}"></td>
+
+                <td th:text="${p.tipo_sangre != null ? p.tipo_sangre : '-'}"></td>
+
+                <td th:text="${p.correo}"></td>
+
+                <td th:text="${p.telefono != null ? p.telefono : '-'}"></td>
+            </tr>
+        </tbody>
+
+    </table>
+
+</body>
+</html>
