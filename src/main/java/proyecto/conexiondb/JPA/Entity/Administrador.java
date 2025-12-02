@@ -19,25 +19,25 @@ public class Administrador {
     @Column(name = "tipo_doc", length = 10, nullable = false)
     private int TipoDoc;
 
-    @Column(name = "numero_doc", length = 30, nullable = false, unique = true)
+    @Column(name = "numero_doc", length = 10, nullable = false, unique = true)
     private String numeroDoc;
 
-    @Column(name = "nombre", length = 100, nullable = false)
+    @Column(name = "nombre", length = 30, nullable = false)
     private String nombre;
 
-    @Column(name = "apellido", length = 100, nullable = false)
+    @Column(name = "apellido", length = 30, nullable = false)
     private String apellido;
 
     @Column(name = "genero", nullable = false)
     private String genero;
 
-    @Column(length = 20)
+    @Column(length = 10)
     private String telefono;
 
-    @Column(length = 255, nullable = false, unique = true)
+    @Column(length = 35, nullable = false, unique = true)
     private String correo;
 
-    @Column(name = "contraseña", length = 255, nullable = false)
+    @Column(name = "contraseña", length = 25, nullable = false)
     private String contraseña;
 
     //CONSTRUCTOR

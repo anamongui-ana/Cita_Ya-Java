@@ -20,7 +20,7 @@ public class Agendamiento {
     @Column(name= "id_agendamiento")
     private Long IdAgendamiento;
 
-    @Column( name ="cita",length = 255, nullable = false)
+    @Column( name ="cita",length = 35, nullable = false)
     private String cita;
 
     @Column(name="fecha",nullable = false)

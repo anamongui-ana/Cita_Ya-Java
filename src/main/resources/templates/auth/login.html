@@ -4,10 +4,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <link rel="icon" type="image" href="/Assets/img/logoti.png">
-    <link rel="stylesheet" href="/Assets/css/login.css">
-
+    <link rel="icon" type="image" th:href="@{/Assets/img/logoti.png}">
+    <link rel="stylesheet" th:href="@{/Assets/css/login.css}">
     <title>Cita Ya - Iniciar Sesión</title>
 </head>
 
@@ -15,21 +13,26 @@
 
     <div class="container_login">
 
-        <!-- Parte del formulario -->
         <div class="apartado_1">
             <div class="container_login-form">
 
                 <div class="logo-name">
-                    <img src="/Assets/img/nom.png">
+                    <img th:src="@{/Assets/img/nom.png}">
                 </div>
 
-                <!-- Formulario -->
+                <!-- FORMULARIO - LA ACTION DEBE SER /login -->
                 <form class="container_formulario-login" method="POST" th:action="@{/login}">
 
                     <!-- Mensaje de error -->
-                    <div th:if="${error}"
-                        style="background:#ffe6e6; color:#900; padding:10px; border-radius:6px; margin-top:12px;">
-                        <p th:text="${error}"></p>
+                    <div th:if="${param.error}" 
+                         style="background:#ffe6e6; color:#900; padding:10px; border-radius:6px; margin-bottom:12px;">
+                        <p>❌ Documento o contraseña incorrectos</p>
+                    </div>
+
+                    <!-- Mensaje de logout -->
+                    <div th:if="${param.logout}" 
+                         style="background:#e6ffe6; color:#090; padding:10px; border-radius:6px; margin-bottom:12px;">
+                        <p>✓ Sesión cerrada exitosamente</p>
                     </div>
 
                     <!-- Documento -->
@@ -38,8 +41,8 @@
                     </div>
 
                     <div class="input">
-                        <input type="text" id="numero" name="numerodoc" maxlength="10" placeholder="Ej: 1234567890"
-                            oninput="soloNumeros(this)" required>
+                        <input type="text" id="numero" name="numerodoc" 
+                               placeholder="Ej: 123456789" required>
                     </div>
 
                     <!-- Contraseña -->
@@ -48,14 +51,14 @@
                     </div>
 
                     <div class="input">
-                        <input type="password" id="clave" name="contrasena" minlength="8" placeholder="••••••••"
-                            required>
+                        <input type="password" id="clave" name="contrasena" 
+                               placeholder="••••••••" required>
                     </div>
 
-                    <!-- boton -->
+                    <!-- Botón -->
                     <button type="submit" class="login_button">Iniciar Sesión</button>
 
-                    <!-- links -->
+                    <!-- Links -->
                     <div class="cuenta">
                         <a th:href="@{/restablecer}">¿Olvidaste tu contraseña?</a>
                     </div>
@@ -70,10 +73,9 @@
             </div>
         </div>
 
-        <!-- Parte de texto -->
         <div class="apartado_2">
             <div class="emoji-icon">
-                <img src="/Assets/img/logoti.png">
+                <img th:src="@{/Assets/img/logoti.png}">
             </div>
 
             <div class="h1-info">
@@ -93,12 +95,6 @@
 
     </div>
 
-    <script>
-        function soloNumeros(input) {
-            input.value = input.value.replace(/\D/g, '');
-        }
-    </script>
-
 </body>
-
 </html>
+
