@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="icon" type="image" href="/Assets/img/logoti.png">
+    <link rel="stylesheet" href="/Assets/css/login.css">
+
+    <title>Cita Ya - Iniciar Sesión</title>
+</head>
+
+<body class="body">
+
+    <div class="container_login">
+
+        <!-- Parte del formulario -->
+        <div class="apartado_1">
+            <div class="container_login-form">
+
+                <div class="logo-name">
+                    <img src="/Assets/img/nom.png">
+                </div>
+
+                <!-- Formulario -->
+                <form class="container_formulario-login" method="POST" th:action="@{/login}">
+
+                    <!-- Mensaje de error -->
+                    <div th:if="${error}"
+                        style="background:#ffe6e6; color:#900; padding:10px; border-radius:6px; margin-top:12px;">
+                        <p th:text="${error}"></p>
+                    </div>
+
+                    <!-- Documento -->
+                    <div class="label">
+                        <label class="text" for="numero">Número de documento</label>
+                    </div>
+
+                    <div class="input">
+                        <input type="text" id="numero" name="numerodoc" maxlength="10" placeholder="Ej: 1234567890"
+                            oninput="soloNumeros(this)" required>
+                    </div>
+
+                    <!-- Contraseña -->
+                    <div class="label">
+                        <label class="text" for="clave">Contraseña</label>
+                    </div>
+
+                    <div class="input">
+                        <input type="password" id="clave" name="contrasena" minlength="8" placeholder="••••••••"
+                            required>
+                    </div>
+
+                    <!-- boton -->
+                    <button type="submit" class="login_button">Iniciar Sesión</button>
+
+                    <!-- links -->
+                    <div class="cuenta">
+                        <a th:href="@{/restablecer}">¿Olvidaste tu contraseña?</a>
+                    </div>
+
+                    <div class="no-cuenta">
+                        <p>¿No tienes cuenta?
+                            <a th:href="@{/registro}">Regístrate</a>
+                        </p>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+
+        <!-- Parte de texto -->
+        <div class="apartado_2">
+            <div class="emoji-icon">
+                <img src="/Assets/img/logoti.png">
+            </div>
+
+            <div class="h1-info">
+                <h1>¡Bienvenido!</h1>
+            </div>
+
+            <div class="P-info">
+                <p>Accede a tu portal médico y gestiona tus citas de forma fácil y segura</p>
+            </div>
+
+            <div class="p-info">
+                <p>✓ Agenda citas 24/7</p>
+                <p>✓ Consulta tu historial médico</p>
+                <p>✓ Recibe recordatorios de tus citas</p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function soloNumeros(input) {
+            input.value = input.value.replace(/\D/g, '');
+        }
+    </script>
+
+</body>
+
+</html>
