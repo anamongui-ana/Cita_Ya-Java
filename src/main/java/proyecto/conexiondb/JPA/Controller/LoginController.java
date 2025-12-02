@@ -20,29 +20,42 @@ public class LoginController {
     // Mostrar login
     @GetMapping("/login")
     public String mostrarLogin() {
-        return "login"; // login.html
+        return "auth/inicioSesion";
     }
 
     // Procesar login
     @PostMapping("/login")
     public String procesarLogin(
-            @RequestParam("numero_doc") String numeroDoc,
+            @RequestParam("numerodoc") String numeroDoc,
             @RequestParam("contrasena") String contrasena,
             Model model,
             HttpSession session) {
+
+        // Validar documento (6-10 dígitos)
+        if (numeroDoc == null || !numeroDoc.matches("\\d{6,10}")) {
+            model.addAttribute("error", "El número de documento debe tener entre 6 y 10 dígitos.");
+            return "auth/inicioSesion";
+        }
+
+        // Validar contraseña (mínimo 8 caracteres, mayúsculas, minúsculas, números y caracteres especiales)
+        String passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&.#-])[A-Za-z\\d@$!%*?&.#-]{8,}$";
+        if (contrasena == null || !contrasena.matches(passwordRegex)) {
+            model.addAttribute("error", "La contraseña debe tener mínimo 8 caracteres con mayúsculas, minúsculas, números y caracteres especiales.");
+            return "auth/inicioSesion";
+        }
 
         // Buscar por documento
         Paciente paciente = pacienteRepository.findByNumeroDoc(numeroDoc);
 
         if (paciente == null) {
             model.addAttribute("error", "El usuario no existe.");
-            return "login";
+            return "auth/inicioSesion";
         }
 
         // Verificar contraseña
         if (!paciente.getContrasena().equals(contrasena)) {
             model.addAttribute("error", "Contraseña incorrecta.");
-            return "login";
+            return "auth/inicioSesion";
         }
 
         // Guardar sesión
