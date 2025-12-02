@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/Assets/CSS/table.css}">
+    <title>Pacientes</title>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>Pacientes</h1>
+
+    <div class="mb-3 d-flex gap-2">
+        <a th:href="@{/pacientes/create}" class="btn-new">Nuevo Paciente</a>
+
+        <a th:href="@{/pacientes/reporte/pdf(
+                buscar=${param.buscar},
+                tipo_doc=${param.tipo_doc},
+                genero=${param.genero},
+                tipo_sangre=${param.tipo_sangre},
+                fecha_desde=${param.fecha_desde},
+                fecha_hasta=${param.fecha_hasta},
+                orden=${param.orden}
+            )}"
+           target="_blank"
+           class="btn-report">
+
+            Generar Reporte PDF<span th:if="${
+                param.buscar != null or
+                param.tipo_doc != null or
+                param.genero != null or
+                param.tipo_sangre != null or
+                param.fecha_desde != null or
+                param.fecha_hasta != null
+            }"> (Filtrado)</span>
+
+        </a>
+    </div>
+
+
+    <!-- FILTROS -->
+    <div class="card mb-3">
+        <div class="card-header">
+            <strong>Filtros de Búsqueda</strong>
+        </div>
+
+        <div class="card-body">
+
+            <form method="get" th:action="@{/pacientes}">
+
+                <div class="row g-3">
+
+                    <!-- general -->
+                    <div class="col-md-4">
+                        <label class="form-label">Búsqueda General</label>
+                        <input type="text" name="buscar" class="form-control"
+                               placeholder="Nombre, documento, correo..."
+                               th:value="${param.buscar}">
+                    </div>
+
+                    <!-- tipo doc -->
+                    <div class="col-md-2">
+                        <label class="form-label">Tipo Doc.</label>
+                        <select name="tipo_doc" class="form-select">
+                            <option value="">Todos</option>
+                            <option value="CC" th:selected="${param.tipo_doc=='CC'}">CC</option>
+                            <option value="TI" th:selected="${param.tipo_doc=='TI'}">TI</option>
+                            <option value="CE" th:selected="${param.tipo_doc=='CE'}">CE</option>
+                        </select>
+                    </div>
+
+                    <!-- género -->
+                    <div class="col-md-2">
+                        <label class="form-label">Género</label>
+                        <select name="genero" class="form-select">
+                            <option value="">Todos</option>
+                            <option value="M" th:selected="${param.genero=='M'}">Masculino</option>
+                            <option value="F" th:selected="${param.genero=='F'}">Femenino</option>
+                            <option value="Otro" th:selected="${param.genero=='Otro'}">Otro</option>
+                        </select>
+                    </div>
+
+                    <!-- sangre -->
+                    <div class="col-md-2">
+                        <label class="form-label">Tipo Sangre</label>
+                        <select name="tipo_sangre" class="form-select">
+                            <option value="">Todos</option>
+
+                            <option th:selected="${param.tipo_sangre=='A+'}">A+</option>
+                            <option th:selected="${param.tipo_sangre=='A-'}">A-</option>
+                            <option th:selected="${param.tipo_sangre=='B+'}">B+</option>
+                            <option th:selected="${param.tipo_sangre=='B-'}">B-</option>
+                            <option th:selected="${param.tipo_sangre=='AB+'}">AB+</option>
+                            <option th:selected="${param.tipo_sangre=='AB-'}">AB-</option>
+                            <option th:selected="${param.tipo_sangre=='O+'}">O+</option>
+                            <option th:selected="${param.tipo_sangre=='O-'}">O-</option>
+                        </select>
+                    </div>
+
+                    <!-- orden -->
+                    <div class="col-md-2">
+                        <label class="form-label">Orden</label>
+                        <select name="orden" class="form-select">
+                            <option value="desc" th:selected="${param.orden=='desc'}">Más recientes</option>
+                            <option value="asc" th:selected="${param.orden=='asc'}">Más antiguos</option>
+                        </select>
+                    </div>
+
+                    <!-- desde -->
+                    <div class="col-md-3">
+                        <label class="form-label">Fecha Nac. Desde</label>
+                        <input type="date" name="fecha_desde" class="form-control" th:value="${param.fecha_desde}">
+                    </div>
+
+                    <!-- hasta -->
+                    <div class="col-md-3">
+                        <label class="form-label">Fecha Nac. Hasta</label>
+                        <input type="date" name="fecha_hasta" class="form-control" th:value="${param.fecha_hasta}">
+                    </div>
+
+
+                    <div class="col-md-6 d-flex align-items-end gap-2">
+                        <button class="btn btn-primary">Filtrar</button>
+                        <a th:href="@{/pacientes}" class="btn btn-secondary">Limpiar Filtros</a>
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- FILTROS ACTIVOS -->
+    <div th:if="${filtered==true}" class="alert alert-info">
+        <strong>Filtros activos:</strong>
+        Mostrando <span th:text="${total}"></span> resultados
+    </div>
+
+
+    <!-- tabla -->
+    <table class="table mt-3">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Documento</th>
+            <th>Nombre</th>
+            <th>Correo</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+
+        <tbody>
+
+        <tr th:each="p : ${pacientes}">
+            <td th:text="${p.id_paciente}"></td>
+            <td th:text="${p.tipo_doc + ' ' + p.numero_doc}"></td>
+            <td th:text="${p.nombre + ' ' + p.apellido}"></td>
+            <td th:text="${p.correo}"></td>
+
+            <td>
+
+                <a th:href="@{'/pacientes/' + ${p.id_paciente}}" class="btn btn-info btn-sm">Ver</a>
+
+                <a th:href="@{'/pacientes/edit/' + ${p.id_paciente}}" class="btn btn-warning btn-sm">Editar</a>
+
+                <form th:action="@{'/pacientes/delete/' + ${p.id_paciente}}"
+                      method="post" style="display:inline;">
+                    <button onclick="return confirm('¿Eliminar este paciente?')"
+                            class="btn btn-danger btn-sm">Eliminar
+                    </button>
+                </form>
+
+            </td>
+        </tr>
+
+        <tr th:if="${#lists.isEmpty(pacientes)}">
+            <td colspan="5" class="text-center"><em>No se encontraron pacientes con los filtros aplicados</em></td>
+        </tr>
+
+        </tbody>
+    </table>
+
+</div>
+
+</body>
+
+</html>

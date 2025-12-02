@@ -1,0 +1,133 @@
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: arial, sans-serif;
+    margin: 0;
+    background: linear-gradient(to right, #059669, #50aff7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container_forgot {
+    display: flex;
+    border-radius: 2rem;
+    width: 40rem;
+    overflow: hidden;
+    background-color: #fff;
+    padding: 3rem;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.back-icon {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    font-size: 1.5rem;
+    color: #1e3a8a;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.label {
+    color: #000;
+    font-weight: 900;
+    padding: 2rem 2rem;
+    font-size: 1.5rem;
+    width: 100%;
+}
+
+.input input {
+    width: 100%;
+    padding: 1rem;
+    border-radius: .6rem;
+    border: .1rem solid #aaa;
+    background-color: #eee;
+    font-size: 1.05rem;
+    outline: none;
+}
+
+.input input:focus {
+    border: .1rem solid #00f;
+}
+
+button {
+    margin-top: 2rem;
+    padding: 1rem;
+    width: 100%;
+    background-color: #1e3a8a;
+    color: #fff;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 2rem;
+    cursor: pointer;
+    transition: .2s linear;
+}
+
+button:hover {
+    background-color: #2247b1;
+}
+
+.status-msg {
+    margin-top: 1.5rem;
+    color: green;
+    text-align: center;
+    font-weight: bold;
+}
+
+.cuenta {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.cuenta a {
+    font-size: 1.15rem;
+    color: #1e3a8a;
+    text-decoration: none;
+}
+
+.cuenta a:hover {
+    text-decoration: underline;
+}
+</style>
+
+<div class="container_forgot">
+    <a href="/inicioSesion" class="back-icon">&larr; Volver</a>
+
+    <form id="forgotForm" onsubmit="enviarEnlace(event)">
+        <div class="label">
+            <label for="correo">Correo electrónico</label>
+        </div>
+
+        <div class="input">
+            <input type="email" id="correo" name="correo" placeholder="Ingresa tu correo" required>
+        </div>
+
+        <button type="submit">Enviar enlace</button>
+
+        <p id="statusMsg" class="status-msg" style="display:none;"></p>
+    </form>
+</div>
+
+<script>
+function enviarEnlace(event) {
+    event.preventDefault();
+
+    const correo = document.getElementById('correo').value;
+    const msg = document.getElementById('statusMsg');
+
+    msg.style.display = "block";
+    msg.style.color = "#0a0";
+
+    msg.textContent = "Enlace enviado a " + correo;
+
+    document.getElementById('correo').value = "";
+}
+</script>

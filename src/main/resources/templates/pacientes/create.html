@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registrar Paciente</title>
+    <link rel="stylesheet" th:href="@{/Assets/css/create.css}">
+</head>
+
+<body>
+
+<div class="container">
+    <h1>Registrar Paciente</h1>
+
+    <form action="#" method="POST">
+
+        <!-- Tipo de Documento -->
+        <div class="mb-3">
+            <label class="form-label">Tipo de Documento</label>
+            <select name="tipo_doc" class="form-select" required>
+                <option value="">- Selecciona -</option>
+                <option value="CC">CC</option>
+                <option value="TI">TI</option>
+                <option value="RC">RC</option>
+                <option value="CE">CE</option>
+                <option value="PA">PA</option>
+                <option value="DNI">DNI</option>
+                <option value="PEP">PEP</option>
+                <option value="PPT">PPT</option>
+            </select>
+        </div>
+
+        <!-- Número de Documento -->
+        <div class="mb-3">
+            <label class="form-label">Número de Documento</label>
+            <input type="text" name="numero_doc" maxlength="10"
+                class="form-control" required oninput="soloNumeros(this)">
+        </div>
+
+        <!-- Nombre -->
+        <div class="mb-3">
+            <label class="form-label">Nombre</label>
+            <input type="text" name="nombre" maxlength="50"
+                class="form-control" required oninput="soloLetras(this)">
+        </div>
+
+        <!-- Apellido -->
+        <div class="mb-3">
+            <label class="form-label">Apellido</label>
+            <input type="text" name="apellido" maxlength="100"
+                class="form-control" required oninput="soloLetras(this)">
+        </div>
+
+        <!-- Género -->
+        <div class="mb-3">
+            <label class="form-label">Género</label>
+            <select name="genero" class="form-select" required>
+                <option value="">- Selecciona -</option>
+                <option value="M">Masculino</option>
+                <option value="F">Femenino</option>
+                <option value="Otro">Otro</option>
+            </select>
+        </div>
+
+        <!-- Fecha Nacimiento -->
+        <div class="mb-3">
+            <label class="form-label">Fecha de Nacimiento</label>
+            <input type="date" name="fecha_nacimiento"
+                class="form-control" required>
+        </div>
+
+        <!-- Tipo Sangre -->
+        <div class="mb-3">
+            <label class="form-label">Tipo de Sangre</label>
+            <select name="tipo_sangre" class="form-select">
+                <option value="">- Selecciona -</option>
+                <option>O+</option> <option>O-</option>
+                <option>A+</option> <option>A-</option>
+                <option>B+</option> <option>B-</option>
+                <option>AB+</option> <option>AB-</option>
+            </select>
+        </div>
+
+        <!-- Dirección -->
+        <div class="mb-3">
+            <label class="form-label">Dirección</label>
+            <input type="text" name="direccion" maxlength="255"
+                class="form-control">
+        </div>
+
+        <!-- Teléfono -->
+        <div class="mb-3">
+            <label class="form-label">Teléfono</label>
+            <input type="text" name="telefono" maxlength="10"
+                class="form-control" oninput="soloNumeros(this)">
+        </div>
+
+        <!-- Correo -->
+        <div class="mb-3">
+            <label class="form-label">Correo</label>
+            <input type="email" name="correo" maxlength="100"
+                class="form-control" required>
+        </div>
+
+        <!-- Contraseña -->
+        <div class="mb-3">
+            <label class="form-label">Contraseña</label>
+            <input type="password" name="contraseña" minlength="8"
+                class="form-control" required>
+        </div>
+
+        <button type="submit" class="btn btn-success">Guardar</button>
+        <a href="#" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+
+<script>
+function soloNumeros(input){
+    input.value = input.value.replace(/\D/g,'');
+}
+function soloLetras(input){
+    input.value = input.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g,'');
+}
+</script>
+
+</body>
+</html>
