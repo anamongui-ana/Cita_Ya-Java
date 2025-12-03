@@ -63,8 +63,8 @@ public class LoginController {
                 session.setAttribute("usuario", administrador);
                 session.setAttribute("tipoUsuario", "administrador");
                 session.setAttribute("nombreCompleto", administrador.getNombre() + " " + administrador.getApellido());
-                System.out.println("Login exitoso - Redirigiendo a dashboard administrador");
-                return "redirect:/dashboard/administrador";
+                System.out.println("Login exitoso - Redirigiendo a layouts administrador");
+                return "redirect:/Layouts/administrador";
             } else {
                 model.addAttribute("error", "Contraseña incorrecta.");
                 return "auth/inicioSesion";
@@ -82,8 +82,8 @@ public class LoginController {
                 session.setAttribute("usuario", medico);
                 session.setAttribute("tipoUsuario", "medico");
                 session.setAttribute("nombreCompleto", medico.getNombre() + " " + medico.getApellido());
-                System.out.println("Login exitoso - Redirigiendo a dashboard médico");
-                return "redirect:/dashboard/medico";
+                System.out.println("Login exitoso - Redirigiendo a layouts médico");
+                return "redirect:/Layouts/medico";
             } else {
                 model.addAttribute("error", "Contraseña incorrecta.");
                 return "auth/inicioSesion";
@@ -101,8 +101,8 @@ public class LoginController {
                 session.setAttribute("usuario", paciente);
                 session.setAttribute("tipoUsuario", "paciente");
                 session.setAttribute("nombreCompleto", paciente.getNombre() + " " + paciente.getApellido());
-                System.out.println("Login exitoso - Redirigiendo a dashboard paciente");
-                return "redirect:/dashboard/paciente";
+                System.out.println("Login exitoso - Redirigiendo a layouts paciente");
+                return "redirect:/Layouts/paciente";
             } else {
                 model.addAttribute("error", "Contraseña incorrecta.");
                 return "auth/inicioSesion";

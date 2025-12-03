@@ -4,10 +4,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Dashboard Paciente - Cita Ya</title>
-    <link rel="icon" type="image" href="/Assets/img/logoti.png">
+    <link rel="icon" type="image" th:href="@{/Assets/img/logoti.png}">
 
     <style>
-        /* TODO EL CSS ES IGUAL AL ORIGINAL */
         * {
             font-family: arial, sans-serif;
             margin: 0;
@@ -40,7 +39,7 @@
             box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
             border-radius: 0.5rem; overflow: hidden;
         }
-        .dropdown_item { padding: 12px 16px; cursor: pointer; }
+        .dropdown_item { padding: 12px 16px; cursor: pointer; text-decoration: none; display: block; color: #333; }
         .dropdown_item:hover { background: #f1f1f1; }
 
         .welcome_section {
@@ -89,38 +88,39 @@
         .history_card { padding: 1rem; border-bottom: 1px solid #e2e8f0; }
         .history_card:last-child { border-bottom: none; }
         .show { display: block !important; }
-
     </style>
 </head>
 <body>
 
 <header>
     <div class="container_header">
-        <img class="logo" src="logo.png" alt="Logo">
+        <img class="logo" th:src="@{/Assets/img/logo.png}" alt="Logo">
 
         <div class="profile_dropdown">
             <button class="profile_button" onclick="toggleDropdown()">
-                <span th:text="${nombreCompleto}">Usuario</span> ▼
+                <span th:if="${session.nombreCompleto}" th:text="${session.nombreCompleto}"></span>
+                <span th:unless="${session.nombreCompleto}">Usuario</span> ▼
             </button>
 
             <div class="dropdown_content" id="profileDropdown">
                 <a class="dropdown_item" th:href="@{/pacientes/perfil}">Ver Mi Perfil</a>
                 <a class="dropdown_item" th:href="@{/pacientes/editar}">Editar Perfil</a>
-                <a class="dropdown_item" th:href="@{/logout}" style="color:red;">Cerrar Sesión</a>
+                <hr style="margin: 0;">
+                <form method="POST" th:action="@{/logout}" style="margin: 0;">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                    <button type="submit" class="dropdown_item" style="width:100%; background:none; border:none; text-align:left; color:red;">Cerrar Sesión</button>
+                </form>
             </div>
         </div>
     </div>
 </header>
 
 <div class="container_main">
-
-    <!-- Bienvenida -->
     <div class="welcome_section">
-        <h1 class="welcome_title">¡Bienvenido, <span th:text="${nombreCompleto}">Usuario</span>!</h1>
+        <h1 class="welcome_title">¡Bienvenido, <span th:text="${session.nombreCompleto}">Usuario</span>!</h1>
         <p>Tu panel de salud personal</p>
     </div>
 
-    <!-- Tarjetas -->
     <div class="stats_container">
         <div class="stat_card primary">
             <div class="stat_number">3</div>
@@ -133,10 +133,7 @@
         </div>
     </div>
 
-    <!-- Grid -->
     <div class="content_grid">
-
-        <!-- Citas -->
         <div class="card">
             <div class="card_header">
                 <h3>Mis Citas</h3>
@@ -154,7 +151,6 @@
                             <th>Estado</th>
                         </tr>
                     </thead>
-
                     <tbody>
                         <tr>
                             <td>12/12/2025</td>
@@ -163,7 +159,6 @@
                             <td>Consulta General</td>
                             <td><span class="status_badge warning">Programada</span></td>
                         </tr>
-
                         <tr>
                             <td>05/11/2025</td>
                             <td>10:00</td>
@@ -171,7 +166,6 @@
                             <td>Pediatría</td>
                             <td><span class="status_badge info">Hoy</span></td>
                         </tr>
-
                         <tr>
                             <td>28/10/2025</td>
                             <td>09:30</td>
@@ -184,29 +178,24 @@
             </div>
         </div>
 
-        <!-- Historia Clínica -->
         <div class="card">
             <div class="card_header">
                 <h3>Historial Clínico</h3>
             </div>
 
             <div class="card_body">
-
                 <div class="history_card">
                     <strong>10/10/2025</strong>
                     <p>Consulta con Dr. Gómez - Psicología</p>
                 </div>
-
                 <div class="history_card">
                     <strong>02/09/2025</strong>
                     <p>Consulta general - Dr. Díaz</p>
                 </div>
-
                 <div class="history_card">
                     <strong>22/08/2025</strong>
                     <p>Dermatología - Dra. Torres</p>
                 </div>
-
             </div>
         </div>
     </div>
