@@ -16,11 +16,6 @@ public class AuthController {
         return "auth/login";  // Debe estar en templates/auth/login.html
     }
 
-    @GetMapping("/registro")
-    public String registro() {
-        return "auth/registro";
-    }
-
     @GetMapping("/restablecer")
     public String restablecer() {
         return "auth/restablecer";

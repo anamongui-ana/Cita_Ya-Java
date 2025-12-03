@@ -1,6 +1,7 @@
 package proyecto.conexiondb.JPA.Entity;
 
 import jakarta.persistence.*;
+import org.springframework.format.annotation.DateTimeFormat;
 import java.util.Date;
 
 @Entity
@@ -21,13 +22,15 @@ public class Paciente {
     @Column(name = "nombre", length = 30, nullable = false)
     private String nombre;
 
-    @Column(name = "apellido", length = 30, nullable = false)
+    @Column(name = "apellido", length = 20, nullable = false)
     private String apellido;
 
     @Column(name = "genero", nullable = false)
     private String genero;
 
     @Column(name = "fecha_nacimiento", nullable = false)
+    @Temporal(TemporalType.DATE)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")  // ← AGREGA ESTO
     private Date fechaNacimiento;
 
     @Column(name = "tipo_sangre", length = 5)
@@ -42,11 +45,11 @@ public class Paciente {
     @Column(length = 35, nullable = false, unique = true)
     private String correo;
 
-    @Column(name = "contraseña", length = 35, nullable = false)
+    @Column(name = "contraseña", length = 25, nullable = false)
     private String contrasena;
 
-    //contructores
-
+    // Getters y setters (déjalos como están)
+    
     public Long getIdPaciente() {
         return idPaciente;
     }
@@ -142,10 +145,4 @@ public class Paciente {
     public void setContrasena(String contrasena) {
         this.contrasena = contrasena;
     }
-
- 
-    // private LocalDateTime created_at;
-    // private LocalDateTime updated_at;
-
-    // RELACIÓN con agendamientos / historial se agrega después
 }

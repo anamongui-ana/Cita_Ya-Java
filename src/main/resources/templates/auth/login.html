@@ -94,7 +94,11 @@
         </div>
 
     </div>
-
+    <!-- Mensaje de registro exitoso -->
+<div th:if="${param.registro}" 
+     style="background:#e6ffe6; color:#090; padding:10px; border-radius:6px; margin-bottom:12px;">
+    <p>✓ ¡Registro exitoso! Ahora puedes iniciar sesión</p>
+</div>
 </body>
 </html>
 

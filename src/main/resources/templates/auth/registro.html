@@ -4,176 +4,157 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" type="image" th:href="@{/Assets/IMG/logotipo.png}">
-    <link rel="stylesheet" href="/Assets/css/registro.css?v1.0">
-    <title>Registro - Cita Ya</title>
+    <title>Cita Ya - Registro</title>
+    <link rel="icon" type="image" th:href="@{/Assets/img/logoti.png}">
+    <link rel="stylesheet" th:href="@{/Assets/css/login.css}">
 </head>
 
 <body class="body">
+
     <div class="container_login">
+
         <div class="apartado_1">
             <div class="container_login-form">
+
                 <div class="logo-name">
-                    <img th:src="@{/Assets/IMG/nom.png}">
+                    <img th:src="@{/Assets/img/nom.png}">
                 </div>
 
-                <!-- Formulario -->
-                <form th:action="@{/paciente/guardar}" method="POST">
+                <h2 style="text-align: center; margin-bottom: 1rem;">Registro de Paciente</h2>
 
-                    <!-- Tipo de Documento -->
-                    <div class="label"><label for="tipo_doc">Tipo de Documento</label></div>
-                    <select id="tipo_doc" name="tipodoc" required>
-                        <option value="">- Selecciona -</option>
-                        <option value="CC">CC</option>
-                        <option value="TI">TI</option>
-                        <option value="RC">RC</option>
-                        <option value="CE">CE</option>
-                        <option value="PA">PA</option>
-                        <option value="DNI">DNI</option>
-                        <option value="PEP">PEP</option>
-                        <option value="PPT">PPT</option>
-                    </select>
+                <!-- Formulario de registro -->
+                <form class="container_formulario-login" method="POST" th:action="@{/registro}" th:object="${paciente}">
 
-                    <!-- Número de Documento -->
-                    <div class="label"><label for="numero_doc">Número de Documento</label></div>
-                    <div class="input">
-                        <input type="text" id="numero_doc" name="numerodoc" placeholder="Ej: 1234567890" maxlength="10"
-                            oninput="validarNumeroDoc(this)" required>
+                    <!-- Mensaje de error -->
+                    <div th:if="${error}" 
+                         style="background:#ffe6e6; color:#900; padding:10px; border-radius:6px; margin-bottom:12px;">
+                        <p th:text="${error}"></p>
                     </div>
 
-                    <!-- Nombres -->
-                    <div class="label"><label for="nombre">Nombres</label></div>
+                    <!-- Tipo de documento -->
+                    <div class="label">
+                        <label class="text">Tipo de documento</label>
+                    </div>
                     <div class="input">
-                        <input type="text" id="nombre" name="nombre" placeholder="Ingresa tus nombres completos"
-                            oninput="soloLetras(this)" minlength="18" maxlength="50" required>
+                        <select name="tipoDoc" th:field="*{tipoDoc}" required>
+                            <option value="">Seleccione...</option>
+                            <option value="CC">Cédula de Ciudadanía</option>
+                            <option value="TI">Tarjeta de Identidad</option>
+                            <option value="CE">Cédula de Extranjería</option>
+                        </select>
                     </div>
 
-                    <!-- Apellidos -->
-                    <div class="label"><label for="apellido">Apellidos</label></div>
+                    <!-- Número de documento -->
+                    <div class="label">
+                        <label class="text">Número de documento</label>
+                    </div>
                     <div class="input">
-                        <input type="text" id="apellido" name="apellido" placeholder="Ingresa tus apellidos completos"
-                            oninput="soloLetras(this)" minlength="20" maxlength="100" required>
+                        <input type="text" name="numeroDoc" th:field="*{numeroDoc}" 
+                               placeholder="Ej: 1234567890" required>
+                    </div>
+
+                    <!-- Nombre -->
+                    <div class="label">
+                        <label class="text">Nombre</label>
+                    </div>
+                    <div class="input">
+                        <input type="text" name="nombre" th:field="*{nombre}" 
+                               placeholder="Juan" required>
+                    </div>
+
+                    <!-- Apellido -->
+                    <div class="label">
+                        <label class="text">Apellido</label>
+                    </div>
+                    <div class="input">
+                        <input type="text" name="apellido" th:field="*{apellido}" 
+                               placeholder="Pérez" required>
                     </div>
 
                     <!-- Género -->
-                    <div class="label"><label for="genero">Género</label></div>
-                    <select id="genero" name="genero" required>
-                        <option value="">- Selecciona -</option>
-                        <option value="M">Masculino</option>
-                        <option value="F">Femenino</option>
-                        <option value="Otro">Otro</option>
-                    </select>
-
-                    <!-- Fecha de Nacimiento -->
-                    <div class="label"><label for="fecha_nacimiento">Fecha de Nacimiento</label></div>
+                    <div class="label">
+                        <label class="text">Género</label>
+                    </div>
                     <div class="input">
-                        <input type="date" id="fecha_nacimiento" name="fechanacimiento" required>
+                        <select name="genero" th:field="*{genero}" required>
+                            <option value="">Seleccione...</option>
+                            <option value="M">Masculino</option>
+                            <option value="F">Femenino</option>
+                            <option value="Otro">Otro</option>
+                        </select>
                     </div>
 
-                    <!-- Tipo de Sangre -->
-                    <div class="label"><label for="tipo_sangre">Tipo de Sangre</label></div>
-                    <select id="tipo_sangre" name="tiposangre">
-                        <option value="">- Selecciona -</option>
-                        <option value="O+">O+</option>
-                        <option value="O-">O-</option>
-                        <option value="A+">A+</option>
-                        <option value="A-">A-</option>
-                        <option value="B+">B+</option>
-                        <option value="B-">B-</option>
-                        <option value="AB+">AB+</option>
-                        <option value="AB-">AB-</option>
-                    </select>
-
-                    <!-- Dirección -->
-                    <div class="label"><label for="direccion">Dirección</label></div>
-                    <div class="input">
-                        <input type="text" id="direccion" name="direccion" minlength="15" maxlength="255"
-                            placeholder="Ej: Calle 123 #45-67">
+                    <!-- Fecha de nacimiento (ESTE FALTABA) -->
+                    <div class="label">
+                        <label class="text">Fecha de nacimiento</label>
                     </div>
-
-                    <!-- Teléfono -->
-                    <div class="label"><label for="telefono">Teléfono</label></div>
                     <div class="input">
-                        <input type="tel" id="telefono" name="telefono" minlength="6" maxlength="10" placeholder="Ej: 3001234567"
-                            oninput="validarTelefono(this)" required>
+                        <input type="date" name="fechaNacimiento" th:field="*{fechaNacimiento}" required>
                     </div>
 
                     <!-- Correo -->
-                    <div class="label"><label for="correo">Correo</label></div>
+                    <div class="label">
+                        <label class="text">Correo electrónico</label>
+                    </div>
                     <div class="input">
-                        <input type="email" id="correo" name="correo" placeholder="Ingresa tu correo" minlength="10" maxlength="100"
-                            required>
+                        <input type="email" name="correo" th:field="*{correo}" 
+                               placeholder="ejemplo@correo.com" required>
+                    </div>
+
+                    <!-- Teléfono (opcional) -->
+                    <div class="label">
+                        <label class="text">Teléfono (opcional)</label>
+                    </div>
+                    <div class="input">
+                        <input type="tel" name="telefono" th:field="*{telefono}" 
+                               placeholder="3001234567">
                     </div>
 
                     <!-- Contraseña -->
-                    <div class="label"><label for="contraseña">Contraseña</label></div>
+                    <div class="label">
+                        <label class="text">Contraseña</label>
+                    </div>
                     <div class="input">
-                        <input type="password" id="contraseña" name="contrasena" minlength="10"
-                            placeholder="Crea una contraseña segura" pattern="(?=.*[A-Z])(?=.*[!@#$%^&*])\S{10,}"
-                            title="Incluye 10 caracteres, una mayúscula y un carácter especial." required>
+                        <input type="password" name="contrasena" th:field="*{contrasena}" 
+                               minlength="8" placeholder="Mínimo 8 caracteres" required>
                     </div>
 
-                    <button type="submit">Registrarse</button>
+                    <!-- Botón -->
+                    <button type="submit" class="login_button">Registrarse</button>
 
-                    <!-- Ir al login -->
-                    <div class="cuenta">
+                    <!-- Link a login -->
+                    <div class="no-cuenta" style="text-align: center; margin-top: 1rem;">
                         <p>¿Ya tienes cuenta?
                             <a th:href="@{/login}">Inicia sesión</a>
                         </p>
                     </div>
-
                 </form>
+
             </div>
         </div>
 
+        <!-- Parte decorativa -->
         <div class="apartado_2">
             <div class="emoji-icon">
-                <img th:src="@{/Assets/IMG/logoti.png}">
+                <img th:src="@{/Assets/img/logoti.png}">
             </div>
+
             <div class="h1-info">
-                <h1>Formulario de Registro</h1>
+                <h1>¡Únete a nosotros!</h1>
             </div>
+
             <div class="P-info">
-                <p>Regístrate y accede a tu portal médico para gestionar tus citas</p>
+                <p>Crea tu cuenta y comienza a gestionar tu salud</p>
             </div>
+
             <div class="p-info">
-                <p>✓ Agenda citas 24/7</p>
-                <p>✓ Consulta tu historial médico</p>
-                <p>✓ Recibe recordatorios</p>
+                <p>✓ Registro rápido y seguro</p>
+                <p>✓ Acceso a tu historial médico</p>
+                <p>✓ Agenda tus citas en minutos</p>
             </div>
         </div>
+
     </div>
 
-    <script>
-        function soloNumeros(input) {
-            input.value = input.value.replace(/\D/g, '');
-        }
-
-        function validarNumeroDoc(input) {
-            let cleanValue = input.value.replace(/\D/g, '').substring(0, 10);
-            input.value = cleanValue;
-            if (cleanValue.length !== 10 && cleanValue.length > 0) {
-                input.setCustomValidity("Debe tener 10 dígitos.");
-            } else {
-                input.setCustomValidity("");
-            }
-        }
-
-        function validarTelefono(input) {
-            let cleanValue = input.value.replace(/\D/g, '').substring(0, 10);
-            input.value = cleanValue;
-            if (cleanValue.length !== 10 && cleanValue.length > 0) {
-                input.setCustomValidity("Debe tener 10 dígitos.");
-            } else {
-                input.setCustomValidity("");
-            }
-        }
-
-        function soloLetras(input) {
-            input.value = input.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
-        }
-    </script>
-
 </body>
-
 </html>
