@@ -11,28 +11,13 @@ public class HomeController {
         return "index";
     }
 
-    @GetMapping("/inicioSesion")
-    public String inicioSesion() {
-        return "auth/inicioSesion";
-    }
-
-    @GetMapping("/registro")
-    public String registro() {
-        return "auth/registro";
+    @GetMapping("/index")
+    public String indexAlt() {
+        return "index";
     }
 
     @GetMapping("/restablecer")
     public String restablecer() {
         return "auth/restablecer";
-    }
-
-    @GetMapping("/Dashboard/medico")
-    public String DashBoardMedico() {
-        return "Dashboard/medico";
-    }
-
-    @GetMapping("/Dashboard/paciente")
-    public String DashBoardPaciente() {
-        return "Dashboard/paciente";
     }
 }

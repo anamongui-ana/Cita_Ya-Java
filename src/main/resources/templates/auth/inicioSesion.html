@@ -32,6 +32,12 @@
                         <p th:text="${error}"></p>
                     </div>
 
+                    <!-- Mensaje de éxito -->
+                    <div th:if="${param.registro}"
+                        style="background:#e6ffe6; color:#090; padding:10px; border-radius:6px; margin-top:12px;">
+                        <p>¡Registro exitoso! Ahora puedes iniciar sesión.</p>
+                    </div>
+
                     <!-- Documento -->
                     <div class="label">
                         <label class="text" for="numero">Número de documento</label>

@@ -5,4 +5,6 @@ import proyecto.conexiondb.JPA.Entity.Medico;
 
 
 
-public interface MedicoRepository extends JpaRepository<Medico, Long> {}
+public interface MedicoRepository extends JpaRepository<Medico, Long> {
+    Medico findByNumeroDoc(String numeroDoc);
+}

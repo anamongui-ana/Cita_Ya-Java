@@ -5,4 +5,7 @@ import proyecto.conexiondb.JPA.Entity.Paciente;
 
 public interface PacienteRepository extends JpaRepository<Paciente, Long> {
 
-    Paciente findByNumeroDoc(String numeroDoc);}
+    Paciente findByNumeroDoc(String numeroDoc);
+    
+    Paciente findByCorreo(String correo);
+}

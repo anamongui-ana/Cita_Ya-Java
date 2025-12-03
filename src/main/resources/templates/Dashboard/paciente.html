@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="es">
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Dashboard Paciente - Cita Ya</title>
+    <link rel="icon" type="image" href="/Assets/img/logoti.png">
 
     <style>
         /* TODO EL CSS ES IGUAL AL ORIGINAL */
@@ -82,6 +83,12 @@
         .warning { background: #fbbf24; }
         .info { background: #3b82f6; }
         .secondary { background: #6b7280; }
+        .container_main { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+        .stat_number { font-size: 2.5rem; font-weight: bold; margin-bottom: 0.5rem; }
+        .card_body { padding: 1rem; }
+        .history_card { padding: 1rem; border-bottom: 1px solid #e2e8f0; }
+        .history_card:last-child { border-bottom: none; }
+        .show { display: block !important; }
 
     </style>
 </head>
@@ -93,13 +100,13 @@
 
         <div class="profile_dropdown">
             <button class="profile_button" onclick="toggleDropdown()">
-                Juan Pérez ▼
+                <span th:text="${nombreCompleto}">Usuario</span> ▼
             </button>
 
             <div class="dropdown_content" id="profileDropdown">
-                <a class="dropdown_item">Ver Mi Perfil</a>
-                <a class="dropdown_item">Editar Perfil</a>
-                <a class="dropdown_item" style="color:red;">Cerrar Sesión</a>
+                <a class="dropdown_item" th:href="@{/pacientes/perfil}">Ver Mi Perfil</a>
+                <a class="dropdown_item" th:href="@{/pacientes/editar}">Editar Perfil</a>
+                <a class="dropdown_item" th:href="@{/logout}" style="color:red;">Cerrar Sesión</a>
             </div>
         </div>
     </div>
@@ -109,8 +116,8 @@
 
     <!-- Bienvenida -->
     <div class="welcome_section">
-        <h1 class="welcome_title">¡Bienvenido, Juan!</h1>
-        <p>Tu panel de salud personal - Documento: CC 123456789</p>
+        <h1 class="welcome_title">¡Bienvenido, <span th:text="${nombreCompleto}">Usuario</span>!</h1>
+        <p>Tu panel de salud personal</p>
     </div>
 
     <!-- Tarjetas -->
@@ -133,7 +140,7 @@
         <div class="card">
             <div class="card_header">
                 <h3>Mis Citas</h3>
-                <button class="profile_button" style="padding: 5px 10px;">+ Agendar</button>
+                <a th:href="@{/agendamientos/crear}" class="profile_button" style="padding: 5px 10px; text-decoration: none;">+ Agendar</a>
             </div>
 
             <div class="card_body">
