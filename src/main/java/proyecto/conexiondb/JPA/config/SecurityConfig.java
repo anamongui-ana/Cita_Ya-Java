@@ -17,6 +17,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+
             .authorizeHttpRequests(auth -> auth
                 // Permite acceso a recursos estáticos y páginas públicas
                 .requestMatchers("/", "/login", "/registro", "/restablecer").permitAll()
@@ -42,6 +43,7 @@ public class SecurityConfig {
             )
             .csrf(csrf -> csrf.disable());  // Deshabilita CSRF temporalmente para testing
 
+
         return http.build();
     }
 
@@ -50,8 +52,12 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 }
+
+
+

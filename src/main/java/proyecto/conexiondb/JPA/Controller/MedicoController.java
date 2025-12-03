@@ -20,7 +20,7 @@ public class MedicoController {
     @GetMapping
     public String listar(Model model) {
         model.addAttribute("medicos", medicoRepository.findAll());
-        return "medico/formulario";
+        return "medicos/index";
     }
 
     @GetMapping("/nuevo")
