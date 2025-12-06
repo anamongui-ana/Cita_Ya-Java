@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte de Administradores - Cita Ya</title>
+    <link rel="stylesheet" th:href="@{/Assets/css/reporte.css}">
+</head>
+<body>
+    <div class="content-wrap">
+        <header>
+            <img th:src="@{/Assets/IMG/logo.png}" alt="Logo Cita Ya">
+            <div class="info">
+                <br>
+                <p>Sistema de Gestión de Citas Médicas</p>
+            </div>
+            <div class="fecha">
+                <p><strong>Fecha:</strong> <span th:text="${#dates.format(T(java.time.LocalDate).now(), 'dd/MM/yyyy')}"></span></p>
+            </div>
+        </header>
+
+        <h2>Reporte de Administradores</h2>
+
+        <!-- Filtros aplicados -->
+        <div th:if="${filtros != null}" style="background-color: #f0f8ff; padding: 10px; margin-bottom: 15px; border-left: 4px solid #007bff; font-size: 10px;">
+            <strong>Filtros Aplicados:</strong>
+            <div th:if="${filtros.buscar != null}">
+                <br>Búsqueda: <span th:text="${filtros.buscar}"></span>
+            </div>
+            <div th:if="${filtros.tipo_doc != null}">
+                <br>Tipo de Documento: <span th:text="${filtros.tipo_doc}"></span>
+            </div>
+            <div th:if="${filtros.genero != null}">
+                <br>Género: <span th:text="${filtros.genero == 'M' ? 'Masculino' : (filtros.genero == 'F' ? 'Femenino' : 'Otro')}"></span>
+            </div>
+        </div>
+
+        <div class="tabla-container">
+            <table th:if="${administradores.size() > 0}">
+                <thead>
+                    <tr>
+                        <th style="width:5%;">ID</th>
+                        <th style="width:15%;">Documento</th>
+                        <th style="width:20%;">Nombre</th>
+                        <th style="width:10%;">Género</th>
+                        <th style="width:15%;">Teléfono</th>
+                        <th style="width:35%;">Correo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="admin : ${administradores}">
+                        <td th:text="${admin.id_admin}"></td>
+                        <td th:text="${admin.tipo_doc} + ' ' + ${admin.numero_doc}"></td>
+                        <td th:text="${admin.nombre} + ' ' + ${admin.apellido}"></td>
+                        <td th:text="${admin.genero}"></td>
+                        <td th:text="${admin.telefono != null ? admin.telefono : 'N/A'}"></td>
+                        <td th:text="${admin.correo}"></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p th:if="${administradores.size() == 0}" style="text-align: center; padding: 20px; color: #999;">
+                No se encontraron administradores con los filtros aplicados
+            </p>
+        </div>
+
+        <div class="footer-stats">
+            <div>Total registros: <strong th:text="${administradores.size()}"></strong></div>
+            <div>Generado por: <strong>Cita Ya</strong></div>
+        </div>
+    </div>
+</body>
+</html>

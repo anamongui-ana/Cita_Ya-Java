@@ -1,0 +1,116 @@
+<link rel="stylesheet" th:href="@{/Assets/CSS/edit.css}">
+
+<div class="container">
+    <h1>Editar Médico</h1>
+
+    <!-- ERRORES -->
+    <div class="alert alert-danger" th:if="${errors != null}">
+        <ul>
+            <li th:each="err : ${errors}" th:text="${err}"></li>
+        </ul>
+    </div>
+
+    <form th:action="@{/medicos/update/{id}(id=${medico.idMedico})}" method="POST">
+
+        <!-- Tipo Documento -->
+        <div class="mb-3">
+            <label class="form-label">Tipo de Documento</label>
+            <select name="tipoDoc" class="form-select" required>
+                <option value="">-- Selecciona --</option>
+                <option value="CC" th:selected="${medico.tipoDoc == 'CC'}">CC</option>
+                <option value="TI" th:selected="${medico.tipoDoc == 'TI'}">TI</option>
+                <option value="CE" th:selected="${medico.tipoDoc == 'CE'}">CE</option>
+                <option value="PA" th:selected="${medico.tipoDoc == 'PA'}">PA</option>
+                <option value="DNI" th:selected="${medico.tipoDoc == 'DNI'}">DNI</option>
+            </select>
+        </div>
+
+        <!-- Número Documento -->
+        <div class="mb-3">
+            <label class="form-label">Número de Documento</label>
+            <input type="text" name="numeroDoc" maxlength="10"
+                   oninput="soloNumeros(this)" class="form-control"
+                   th:value="${medico.numeroDoc}" required>
+        </div>
+
+        <!-- Nombre -->
+        <div class="mb-3">
+            <label class="form-label">Nombre</label>
+            <input type="text" name="nombre" maxlength="50"
+                   oninput="soloLetras(this)" class="form-control"
+                   th:value="${medico.nombre}" required>
+        </div>
+
+        <!-- Apellido -->
+        <div class="mb-3">
+            <label class="form-label">Apellido</label>
+            <input type="text" name="apellido" maxlength="50"
+                   oninput="soloLetras(this)" class="form-control"
+                   th:value="${medico.apellido}" required>
+        </div>
+
+        <!-- Género -->
+        <div class="mb-3">
+            <label class="form-label">Género</label>
+            <select name="genero" class="form-select" required>
+                <option value="">-- Selecciona --</option>
+                <option value="M" th:selected="${medico.genero == 'M'}">Masculino</option>
+                <option value="F" th:selected="${medico.genero == 'F'}">Femenino</option>
+                <option value="Otro" th:selected="${medico.genero == 'Otro'}">Otro</option>
+            </select>
+        </div>
+
+        <!-- Especialidad -->
+        <div class="mb-3">
+            <label class="form-label">Especialidad</label>
+            <input type="text" name="especialidad"
+                   maxlength="100" oninput="soloLetras(this)"
+                   class="form-control"
+                   th:value="${medico.especialidad}" required>
+        </div>
+
+        <!-- Teléfono -->
+        <div class="mb-3">
+            <label class="form-label">Teléfono</label>
+            <input type="text" name="telefono"
+                   maxlength="10" oninput="soloNumeros(this)"
+                   class="form-control"
+                   th:value="${medico.telefono}">
+        </div>
+
+        <!-- Correo -->
+        <div class="mb-3">
+            <label class="form-label">Correo</label>
+            <input type="email" name="correo"
+                   maxlength="100" class="form-control"
+                   th:value="${medico.correo}" required>
+        </div>
+
+        <!-- Contraseña -->
+        <div class="mb-3">
+            <label class="form-label">Contraseña (deja vacío si no quieres cambiarla)</label>
+            <input type="password" name="contraseña" minlength="8"
+                   class="form-control">
+        </div>
+
+        <!-- Estado -->
+        <div class="mb-3 form-check">
+            <input type="checkbox" name="estado" value="1"
+                   class="form-check-input"
+                   th:checked="${medico.estado == 1}">
+            <label class="form-check-label">Activo</label>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Actualizar</button>
+        <a th:href="@{/medicos}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+
+<script>
+function soloNumeros(input) {
+    input.value = input.value.replace(/\D/g, '');
+}
+function soloLetras(input) {
+    input.value = input.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
+}
+</script>

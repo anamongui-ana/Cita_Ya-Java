@@ -1,0 +1,116 @@
+<link rel="stylesheet" th:href="@{/Assets/CSS/create.css}">
+
+<div class="container">
+    <h1>Registrar Médico</h1>
+
+    <!-- ERRORES -->
+    <div class="alert alert-danger" th:if="${errors != null}">
+        <ul>
+            <li th:each="err : ${errors}" th:text="${err}"></li>
+        </ul>
+    </div>
+
+    <form th:action="@{/medicos/store}" method="POST">
+
+        <!-- Tipo de Documento -->
+        <div class="mb-3">
+            <label class="form-label">Tipo de Documento</label>
+            <select name="tipoDoc" class="form-select" required>
+                <option value="">- Selecciona -</option>
+                <option value="CC">CC</option>
+                <option value="TI">TI</option>
+                <option value="RC">RC</option>
+                <option value="CE">CE</option>
+                <option value="PA">PA</option>
+                <option value="DNI">DNI</option>
+                <option value="PEP">PEP</option>
+                <option value="PPT">PPT</option>
+            </select>
+        </div>
+
+        <!-- Número Documento -->
+        <div class="mb-3">
+            <label class="form-label">Número de Documento</label>
+            <input type="text" name="numeroDoc" maxlength="10"
+                   oninput="soloNumeros(this)" class="form-control" required>
+        </div>
+
+        <!-- Nombre -->
+        <div class="mb-3">
+            <label class="form-label">Nombre</label>
+            <input type="text" name="nombre" maxlength="50"
+                   oninput="soloLetras(this)" class="form-control" required>
+        </div>
+
+        <!-- Apellido -->
+        <div class="mb-3">
+            <label class="form-label">Apellido</label>
+            <input type="text" name="apellido" maxlength="100"
+                   oninput="soloLetras(this)" class="form-control" required>
+        </div>
+
+        <!-- Género -->
+        <div class="mb-3">
+            <label class="form-label">Género</label>
+            <select name="genero" class="form-select" required>
+                <option value="">- Selecciona -</option>
+                <option value="M">Masculino</option>
+                <option value="F">Femenino</option>
+                <option value="Otro">Otro</option>
+            </select>
+        </div>
+
+        <!-- Especialidad -->
+        <div class="mb-3">
+            <label class="form-label">Especialidad</label>
+            <select name="especialidad" class="form-select" required>
+                <option value="">- Selecciona -</option>
+                <option>Medicina General</option>
+                <option>Ortopedia</option>
+                <option>Cardiología</option>
+                <option>Psicología</option>
+                <option>Pediatría</option>
+                <option>Dermatología</option>
+            </select>
+        </div>
+
+        <!-- Teléfono -->
+        <div class="mb-3">
+            <label class="form-label">Teléfono</label>
+            <input type="text" name="telefono" maxlength="10"
+                   oninput="soloNumeros(this)" class="form-control">
+        </div>
+
+        <!-- Correo -->
+        <div class="mb-3">
+            <label class="form-label">Correo</label>
+            <input type="email" name="correo" maxlength="100"
+                   class="form-control" required>
+        </div>
+
+        <!-- Contraseña -->
+        <div class="mb-3">
+            <label class="form-label">Contraseña</label>
+            <input type="password" name="contraseña" minlength="8"
+                   class="form-control" required>
+        </div>
+
+        <!-- Estado -->
+        <div class="mb-3 form-check">
+            <input type="checkbox" name="estado" value="1" class="form-check-input">
+            <label class="form-check-label">Activo</label>
+        </div>
+
+        <button type="submit" class="btn btn-success">Guardar</button>
+        <a th:href="@{/medicos}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+
+<script>
+    function soloNumeros(input) {
+        input.value = input.value.replace(/\D/g, '');
+    }
+    function soloLetras(input) {
+        input.value = input.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
+    }
+</script>

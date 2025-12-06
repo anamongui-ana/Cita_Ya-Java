@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historias Clínicas - Dashboard Médico</title>
+    <link rel="stylesheet" th:href="@{/Assets/CSS/table.css}">
+    <style>
+        .btn-back {
+            background-color: #3b82f6;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <a th:href="@{/medico/dashboard}" class="btn-back">← Volver al Dashboard</a>
+    
+    <h1>Historias Clínicas Creadas</h1>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Paciente</th>
+            <th>Diagnóstico</th>
+            <th>Médico</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="historia : ${historias}">
+            <td th:text="${#dates.format(historia.fechaAtencion, 'dd/MM/yyyy')}">Fecha</td>
+            <td th:text="${historia.paciente.nombre + ' ' + historia.paciente.apellido}">Paciente</td>
+            <td th:text="${#strings.abbreviate(historia.diagnostico, 100)}">Diagnóstico</td>
+            <td>
+                Dr. <span th:text="${historia.medico.nombre + ' ' + historia.medico.apellido}">Médico</span>
+                <br><small th:text="${historia.medico.especialidad}">Especialidad</small>
+            </td>
+            <td>
+                <a th:href="@{/medico/dashboard/pacientes/{id}/historia(id=${historia.paciente.idPaciente})}" 
+                   class="btn btn-info btn-sm">Ver Todas del Paciente</a>
+            </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(historias)}">
+            <td colspan="4" style="text-align: center; padding: 2rem;">
+                <em>No has creado historias clínicas aún</em>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

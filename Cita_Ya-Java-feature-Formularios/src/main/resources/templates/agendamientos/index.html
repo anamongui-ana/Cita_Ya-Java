@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Citas - Cita Ya</title>
+    <link rel="stylesheet" th:href="@{/Assets/CSS/table.css}">
+</head>
+<body>
+<div class="container">
+    <h1>Mis Citas Médicas</h1>
+    
+    <div class="mb-3">
+        <a th:href="@{/agendamientos/nuevo}" class="btn-new">+ Nueva Cita</a>
+    </div>
+
+    <table class="table mt-3">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Tipo de Cita</th>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Paciente</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="agendamiento : ${agendamientos}">
+            <td th:text="${agendamiento.idAgendamiento}"></td>
+            <td th:text="${agendamiento.cita}"></td>
+            <td th:text="${#dates.format(agendamiento.fecha, 'dd/MM/yyyy')}"></td>
+            <td th:text="${agendamiento.hora}"></td>
+            <td th:text="${agendamiento.paciente.nombre + ' ' + agendamiento.paciente.apellido}"></td>
+            <td>
+                <div style="display: flex; gap: 0.5rem; justify-content: center;">
+                    <a th:href="@{/agendamientos/editar/{id}(id=${agendamiento.idAgendamiento})}" 
+                       class="btn btn-warning btn-sm"
+                       style="background: #f59e0b; color: white; padding: 0.4rem 0.8rem; border-radius: 0.3rem; text-decoration: none; display: inline-block;">
+                        Editar
+                    </a>
+                    <form th:action="@{/agendamientos/eliminar/{id}(id=${agendamiento.idAgendamiento})}"
+                          method="POST"
+                          style="display:inline; margin: 0;">
+                        <button type="submit"
+                                class="btn btn-danger btn-sm"
+                                style="background: #dc2626; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 0.3rem; cursor: pointer;"
+                                onclick="return confirm('¿Cancelar esta cita?')">
+                            Cancelar
+                        </button>
+                    </form>
+                </div>
+            </td>
+        </tr>
+
+        <tr th:if="${#lists.isEmpty(agendamientos)}">
+            <td colspan="6" class="text-center">
+                <em>No tienes citas agendadas</em>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="mt-3">
+        <a th:href="@{/Layouts/paciente}" class="btn btn-secondary">Volver al Dashboard</a>
+    </div>
+</div>
+</body>
+</html>

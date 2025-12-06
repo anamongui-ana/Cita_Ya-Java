@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" th:href="@{/Assets/img/logotipo.png}">
+    <title>Dashboard Médico - Cita Ya</title>
+    <style>
+        * {
+            font-family: arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background-color: #f8f9fa;
+            padding-top: 100px;
+        }
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+        .container_header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+        .logo {
+            width: 4rem;
+            height: 4rem;
+        }
+        .profile_dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .profile_button {
+            background-color: #059669;
+            color: white;
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: bold;
+        }
+        .dropdown_content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: white;
+            min-width: 200px;
+            box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+            border-radius: 0.5rem;
+            overflow: hidden;
+            z-index: 1001;
+        }
+        .dropdown_item {
+            padding: 12px 16px;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            color: #333;
+            background: none;
+            border: none;
+            width: 100%;
+            text-align: left;
+        }
+        .dropdown_item:hover {
+            background: #f1f1f1;
+        }
+        .welcome_section {
+            background: linear-gradient(135deg, #059669, #10b981);
+            color: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .welcome_title {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .stats_container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        .stat_card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .stat_card.success {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+        .stat_card.info {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+        }
+        .stat_card.warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+        }
+        .stat_number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        .container_main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .show {
+            display: block !important;
+        }
+        .card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        .card h3 {
+            color: #059669;
+            margin-bottom: 1rem;
+        }
+        .citas-list {
+            list-style: none;
+        }
+        .cita-item {
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .cita-item:last-child {
+            border-bottom: none;
+        }
+        .cita-info {
+            flex: 1;
+        }
+        .cita-fecha {
+            font-weight: bold;
+            color: #059669;
+        }
+        .cita-paciente {
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: 500;
+        }
+        .btn-primary {
+            background-color: #059669;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #047857;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: #6b7280;
+        }
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="container_header">
+        <img class="logo" th:src="@{/Assets/img/logo.png}" alt="Cita Ya Logo">
+        
+        <div class="profile_dropdown">
+            <button class="profile_button" onclick="toggleDropdown()">
+                Dr. <span th:text="${medico.nombre + ' ' + medico.apellido}">Usuario</span> ▼
+            </button>
+            <div class="dropdown_content" id="profileDropdown">
+                <a th:href="@{/medico/dashboard/perfil}" class="dropdown_item">Ver Mi Perfil</a>
+                <a th:href="@{/medico/dashboard/perfil/editar}" class="dropdown_item">Editar Perfil</a>
+                <hr style="margin:0;">
+                <form th:action="@{/logout}" method="get" style="margin:0;">
+                    <button type="submit" class="dropdown_item">Cerrar Sesión</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="container_main">
+    <div class="welcome_section">
+        <h1 class="welcome_title">Dr. <span th:text="${medico.nombre + ' ' + medico.apellido}">Usuario</span></h1>
+        <p th:text="${medico.especialidad}">Especialidad</p>
+    </div>
+
+    <div class="stats_container">
+        <div class="stat_card success">
+            <div class="stat_number" th:text="${citasDelDia}">0</div>
+            <div>Citas del Día</div>
+        </div>
+        <div class="stat_card info">
+            <div class="stat_number" th:text="${citasDelMes}">0</div>
+            <div>Citas del Mes</div>
+        </div>
+        <div class="stat_card warning">
+            <div class="stat_number" th:text="${totalPacientes}">0</div>
+            <div>Total Pacientes</div>
+        </div>
+    </div>
+
+    <div class="nav-links">
+        <a th:href="@{/medico/dashboard/citas}" class="btn btn-primary">📅 Ver Todas Mis Citas</a>
+        <a th:href="@{/medico/dashboard/pacientes}" class="btn btn-primary">👥 Ver Mis Pacientes</a>
+        <a th:href="@{/medico/dashboard/historias-clinicas}" class="btn btn-primary">📋 Historias Clínicas</a>
+        <a th:href="@{/medico/dashboard/buscar-paciente}" class="btn btn-primary">🔍 Buscar Paciente</a>
+    </div>
+
+    <div class="card">
+        <h3>Próximas Citas</h3>
+        <ul class="citas-list" th:if="${!#lists.isEmpty(proximasCitas)}">
+            <li class="cita-item" th:each="cita : ${proximasCitas}">
+                <div class="cita-info">
+                    <div class="cita-fecha">
+                        <span th:text="${#dates.format(cita.fecha, 'dd/MM/yyyy')}">Fecha</span> - 
+                        <span th:text="${cita.hora}">Hora</span>
+                    </div>
+                    <div class="cita-paciente">
+                        <strong th:text="${cita.paciente.nombre + ' ' + cita.paciente.apellido}">Paciente</strong> - 
+                        <span th:text="${cita.cita}">Tipo de cita</span>
+                    </div>
+                </div>
+                <a th:href="@{/medico/dashboard/citas/{id}(id=${cita.idAgendamiento})}" class="btn btn-primary">Ver Detalle</a>
+            </li>
+        </ul>
+        <div class="empty-state" th:if="${#lists.isEmpty(proximasCitas)}">
+            <p>No tienes citas programadas próximamente.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleDropdown() {
+    document.getElementById("profileDropdown").classList.toggle("show");
+}
+
+window.onclick = function(event) {
+    if (!event.target.matches('.profile_button')) {
+        var dropdowns = document.getElementsByClassName("dropdown_content");
+        for (var i = 0; i < dropdowns.length; i++) {
+            var openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show')) {
+                openDropdown.classList.remove('show');
+            }
+        }
+    }
+}
+</script>
+
+</body>
+</html>
