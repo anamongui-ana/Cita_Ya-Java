@@ -10,7 +10,7 @@ import proyecto.conexiondb.JPA.Repository.PacienteRepository;
 import proyecto.conexiondb.JPA.Repository.MedicoRepository;
 
 @Controller
-@RequestMapping("/historia")
+@RequestMapping("/historiales")
 public class HistoriaClinicaController {
 
     private final HistoriaClinicaRepository historiaRepository;
@@ -42,6 +42,6 @@ public class HistoriaClinicaController {
     @PostMapping("/guardar")
     public String guardar(@ModelAttribute Historia_Clinica historia) {
         historiaRepository.save(historia);
-        return "redirect:/historia";
+        return "redirect:/historiales";
     }
 }

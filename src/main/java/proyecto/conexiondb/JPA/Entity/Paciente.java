@@ -1,7 +1,6 @@
 package proyecto.conexiondb.JPA.Entity;
 
 import jakarta.persistence.*;
-import org.springframework.format.annotation.DateTimeFormat;
 import java.util.Date;
 
 @Entity
@@ -16,40 +15,39 @@ public class Paciente {
     @Column(name = "tipo_doc", length = 20, nullable = false)
     private String tipoDoc;
 
-    @Column(name = "numero_doc", length = 10, nullable = false, unique = true)
+    @Column(name = "numero_doc", length = 30, nullable = false, unique = true)
     private String numeroDoc;
 
-    @Column(name = "nombre", length = 30, nullable = false)
+    @Column(name = "nombre", length = 100, nullable = false)
     private String nombre;
 
-    @Column(name = "apellido", length = 20, nullable = false)
+    @Column(name = "apellido", length = 100, nullable = false)
     private String apellido;
 
     @Column(name = "genero", nullable = false)
     private String genero;
 
     @Column(name = "fecha_nacimiento", nullable = false)
-    @Temporal(TemporalType.DATE)
-    @DateTimeFormat(pattern = "yyyy-MM-dd")  // ← AGREGA ESTO
+    @org.springframework.format.annotation.DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date fechaNacimiento;
 
     @Column(name = "tipo_sangre", length = 5)
     private String tipoSangre;
 
-    @Column(length = 35)
+    @Column(length = 255)
     private String direccion;
 
-    @Column(length = 10)
+    @Column(length = 20)
     private String telefono;
 
-    @Column(length = 35, nullable = false, unique = true)
+    @Column(length = 255, nullable = false, unique = true)
     private String correo;
 
-    @Column(name = "contraseña", length = 25, nullable = false)
+    @Column(name = "contraseña", length = 255, nullable = false)
     private String contrasena;
 
-    // Getters y setters (déjalos como están)
-    
+    //contructores
+
     public Long getIdPaciente() {
         return idPaciente;
     }
@@ -145,4 +143,10 @@ public class Paciente {
     public void setContrasena(String contrasena) {
         this.contrasena = contrasena;
     }
+
+ 
+    // private LocalDateTime created_at;
+    // private LocalDateTime updated_at;
+
+    // RELACIÓN con agendamientos / historial se agrega después
 }

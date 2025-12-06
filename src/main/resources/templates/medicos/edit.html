@@ -10,27 +10,27 @@
         </ul>
     </div>
 
-    <form th:action="@{/medicos/update/{id}(id=${medico.id_medico})}" method="POST">
+    <form th:action="@{/medicos/update/{id}(id=${medico.idMedico})}" method="POST">
 
         <!-- Tipo Documento -->
         <div class="mb-3">
             <label class="form-label">Tipo de Documento</label>
-            <select name="tipo_doc" class="form-select" required>
+            <select name="tipoDoc" class="form-select" required>
                 <option value="">-- Selecciona --</option>
-                <option value="CC" th:selected="${medico.tipo_doc == 'CC'}">CC</option>
-                <option value="TI" th:selected="${medico.tipo_doc == 'TI'}">TI</option>
-                <option value="CE" th:selected="${medico.tipo_doc == 'CE'}">CE</option>
-                <option value="PA" th:selected="${medico.tipo_doc == 'PA'}">PA</option>
-                <option value="DNI" th:selected="${medico.tipo_doc == 'DNI'}">DNI</option>
+                <option value="CC" th:selected="${medico.tipoDoc == 'CC'}">CC</option>
+                <option value="TI" th:selected="${medico.tipoDoc == 'TI'}">TI</option>
+                <option value="CE" th:selected="${medico.tipoDoc == 'CE'}">CE</option>
+                <option value="PA" th:selected="${medico.tipoDoc == 'PA'}">PA</option>
+                <option value="DNI" th:selected="${medico.tipoDoc == 'DNI'}">DNI</option>
             </select>
         </div>
 
         <!-- Número Documento -->
         <div class="mb-3">
             <label class="form-label">Número de Documento</label>
-            <input type="text" name="numero_doc" maxlength="10"
+            <input type="text" name="numeroDoc" maxlength="10"
                    oninput="soloNumeros(this)" class="form-control"
-                   th:value="${medico.numero_doc}" required>
+                   th:value="${medico.numeroDoc}" required>
         </div>
 
         <!-- Nombre -->
@@ -97,7 +97,7 @@
         <div class="mb-3 form-check">
             <input type="checkbox" name="estado" value="1"
                    class="form-check-input"
-                   th:checked="${medico.estado}">
+                   th:checked="${medico.estado == 1}">
             <label class="form-check-label">Activo</label>
         </div>
 

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nueva Historia Clínica</title>
+    <style>
+        * {
+            font-family: arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background-color: #f8f9fa;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin-bottom: 1rem;
+        }
+        .card h2 {
+            color: #059669;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #059669;
+            padding-bottom: 0.5rem;
+        }
+        .patient-info {
+            background: #f9fafb;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 2rem;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #374151;
+        }
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-family: arial, sans-serif;
+        }
+        .form-group textarea {
+            min-height: 120px;
+        }
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #059669;
+        }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+        .btn-back {
+            background-color: #6b7280;
+            color: white;
+        }
+        .btn-save {
+            background-color: #059669;
+            color: white;
+        }
+        .btn:hover {
+            opacity: 0.9;
+        }
+        .alert {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .alert-error {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #dc2626;
+        }
+        .required {
+            color: #dc2626;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <a th:href="@{/medico/dashboard/pacientes/{id}/historia(id=${paciente.idPaciente})}" class="btn btn-back">← Cancelar</a>
+    
+    <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+    
+    <div class="card">
+        <h2>Nueva Historia Clínica</h2>
+        
+        <div class="patient-info">
+            <strong>Paciente:</strong> <span th:text="${paciente.nombre + ' ' + paciente.apellido}">Nombre</span><br>
+            <strong>Documento:</strong> <span th:text="${paciente.tipoDoc + ' ' + paciente.numeroDoc}">Doc</span>
+        </div>
+        
+        <form th:action="@{/medico/dashboard/pacientes/{id}/historia/guardar(id=${paciente.idPaciente})}" method="POST">
+            <div class="form-group">
+                <label>Fecha de Atención <span class="required">*</span></label>
+                <input type="date" name="fechaAtencion" required th:max="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}">
+            </div>
+
+            <div class="form-group">
+                <label>Antecedentes</label>
+                <textarea name="antecedentes" placeholder="Antecedentes médicos del paciente (opcional)..."></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>Diagnóstico <span class="required">*</span></label>
+                <textarea name="diagnostico" required placeholder="Diagnóstico y observaciones del médico..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Tratamiento <span class="required">*</span></label>
+                <textarea name="tratamiento" required placeholder="Tratamiento prescrito, medicamentos, indicaciones..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Observaciones</label>
+                <textarea name="observaciones" placeholder="Observaciones adicionales, notas importantes, seguimiento..."></textarea>
+            </div>
+
+            <div style="margin-top: 2rem;">
+                <button type="submit" class="btn btn-save">Guardar Historia Clínica</button>
+                <a th:href="@{/medico/dashboard/pacientes/{id}/historia(id=${paciente.idPaciente})}" class="btn btn-back">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

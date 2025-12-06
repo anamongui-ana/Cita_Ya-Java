@@ -1,157 +1,372 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" th:href="@{/Assets/CSS/edit.css}">
-    <title>Editar Paciente</title>
+    <title>Editar Paciente - Panel Administrativo</title>
+
+    <style>
+        * {
+            font-family: arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            padding-top: 100px;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .container_header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+
+        .logo {
+            width: 5rem;
+            height: 5rem;
+            position: relative;
+            left: 6rem;
+        }
+
+        .profile_dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .profile_button {
+            background-color: #059669;
+            color: white;
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+            position: relative;
+            right: 6rem;
+        }
+
+        .profile_button:hover {
+            background-color: #10b981;
+        }
+
+        .dropdown_content {
+            display: none;
+            position: absolute;
+            right: 6rem;
+            background-color: white;
+            min-width: 200px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            z-index: 1001;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+
+        .dropdown_content.show {
+            display: block;
+        }
+
+        .dropdown_item {
+            color: #333;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.2s;
+            cursor: pointer;
+            background: #fff;
+            border: none;
+            width: 100%;
+        }
+
+        .dropdown_item:hover {
+            background-color: #f1f1f1;
+        }
+
+        .admin-navbar {
+            background-color: #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            padding: 0.8rem 1.5rem;
+            border-bottom: 3px solid #059669;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        .admin-navbar .navbar-nav {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: center;
+            list-style: none;
+        }
+
+        .admin-navbar .nav-link {
+            color: #3b82f6;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.6rem 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            text-decoration: none;
+        }
+
+        .admin-navbar .nav-link:hover,
+        .admin-navbar .nav-link.active {
+            background: #f0fdf4;
+            color: #059669;
+            transform: translateY(-2px);
+        }
+
+        .admin-navbar .nav-link i {
+            font-size: 1rem;
+            color: #059669;
+            transition: color 0.3s;
+        }
+
+        .admin-navbar .nav-link:hover i {
+            color: #10b981;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+    </style>
 </head>
 
-<body>
+<body class="bg-light">
+    <header>
+        <div class="container_header">
+            <img class="logo" th:src="@{/Assets/img/logo.png}" alt="Cita Ya Logo">
 
-<div class="container">
-    <h1>Editar Paciente</h1>
-
-    <!-- Mostrar errores -->
-    <div th:if="${#fields.hasErrors()}" class="alert alert-danger">
-        <ul>
-            <li th:each="err : ${#fields.errors('*')}"
-                th:text="${err}"></li>
-        </ul>
-    </div>
-
-    <form th:action="@{'/pacientes/update/' + ${paciente.id_paciente}}" method="post">
-
-        <input type="hidden" name="_method" value="put"/>
-
-        <!-- Tipo Documento -->
-        <div class="mb-3">
-            <label class="form-label">Tipo de Documento</label>
-            <select name="tipo_doc" class="form-select" required>
-                <option value="">-- Selecciona --</option>
-                <option value="CC" th:selected="${paciente.tipo_doc=='CC'}">CC</option>
-                <option value="TI" th:selected="${paciente.tipo_doc=='TI'}">TI</option>
-                <option value="RC" th:selected="${paciente.tipo_doc=='RC'}">RC</option>
-                <option value="CE" th:selected="${paciente.tipo_doc=='CE'}">CE</option>
-                <option value="PA" th:selected="${paciente.tipo_doc=='PA'}">PA</option>
-                <option value="DNI" th:selected="${paciente.tipo_doc=='DNI'}">DNI</option>
-                <option value="PEP" th:selected="${paciente.tipo_doc=='PEP'}">PEP</option>
-                <option value="PPT" th:selected="${paciente.tipo_doc=='PPT'}">PPT</option>
-            </select>
+            <div class="profile_dropdown">
+                <button class="profile_button" onclick="toggleDropdown()">
+                    <i class="fas fa-user-cog"></i>
+                    <span th:if="${session.nombreCompleto}" th:text="'Admin ' + ${session.nombreCompleto}"></span>
+                    <span th:unless="${session.nombreCompleto}">Admin Usuario</span>
+                </button>
+                <div class="dropdown_content" id="profileDropdown">
+                    <button class="dropdown_item" onclick="openProfileModal()">Ver Mi Perfil</button>
+                    <button class="dropdown_item" onclick="openEditModal()">Editar Perfil</button>
+                    <hr style="margin: 0;">
+                    <form method="POST" th:action="@{/logout}" style="margin: 0;">
+                        <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                        <button type="submit" class="dropdown_item">Cerrar Sesión</button>
+                    </form>
+                </div>
+            </div>
         </div>
+    </header>
 
-        <!-- Número Documento -->
-        <div class="mb-3">
-            <label class="form-label">Número de Documento</label>
-            <input type="text" name="numero_doc" maxlength="10"
-                   class="form-control"
-                   th:value="${paciente.numero_doc}"
-                   oninput="soloNumeros(this)"
-                   required>
+    <nav class="navbar navbar-expand-lg admin-navbar">
+        <div class="container">
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/pacientes}">
+                            <i class="fas fa-users me-1"></i>
+                            Pacientes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/medicos}">
+                            <i class="fas fa-user-md me-1"></i>
+                            Médicos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/agendamientos}">
+                            <i class="fas fa-calendar-alt me-1"></i>
+                            Citas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/historiales}">
+                            <i class="fas fa-file-medical me-1"></i>
+                            Historiales
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/administradores}">
+                            <i class="fas fa-user-shield me-1"></i>
+                            Administradores
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </div>
+    </nav>
 
-        <!-- Nombre -->
-        <div class="mb-3">
-            <label class="form-label">Nombre</label>
-            <input type="text" name="nombre" maxlength="50"
-                   class="form-control"
-                   th:value="${paciente.nombre}"
-                   oninput="soloLetras(this)"
-                   required>
+    <main class="main-content py-4">
+        <div class="container">
+            <h1>Editar Paciente</h1>
+
+            <!-- Formulario dinámico: usa /pacientes/editar para perfil propio, /pacientes/edit/{id} para admin -->
+            <form th:action="${esPerfilPropio != null && esPerfilPropio ? '/pacientes/editar' : '/pacientes/edit/' + paciente.idPaciente}" 
+                  th:object="${paciente}" 
+                  method="post">
+
+                <!-- Tipo Documento -->
+                <div class="mb-3">
+                    <label class="form-label">Tipo de Documento</label>
+                    <select th:field="*{tipoDoc}" class="form-select" required>
+                        <option value="">-- Selecciona --</option>
+                        <option value="CC">CC</option>
+                        <option value="TI">TI</option>
+                        <option value="RC">RC</option>
+                        <option value="CE">CE</option>
+                        <option value="PA">PA</option>
+                        <option value="DNI">DNI</option>
+                        <option value="PEP">PEP</option>
+                        <option value="PPT">PPT</option>
+                    </select>
+                </div>
+
+                <!-- Número Documento -->
+                <div class="mb-3">
+                    <label class="form-label">Número de Documento</label>
+                    <input type="text" th:field="*{numeroDoc}" maxlength="30"
+                           class="form-control"
+                           oninput="soloNumeros(this)"
+                           required>
+                </div>
+
+                <!-- Nombre -->
+                <div class="mb-3">
+                    <label class="form-label">Nombre</label>
+                    <input type="text" th:field="*{nombre}" maxlength="100"
+                           class="form-control"
+                           oninput="soloLetras(this)"
+                           required>
+                </div>
+
+                <!-- Apellido -->
+                <div class="mb-3">
+                    <label class="form-label">Apellido</label>
+                    <input type="text" th:field="*{apellido}" maxlength="100"
+                           class="form-control"
+                           oninput="soloLetras(this)"
+                           required>
+                </div>
+
+                <!-- Género -->
+                <div class="mb-3">
+                    <label class="form-label">Género</label>
+                    <select th:field="*{genero}" class="form-select" required>
+                        <option value="">-- Selecciona --</option>
+                        <option value="M">Masculino</option>
+                        <option value="F">Femenino</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                </div>
+
+                <!-- Fecha nacimiento -->
+                <div class="mb-3">
+                    <label class="form-label">Fecha de Nacimiento</label>
+                    <input type="date"
+                           class="form-control"
+                           th:field="*{fechaNacimiento}"
+                           required>
+                </div>
+
+                <!-- Tipo sangre -->
+                <div class="mb-3">
+                    <label class="form-label">Tipo de Sangre</label>
+                    <select th:field="*{tipoSangre}" class="form-select">
+                        <option value="">-- Selecciona --</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                    </select>
+                </div>
+
+                <!-- Dirección -->
+                <div class="mb-3">
+                    <label class="form-label">Dirección</label>
+                    <input type="text" maxlength="255"
+                           class="form-control"
+                           th:field="*{direccion}">
+                </div>
+
+                <!-- Teléfono -->
+                <div class="mb-3">
+                    <label class="form-label">Teléfono</label>
+                    <input type="text" maxlength="20"
+                           class="form-control"
+                           th:field="*{telefono}"
+                           oninput="soloNumeros(this)">
+                </div>
+
+                <!-- Correo -->
+                <div class="mb-3">
+                    <label class="form-label">Correo</label>
+                    <input type="email" maxlength="255"
+                           class="form-control"
+                           th:field="*{correo}"
+                           required>
+                </div>
+
+                <!-- Contraseña -->
+                <div class="mb-3">
+                    <label class="form-label">Contraseña (deja en blanco si no quieres cambiarla)</label>
+                    <input type="password" th:field="*{contrasena}" minlength="8" class="form-control">
+                </div>
+
+                <button type="submit" class="btn btn-primary">Actualizar</button>
+                <a th:href="@{/pacientes}" class="btn btn-secondary">Cancelar</a>
+
+            </form>
         </div>
+    </main>
 
-        <!-- Apellido -->
-        <div class="mb-3">
-            <label class="form-label">Apellido</label>
-            <input type="text" name="apellido" maxlength="100"
-                   class="form-control"
-                   th:value="${paciente.apellido}"
-                   oninput="soloLetras(this)"
-                   required>
-        </div>
+    <script>
+        function soloNumeros(i){i.value=i.value.replace(/\D/g,'');}
+        function soloLetras(i){i.value=i.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g,'');}
 
-        <!-- Género -->
-        <div class="mb-3">
-            <label class="form-label">Género</label>
-            <select name="genero" class="form-select" required>
-                <option value="">-- Selecciona --</option>
-                <option value="M" th:selected="${paciente.genero=='M'}">Masculino</option>
-                <option value="F" th:selected="${paciente.genero=='F'}">Femenino</option>
-                <option value="Otro" th:selected="${paciente.genero=='Otro'}">Otro</option>
-            </select>
-        </div>
+        function toggleDropdown() {
+            document.getElementById("profileDropdown").classList.toggle("show");
+        }
 
-        <!-- Fecha nacimiento -->
-        <div class="mb-3">
-            <label class="form-label">Fecha de Nacimiento</label>
-            <input type="date"
-                   class="form-control"
-                   name="fecha_nacimiento"
-                   th:value="${paciente.fecha_nacimiento}"
-                   required>
-        </div>
-
-        <!-- Tipo sangre -->
-        <div class="mb-3">
-            <label class="form-label">Tipo de Sangre</label>
-            <select name="tipo_sangre" class="form-select">
-                <option value="">-- Selecciona --</option>
-                <option th:selected="${paciente.tipo_sangre=='O+'}">O+</option>
-                <option th:selected="${paciente.tipo_sangre=='O-'}">O-</option>
-                <option th:selected="${paciente.tipo_sangre=='A+'}">A+</option>
-                <option th:selected="${paciente.tipo_sangre=='A-'}">A-</option>
-                <option th:selected="${paciente.tipo_sangre=='B+'}">B+</option>
-                <option th:selected="${paciente.tipo_sangre=='B-'}">B-</option>
-                <option th:selected="${paciente.tipo_sangre=='AB+'}">AB+</option>
-                <option th:selected="${paciente.tipo_sangre=='AB-'}">AB-</option>
-            </select>
-        </div>
-
-        <!-- Dirección -->
-        <div class="mb-3">
-            <label class="form-label">Dirección</label>
-            <input type="text" maxlength="255"
-                   class="form-control"
-                   name="direccion"
-                   th:value="${paciente.direccion}">
-        </div>
-
-        <!-- Teléfono -->
-        <div class="mb-3">
-            <label class="form-label">Teléfono</label>
-            <input type="text" maxlength="10"
-                   class="form-control"
-                   name="telefono"
-                   th:value="${paciente.telefono}"
-                   oninput="soloNumeros(this)">
-        </div>
-
-        <!-- Correo -->
-        <div class="mb-3">
-            <label class="form-label">Correo</label>
-            <input type="email" maxlength="100"
-                   class="form-control"
-                   name="correo"
-                   th:value="${paciente.correo}"
-                   required>
-        </div>
-
-        <!-- Contraseña -->
-        <div class="mb-3">
-            <label class="form-label">Contraseña (deja en blanco si no quieres cambiarla)</label>
-            <input type="password" name="contraseña" minlength="8" class="form-control">
-        </div>
-
-        <button type="submit" class="btn btn-primary">Actualizar</button>
-        <a th:href="@{/pacientes}" class="btn btn-secondary">Cancelar</a>
-
-    </form>
-</div>
-
-<script>
-function soloNumeros(i){i.value=i.value.replace(/\D/g,'');}
-function soloLetras(i){i.value=i.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g,'');}
-</script>
-
+        window.onclick = function (event) {
+            if (!event.target.matches('.profile_button')) {
+                var dropdowns = document.getElementsByClassName("dropdown_content");
+                for (var i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+    </script>
 </body>
 </html>

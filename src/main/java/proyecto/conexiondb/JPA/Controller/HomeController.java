@@ -29,11 +29,11 @@ public class HomeController {
 
     @GetMapping({"/layouts/medico", "/Layout/medico", "/Layouts/medico"})
     public String layoutsMedico() {
-        return "layouts/medico";
+        return "redirect:/medico/dashboard";
     }
 
     @GetMapping({"/layouts/paciente", "/Layout/paciente", "/Layouts/paciente"})
     public String layoutsPaciente() {
-        return "layouts/paciente";
+        return "redirect:/pacientes/dashboard";
     }
 }

@@ -4,157 +4,282 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Cita Ya - Registro</title>
-    <link rel="icon" type="image" th:href="@{/Assets/img/logoti.png}">
-    <link rel="stylesheet" th:href="@{/Assets/css/login.css}">
+    <link rel="icon" type="image" th:href="@{/Assets/IMG/logotipo.png}">
+    <link rel="stylesheet" href="/Assets/css/registro.css?v2.0">
+    <title>Registro - Cita Ya</title>
 </head>
 
 <body class="body">
-
     <div class="container_login">
-
         <div class="apartado_1">
             <div class="container_login-form">
-
                 <div class="logo-name">
-                    <img th:src="@{/Assets/img/nom.png}">
+                    <img th:src="@{/Assets/IMG/nom.png}">
                 </div>
 
-                <h2 style="text-align: center; margin-bottom: 1rem;">Registro de Paciente</h2>
-
-                <!-- Formulario de registro -->
-                <form class="container_formulario-login" method="POST" th:action="@{/registro}" th:object="${paciente}">
+                <!-- Formulario -->
+                <form th:action="@{/registro}" method="POST" id="formRegistro">
 
                     <!-- Mensaje de error -->
-                    <div th:if="${error}" 
-                         style="background:#ffe6e6; color:#900; padding:10px; border-radius:6px; margin-bottom:12px;">
+                    <div th:if="${error}"
+                        style="background:#ffe6e6; color:#900; padding:10px; border-radius:6px; margin-bottom:12px;">
                         <p th:text="${error}"></p>
                     </div>
 
-                    <!-- Tipo de documento -->
-                    <div class="label">
-                        <label class="text">Tipo de documento</label>
-                    </div>
-                    <div class="input">
-                        <select name="tipoDoc" th:field="*{tipoDoc}" required>
-                            <option value="">Seleccione...</option>
-                            <option value="CC">Cédula de Ciudadanía</option>
-                            <option value="TI">Tarjeta de Identidad</option>
-                            <option value="CE">Cédula de Extranjería</option>
-                        </select>
+                    <!-- Mensaje de éxito -->
+                    <div th:if="${exito}"
+                        style="background:#e6ffe6; color:#090; padding:10px; border-radius:6px; margin-bottom:12px;">
+                        <p th:text="${exito}"></p>
                     </div>
 
-                    <!-- Número de documento -->
-                    <div class="label">
-                        <label class="text">Número de documento</label>
-                    </div>
+                    <!-- Tipo de Documento -->
+                    <div class="label"><label for="tipo_doc">Tipo de Documento</label></div>
+                    <select id="tipo_doc" name="tipodoc" required>
+                        <option value="">- Selecciona -</option>
+                        <option value="CC">CC</option>
+                        <option value="TI">TI</option>
+                        <option value="RC">RC</option>
+                        <option value="CE">CE</option>
+                        <option value="PA">PA</option>
+                        <option value="DNI">DNI</option>
+                        <option value="PEP">PEP</option>
+                        <option value="PPT">PPT</option>
+                    </select>
+
+                    <!-- Número de Documento -->
+                    <div class="label"><label for="numero_doc">Número de Documento</label></div>
                     <div class="input">
-                        <input type="text" name="numeroDoc" th:field="*{numeroDoc}" 
-                               placeholder="Ej: 1234567890" required>
+                        <input type="text" id="numero_doc" name="numerodoc" placeholder="Ej: 1234567890" 
+                            minlength="6" maxlength="10" oninput="validarNumeroDoc(this)" required>
+                        <small id="errorDocumento" style="color:#900; font-size:12px; display:none;">
+                            El documento debe tener entre 6 y 10 dígitos
+                        </small>
                     </div>
 
-                    <!-- Nombre -->
-                    <div class="label">
-                        <label class="text">Nombre</label>
-                    </div>
+                    <!-- Nombre Completo -->
+                    <div class="label"><label for="nombre_completo">Nombre Completo</label></div>
                     <div class="input">
-                        <input type="text" name="nombre" th:field="*{nombre}" 
-                               placeholder="Juan" required>
-                    </div>
+                        <input type="text" id="nombre_completo" name="nombrecompleto" 
+                            placeholder="Ej: Ana María Rodríguez García"
+                            oninput="soloLetras(this)" minleng
 
-                    <!-- Apellido -->
-                    <div class="label">
-                        <label class="text">Apellido</label>
-                    </div>
+                    <!-- Apellidos -->
+                    <div class="label"><label for="apellido">Apellidos</label></div>
                     <div class="input">
-                        <input type="text" name="apellido" th:field="*{apellido}" 
-                               placeholder="Pérez" required>
+                        <input type="text" id="apellido" name="apellido" placeholder="Ingresa tus apellidos"
+                            oninput="soloLetras(this)" minlength="3" maxlength="100" required>
                     </div>
 
                     <!-- Género -->
-                    <div class="label">
-                        <label class="text">Género</label>
-                    </div>
+                    <div class="label"><label for="genero">Género</label></div>
+                    <select id="genero" name="genero" required>
+                        <option value="">- Selecciona -</option>
+                        <option value="M">Masculino</option>
+                        <option value="F">Femenino</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+
+                    <!-- Fecha de Nacimiento -->
+                    <div class="label"><label for="fecha_nacimiento">Fecha de Nacimiento</label></div>
                     <div class="input">
-                        <select name="genero" th:field="*{genero}" required>
-                            <option value="">Seleccione...</option>
-                            <option value="M">Masculino</option>
-                            <option value="F">Femenino</option>
-                            <option value="Otro">Otro</option>
-                        </select>
+                        <input type="date" id="fecha_nacimiento" name="fechanacimiento" required>
                     </div>
 
-                    <!-- Fecha de nacimiento (ESTE FALTABA) -->
-                    <div class="label">
-                        <label class="text">Fecha de nacimiento</label>
-                    </div>
+                    <!-- Tipo de Sangre -->
+                    <div class="label"><label for="tipo_sangre">Tipo de Sangre</label></div>
+                    <select id="tipo_sangre" name="tiposangre">
+                        <option value="">- Selecciona -</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                    </select>
+
+                    <!-- Dirección -->
+                    <div class="label"><label for="direccion">Dirección</label></div>
                     <div class="input">
-                        <input type="date" name="fechaNacimiento" th:field="*{fechaNacimiento}" required>
+                        <input type="text" id="direccion" name="direccion" minlength="15" maxlength="255"
+                            placeholder="Ej: Calle 123 #45-67">
+                    </div>
+
+                    <!-- Teléfono -->
+                    <div class="label"><label for="telefono">Teléfono</label></div>
+                    <div class="input">
+                        <input type="tel" id="telefono" name="telefono" minlength="7" maxlength="10" placeholder="Ej: 3001234567"
+                            oninput="validarTelefono(this)" required>
+                        <small id="errorTelefono" style="color:#900; font-size:12px; display:none;">
+                            El teléfono debe tener entre 7 y 10 dígitos
+                        </small>
                     </div>
 
                     <!-- Correo -->
-                    <div class="label">
-                        <label class="text">Correo electrónico</label>
-                    </div>
+                    <div class="label"><label for="correo">Correo</label></div>
                     <div class="input">
-                        <input type="email" name="correo" th:field="*{correo}" 
-                               placeholder="ejemplo@correo.com" required>
-                    </div>
-
-                    <!-- Teléfono (opcional) -->
-                    <div class="label">
-                        <label class="text">Teléfono (opcional)</label>
-                    </div>
-                    <div class="input">
-                        <input type="tel" name="telefono" th:field="*{telefono}" 
-                               placeholder="3001234567">
+                        <input type="email" id="correo" name="correo" placeholder="Ingresa tu correo" minlength="10" maxlength="100"
+                            required>
                     </div>
 
                     <!-- Contraseña -->
-                    <div class="label">
-                        <label class="text">Contraseña</label>
-                    </div>
+                    <div class="label"><label for="contraseña">Contraseña</label></div>
                     <div class="input">
-                        <input type="password" name="contrasena" th:field="*{contrasena}" 
-                               minlength="8" placeholder="Mínimo 8 caracteres" required>
+                        <input type="password" id="contraseña" name="contrasena" minlength="8"
+                            placeholder="Ej: Ana.320398" 
+                            pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.#-])[A-Za-z\d@$!%*?&.#-]{8,}$"
+                            title="Debe contener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial (@$!%*?&.#-)"
+                            required>
+                        <small id="errorContrasena" style="color:#900; font-size:12px; display:none;">
+                            Mínimo 8 caracteres con mayúsculas, minúsculas, números y caracteres especiales
+                        </small>
                     </div>
 
-                    <!-- Botón -->
-                    <button type="submit" class="login_button">Registrarse</button>
+                    <!-- Confirmar Contraseña -->
+                    <div class="label"><label for="confirmar_contraseña">Confirmar Contraseña</label></div>
+                    <div class="input">
+                        <input type="password" id="confirmar_contraseña" name="confirmarContrasena" minlength="8"
+                            placeholder="Confirma tu contraseña" required>
+                        <small id="errorConfirmar" style="color:#900; font-size:12px; display:none;">
+                            Las contraseñas no coinciden
+                        </small>
+                    </div>
 
-                    <!-- Link a login -->
-                    <div class="no-cuenta" style="text-align: center; margin-top: 1rem;">
+                    <button type="submit">Registrarse</button>
+
+                    <!-- Ir al login -->
+                    <div class="cuenta">
                         <p>¿Ya tienes cuenta?
                             <a th:href="@{/login}">Inicia sesión</a>
                         </p>
                     </div>
-                </form>
 
+                </form>
             </div>
         </div>
 
-        <!-- Parte decorativa -->
         <div class="apartado_2">
             <div class="emoji-icon">
-                <img th:src="@{/Assets/img/logoti.png}">
+                <img th:src="@{/Assets/IMG/logoti.png}">
             </div>
-
             <div class="h1-info">
-                <h1>¡Únete a nosotros!</h1>
+                <h1>Formulario de Registro</h1>
             </div>
-
             <div class="P-info">
-                <p>Crea tu cuenta y comienza a gestionar tu salud</p>
+                <p>Regístrate y accede a tu portal médico para gestionar tus citas</p>
             </div>
-
             <div class="p-info">
-                <p>✓ Registro rápido y seguro</p>
-                <p>✓ Acceso a tu historial médico</p>
-                <p>✓ Agenda tus citas en minutos</p>
+                <p>✓ Agenda citas 24/7</p>
+                <p>✓ Consulta tu historial médico</p>
+                <p>✓ Recibe recordatorios</p>
             </div>
         </div>
-
     </div>
 
+    <script>
+        function validarNumeroDoc(input) {
+            input.value = input.value.replace(/\D/g, '');
+            const errorDocumento = document.getElementById('errorDocumento');
+            
+            if (input.value.length > 0 && (input.value.length < 6 || input.value.length > 10)) {
+                errorDocumento.style.display = 'block';
+            } else {
+                errorDocumento.style.display = 'none';
+            }
+        }
+
+        function validarTelefono(input) {
+            input.value = input.value.replace(/\D/g, '');
+            const errorTelefono = document.getElementById('errorTelefono');
+            
+            if (input.value.length > 0 && (input.value.length < 7 || input.value.length > 10)) {
+                errorTelefono.style.display = 'block';
+            } else {
+                errorTelefono.style.display = 'none';
+            }
+        }
+
+        function soloLetras(input) {
+            input.value = input.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const contrasenaInput = document.getElementById('contraseña');
+            const confirmarInput = document.getElementById('confirmar_contraseña');
+            const errorContrasena = document.getElementById('errorContrasena');
+            const errorConfirmar = document.getElementById('errorConfirmar');
+            const form = document.getElementById('formRegistro');
+
+            // Validar contraseña en tiempo real
+            contrasenaInput.addEventListener('input', function() {
+                const password = this.value;
+                const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.#-])[A-Za-z\d@$!%*?&.#-]{8,}$/;
+                
+                if (password.length > 0 && !regex.test(password)) {
+                    errorContrasena.style.display = 'block';
+                } else {
+                    errorContrasena.style.display = 'none';
+                }
+
+                // Validar coincidencia si ya hay algo en confirmar
+                if (confirmarInput.value.length > 0) {
+                    if (password !== confirmarInput.value) {
+                        errorConfirmar.style.display = 'block';
+                    } else {
+                        errorConfirmar.style.display = 'none';
+                    }
+                }
+            });
+
+            // Validar confirmación de contraseña
+            confirmarInput.addEventListener('input', function() {
+                if (this.value !== contrasenaInput.value) {
+                    errorConfirmar.style.display = 'block';
+                } else {
+                    errorConfirmar.style.display = 'none';
+                }
+            });
+
+            // Validar antes de enviar
+            form.addEventListener('submit', function(e) {
+                const numeroDoc = document.getElementById('numero_doc').value;
+                const telefono = document.getElementById('telefono').value;
+                const contrasena = contrasenaInput.value;
+                const confirmar = confirmarInput.value;
+
+                // Validar documento
+                if (numeroDoc.length < 6 || numeroDoc.length > 10) {
+                    e.preventDefault();
+                    document.getElementById('errorDocumento').style.display = 'block';
+                    return false;
+                }
+
+                // Validar teléfono
+                if (telefono.length < 7 || telefono.length > 10) {
+                    e.preventDefault();
+                    document.getElementById('errorTelefono').style.display = 'block';
+                    return false;
+                }
+
+                // Validar contraseña
+                const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.#-])[A-Za-z\d@$!%*?&.#-]{8,}$/;
+                if (!regex.test(contrasena)) {
+                    e.preventDefault();
+                    errorContrasena.style.display = 'block';
+                    return false;
+                }
+
+                // Validar coincidencia
+                if (contrasena !== confirmar) {
+                    e.preventDefault();
+                    errorConfirmar.style.display = 'block';
+                    return false;
+                }
+            });
+        });
+    </script>
+
 </body>
+
 </html>

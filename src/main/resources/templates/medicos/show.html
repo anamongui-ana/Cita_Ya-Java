@@ -13,11 +13,11 @@
         <h1>Detalle del Médico</h1>
         <div class="card-body">
 
-            <p><strong>ID:</strong> <span th:text="${medico.id_medico}"></span></p>
+            <p><strong>ID:</strong> <span th:text="${medico.idMedico}"></span></p>
 
             <p><strong>Documento:</strong> 
-                <span th:text="${medico.tipo_doc}"></span>
-                <span th:text="${medico.numero_doc}"></span>
+                <span th:text="${medico.tipoDoc}"></span>
+                <span th:text="${medico.numeroDoc}"></span>
             </p>
 
             <p><strong>Nombre:</strong> 
@@ -42,7 +42,7 @@
             </p>
 
             <p><strong>Estado:</strong>
-                <span th:text="${medico.estado ? 'Activo' : 'Inactivo'}"></span>
+                <span th:text="${medico.estado == 1 ? 'Activo' : 'Inactivo'}"></span>
             </p>
 
         </div>
@@ -51,7 +51,7 @@
 
             <a th:href="@{/medicos}" class="btn btn-secondary mt-3">Volver</a>
 
-            <a th:href="@{/medicos/edit/{id}(id=${medico.id_medico})}" 
+            <a th:href="@{/medicos/edit/{id}(id=${medico.idMedico})}" 
                class="btn btn-warning mt-3">Editar</a>
 
         </div>

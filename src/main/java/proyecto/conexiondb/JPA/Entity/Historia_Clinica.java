@@ -13,7 +13,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "historia clinica")
+@Table(name = "historia_clinica")
 public class Historia_Clinica {
 
     @Id
@@ -24,11 +24,20 @@ public class Historia_Clinica {
     @Column(name = "fecha_creacion", nullable = false)
     private Date fechaCreacion;
 
+    @Column(name = "fecha_atencion", nullable = false)
+    private Date fechaAtencion;
+
     @Lob
     private String antecedentes;
 
     @Lob
     private String diagnostico;
+
+    @Lob
+    private String tratamiento;
+
+    @Lob
+    private String observaciones;
 
     @ManyToOne
     @JoinColumn(name = "id_paciente", nullable = false)
@@ -56,6 +65,14 @@ public class Historia_Clinica {
         this.fechaCreacion = fechaCreacion;
     }
 
+    public Date getFechaAtencion() {
+        return fechaAtencion;
+    }
+
+    public void setFechaAtencion(Date fechaAtencion) {
+        this.fechaAtencion = fechaAtencion;
+    }
+
     public String getAntecedentes() {
         return antecedentes;
     }
@@ -70,6 +87,22 @@ public class Historia_Clinica {
 
     public void setDiagnostico(String diagnostico) {
         this.diagnostico = diagnostico;
+    }
+
+    public String getTratamiento() {
+        return tratamiento;
+    }
+
+    public void setTratamiento(String tratamiento) {
+        this.tratamiento = tratamiento;
+    }
+
+    public String getObservaciones() {
+        return observaciones;
+    }
+
+    public void setObservaciones(String observaciones) {
+        this.observaciones = observaciones;
     }
 
     public Paciente getPaciente() {

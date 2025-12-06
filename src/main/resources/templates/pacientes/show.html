@@ -1,74 +1,303 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
     <meta charset="UTF-8">
-    <title>Detalle del Paciente</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle del Paciente - Panel Administrativo</title>
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" th:href="@{/Assets/CSS/show.css}">
+
+    <style>
+        * {
+            font-family: arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            padding-top: 100px;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .container_header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+
+        .logo {
+            width: 5rem;
+            height: 5rem;
+            position: relative;
+            left: 6rem;
+        }
+
+        .profile_dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .profile_button {
+            background-color: #059669;
+            color: white;
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+            position: relative;
+            right: 6rem;
+        }
+
+        .profile_button:hover {
+            background-color: #10b981;
+        }
+
+        .dropdown_content {
+            display: none;
+            position: absolute;
+            right: 6rem;
+            background-color: white;
+            min-width: 200px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            z-index: 1001;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+
+        .dropdown_content.show {
+            display: block;
+        }
+
+        .dropdown_item {
+            color: #333;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.2s;
+            cursor: pointer;
+            background: #fff;
+            border: none;
+            width: 100%;
+        }
+
+        .dropdown_item:hover {
+            background-color: #f1f1f1;
+        }
+
+        .admin-navbar {
+            background-color: #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            padding: 0.8rem 1.5rem;
+            border-bottom: 3px solid #059669;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        .admin-navbar .navbar-nav {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: center;
+            list-style: none;
+        }
+
+        .admin-navbar .nav-link {
+            color: #3b82f6;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.6rem 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            text-decoration: none;
+        }
+
+        .admin-navbar .nav-link:hover,
+        .admin-navbar .nav-link.active {
+            background: #f0fdf4;
+            color: #059669;
+            transform: translateY(-2px);
+        }
+
+        .admin-navbar .nav-link i {
+            font-size: 1rem;
+            color: #059669;
+            transition: color 0.3s;
+        }
+
+        .admin-navbar .nav-link:hover i {
+            color: #10b981;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+    </style>
 </head>
 
-<body>
+<body class="bg-light">
+    <header>
+        <div class="container_header">
+            <img class="logo" th:src="@{/Assets/img/logo.png}" alt="Cita Ya Logo">
 
-    <div class="container">
-
-        <div class="card">
-            <h1>Detalle del Paciente</h1>
-
-            <div class="card-body">
-
-                <p><strong>ID:</strong> <span th:text="${paciente.id_paciente}"></span></p>
-
-                <p><strong>Documento:</strong>
-                    <span th:text="${paciente.tipo_doc + ' ' + paciente.numero_doc}"></span>
-                </p>
-
-                <p><strong>Nombre:</strong>
-                    <span th:text="${paciente.nombre + ' ' + paciente.apellido}"></span>
-                </p>
-
-                <p><strong>Género:</strong>
-                    <span th:text="${paciente.genero}"></span>
-                </p>
-
-                <p><strong>Fecha de Nacimiento:</strong>
-                    <span th:text="${paciente.fecha_nacimiento}"></span>
-                </p>
-
-                <p><strong>Tipo de Sangre:</strong>
-                    <span th:text="${paciente.tipo_sangre}"></span>
-                </p>
-
-                <p><strong>Dirección:</strong>
-                    <span th:text="${paciente.direccion}"></span>
-                </p>
-
-                <p><strong>Teléfono:</strong>
-                    <span th:text="${paciente.telefono}"></span>
-                </p>
-
-                <p><strong>Correo:</strong>
-                    <span th:text="${paciente.correo}"></span>
-                </p>
-
+            <div class="profile_dropdown">
+                <button class="profile_button" onclick="toggleDropdown()">
+                    <i class="fas fa-user-cog"></i>
+                    <span th:if="${session.nombreCompleto}" th:text="'Admin ' + ${session.nombreCompleto}"></span>
+                    <span th:unless="${session.nombreCompleto}">Admin Usuario</span>
+                </button>
+                <div class="dropdown_content" id="profileDropdown">
+                    <button class="dropdown_item" onclick="openProfileModal()">Ver Mi Perfil</button>
+                    <button class="dropdown_item" onclick="openEditModal()">Editar Perfil</button>
+                    <hr style="margin: 0;">
+                    <form method="POST" th:action="@{/logout}" style="margin: 0;">
+                        <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                        <button type="submit" class="dropdown_item">Cerrar Sesión</button>
+                    </form>
+                </div>
             </div>
-
-            <div class="actions">
-
-                <a th:href="@{/pacientes}" class="btn btn-secondary">
-                    Volver
-                </a>
-
-                <a th:href="@{'/pacientes/' + ${paciente.id_paciente} + '/edit'}" class="btn btn-warning">
-                    Editar Información
-                </a>
-
-            </div>
-
         </div>
+    </header>
 
-    </div>
+    <nav class="navbar navbar-expand-lg admin-navbar">
+        <div class="container">
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/pacientes}">
+                            <i class="fas fa-users me-1"></i>
+                            Pacientes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/medicos}">
+                            <i class="fas fa-user-md me-1"></i>
+                            Médicos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/agendamientos}">
+                            <i class="fas fa-calendar-alt me-1"></i>
+                            Citas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/historiales}">
+                            <i class="fas fa-file-medical me-1"></i>
+                            Historiales
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/administradores}">
+                            <i class="fas fa-user-shield me-1"></i>
+                            Administradores
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
+    <main class="main-content py-4">
+        <div class="container">
+            <div class="card">
+                <h1>Detalle del Paciente</h1>
+
+                <div class="card-body">
+
+                    <p><strong>ID:</strong> <span th:text="${paciente.idPaciente}"></span></p>
+
+                    <p><strong>Documento:</strong>
+                        <span th:text="${paciente.tipoDoc + ' ' + paciente.numeroDoc}"></span>
+                    </p>
+
+                    <p><strong>Nombre:</strong>
+                        <span th:text="${paciente.nombre + ' ' + paciente.apellido}"></span>
+                    </p>
+
+                    <p><strong>Género:</strong>
+                        <span th:text="${paciente.genero}"></span>
+                    </p>
+
+                    <p><strong>Fecha de Nacimiento:</strong>
+                        <span th:text="${#dates.format(paciente.fechaNacimiento, 'dd/MM/yyyy')}"></span>
+                    </p>
+
+                    <p><strong>Tipo de Sangre:</strong>
+                        <span th:text="${paciente.tipoSangre}"></span>
+                    </p>
+
+                    <p><strong>Dirección:</strong>
+                        <span th:text="${paciente.direccion}"></span>
+                    </p>
+
+                    <p><strong>Teléfono:</strong>
+                        <span th:text="${paciente.telefono}"></span>
+                    </p>
+
+                    <p><strong>Correo:</strong>
+                        <span th:text="${paciente.correo}"></span>
+                    </p>
+
+                </div>
+
+                <div class="actions">
+
+                    <a th:href="@{/pacientes}" class="btn btn-secondary">
+                        Volver
+                    </a>
+
+                    <a th:href="@{'/pacientes/edit/' + ${paciente.idPaciente}}" class="btn btn-warning">
+                        Editar Información
+                    </a>
+
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function toggleDropdown() {
+            document.getElementById("profileDropdown").classList.toggle("show");
+        }
+
+        window.onclick = function (event) {
+            if (!event.target.matches('.profile_button')) {
+                var dropdowns = document.getElementsByClassName("dropdown_content");
+                for (var i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+    </script>
 </body>
 
 </html>

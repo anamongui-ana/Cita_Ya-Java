@@ -20,10 +20,11 @@ public class Agendamiento {
     @Column(name= "id_agendamiento")
     private Long IdAgendamiento;
 
-    @Column( name ="cita",length = 35, nullable = false)
+    @Column( name ="cita",length = 255, nullable = false)
     private String cita;
 
     @Column(name="fecha",nullable = false)
+    @org.springframework.format.annotation.DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date fecha;
 
     @Column(name="hora",nullable = false)
@@ -33,6 +34,11 @@ public class Agendamiento {
     @ManyToOne
     @JoinColumn(name = "id_paciente", nullable = false)
     private Paciente paciente;
+    
+    // RELACIÓN con médico (opcional para compatibilidad con citas antiguas)
+    @ManyToOne
+    @JoinColumn(name = "id_medico", nullable = true)
+    private Medico medico;
 
     
 
@@ -74,6 +80,14 @@ public class Agendamiento {
 
     public void setPaciente(Paciente paciente) {
         this.paciente = paciente;
+    }
+
+    public Medico getMedico() {
+        return medico;
+    }
+
+    public void setMedico(Medico medico) {
+        this.medico = medico;
     }
     
 }

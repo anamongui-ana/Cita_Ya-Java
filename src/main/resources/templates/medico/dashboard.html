@@ -59,6 +59,7 @@
             box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
             border-radius: 0.5rem;
             overflow: hidden;
+            z-index: 1001;
         }
         .dropdown_item {
             padding: 12px 16px;
@@ -103,6 +104,14 @@
             background: linear-gradient(135deg, #10b981, #059669);
             color: white;
         }
+        .stat_card.info {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+        }
+        .stat_card.warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+        }
         .stat_number {
             font-size: 2.5rem;
             font-weight: bold;
@@ -121,10 +130,60 @@
             border-radius: 1rem;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             padding: 2rem;
+            margin-bottom: 2rem;
         }
         .card h3 {
             color: #059669;
             margin-bottom: 1rem;
+        }
+        .citas-list {
+            list-style: none;
+        }
+        .cita-item {
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .cita-item:last-child {
+            border-bottom: none;
+        }
+        .cita-info {
+            flex: 1;
+        }
+        .cita-fecha {
+            font-weight: bold;
+            color: #059669;
+        }
+        .cita-paciente {
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: 500;
+        }
+        .btn-primary {
+            background-color: #059669;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #047857;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: #6b7280;
+        }
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
         }
     </style>
 </head>
@@ -136,14 +195,13 @@
         
         <div class="profile_dropdown">
             <button class="profile_button" onclick="toggleDropdown()">
-                Dr. <span th:if="${session.nombreCompleto}" th:text="${session.nombreCompleto}"></span>
-                <span th:unless="${session.nombreCompleto}">Usuario</span> ▼
+                Dr. <span th:text="${medico.nombre + ' ' + medico.apellido}">Usuario</span> ▼
             </button>
             <div class="dropdown_content" id="profileDropdown">
-                <a href="#" class="dropdown_item">Ver Mi Perfil</a>
-                <a href="#" class="dropdown_item">Editar Perfil</a>
+                <a th:href="@{/medico/dashboard/perfil}" class="dropdown_item">Ver Mi Perfil</a>
+                <a th:href="@{/medico/dashboard/perfil/editar}" class="dropdown_item">Editar Perfil</a>
                 <hr style="margin:0;">
-                <form th:action="@{/logout}" method="post" style="margin:0;">
+                <form th:action="@{/logout}" method="get" style="margin:0;">
                     <button type="submit" class="dropdown_item">Cerrar Sesión</button>
                 </form>
             </div>
@@ -153,20 +211,52 @@
 
 <div class="container_main">
     <div class="welcome_section">
-        <h1 class="welcome_title">Dr. <span th:text="${session.nombreCompleto}">Usuario</span></h1>
-        <p>Dashboard Médico</p>
+        <h1 class="welcome_title">Dr. <span th:text="${medico.nombre + ' ' + medico.apellido}">Usuario</span></h1>
+        <p th:text="${medico.especialidad}">Especialidad</p>
     </div>
 
     <div class="stats_container">
         <div class="stat_card success">
-            <div class="stat_number">0</div>
+            <div class="stat_number" th:text="${citasDelDia}">0</div>
             <div>Citas del Día</div>
+        </div>
+        <div class="stat_card info">
+            <div class="stat_number" th:text="${citasDelMes}">0</div>
+            <div>Citas del Mes</div>
+        </div>
+        <div class="stat_card warning">
+            <div class="stat_number" th:text="${totalPacientes}">0</div>
+            <div>Total Pacientes</div>
         </div>
     </div>
 
+    <div class="nav-links">
+        <a th:href="@{/medico/dashboard/citas}" class="btn btn-primary">📅 Ver Todas Mis Citas</a>
+        <a th:href="@{/medico/dashboard/pacientes}" class="btn btn-primary">👥 Ver Mis Pacientes</a>
+        <a th:href="@{/medico/dashboard/historias-clinicas}" class="btn btn-primary">📋 Historias Clínicas</a>
+        <a th:href="@{/medico/dashboard/buscar-paciente}" class="btn btn-primary">🔍 Buscar Paciente</a>
+    </div>
+
     <div class="card">
-        <h3>Mis Pacientes</h3>
-        <p>Aquí podrás ver tus citas y pacientes programados.</p>
+        <h3>Próximas Citas</h3>
+        <ul class="citas-list" th:if="${!#lists.isEmpty(proximasCitas)}">
+            <li class="cita-item" th:each="cita : ${proximasCitas}">
+                <div class="cita-info">
+                    <div class="cita-fecha">
+                        <span th:text="${#dates.format(cita.fecha, 'dd/MM/yyyy')}">Fecha</span> - 
+                        <span th:text="${cita.hora}">Hora</span>
+                    </div>
+                    <div class="cita-paciente">
+                        <strong th:text="${cita.paciente.nombre + ' ' + cita.paciente.apellido}">Paciente</strong> - 
+                        <span th:text="${cita.cita}">Tipo de cita</span>
+                    </div>
+                </div>
+                <a th:href="@{/medico/dashboard/citas/{id}(id=${cita.idAgendamiento})}" class="btn btn-primary">Ver Detalle</a>
+            </li>
+        </ul>
+        <div class="empty-state" th:if="${#lists.isEmpty(proximasCitas)}">
+            <p>No tienes citas programadas próximamente.</p>
+        </div>
     </div>
 </div>
 

@@ -10,35 +10,39 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "administrador")
+@Table(name = "administradores")
 public class Administrador {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_administrador")
     private int id;
 
     @Column(name = "tipo_doc", length = 10, nullable = false)
-    private int TipoDoc;
+    private String tipoDoc;
 
-    @Column(name = "numero_doc", length = 10, nullable = false, unique = true)
+    @Column(name = "numero_doc", length = 30, nullable = false, unique = true)
     private String numeroDoc;
 
-    @Column(name = "nombre", length = 30, nullable = false)
+    @Column(name = "nombre", length = 100, nullable = false)
     private String nombre;
 
-    @Column(name = "apellido", length = 30, nullable = false)
+    @Column(name = "apellido", length = 100, nullable = false)
     private String apellido;
 
     @Column(name = "genero", nullable = false)
     private String genero;
 
-    @Column(length = 10)
+    @Column(length = 20)
     private String telefono;
 
-    @Column(length = 35, nullable = false, unique = true)
+    @Column(length = 255, nullable = false, unique = true)
     private String correo;
 
-    @Column(name = "contraseña", length = 25, nullable = false)
+    @Column(name = "contraseña", length = 255, nullable = false)
     private String contraseña;
+
+    @Column(name = "estado", nullable = false)
+    private boolean estado = true;
 
     //CONSTRUCTOR
 
@@ -50,12 +54,12 @@ public class Administrador {
         this.id = id;
     }
 
-    public int getTipoDoc() {
-        return TipoDoc;
+    public String getTipoDoc() {
+        return tipoDoc;
     }
 
-    public void setTipoDoc(int tipoDoc) {
-        TipoDoc = tipoDoc;
+    public void setTipoDoc(String tipoDoc) {
+        this.tipoDoc = tipoDoc;
     }
 
     public String getNumeroDoc() {
@@ -114,10 +118,11 @@ public class Administrador {
         this.contraseña = contraseña;
     }
 
-    public void save(Administrador administrador) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'save'");
+    public boolean isEstado() {
+        return estado;
     }
 
-    
+    public void setEstado(boolean estado) {
+        this.estado = estado;
+    }
 }

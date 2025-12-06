@@ -107,7 +107,6 @@
                 <a class="dropdown_item" th:href="@{/pacientes/editar}">Editar Perfil</a>
                 <hr style="margin: 0;">
                 <form method="POST" th:action="@{/logout}" style="margin: 0;">
-                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                     <button type="submit" class="dropdown_item" style="width:100%; background:none; border:none; text-align:left; color:red;">Cerrar Sesión</button>
                 </form>
             </div>
@@ -123,12 +122,12 @@
 
     <div class="stats_container">
         <div class="stat_card primary">
-            <div class="stat_number">3</div>
+            <div class="stat_number" th:text="${totalCitas != null ? totalCitas : 0}">0</div>
             <div>Mis Citas Médicas</div>
         </div>
 
         <div class="stat_card success">
-            <div class="stat_number">12</div>
+            <div class="stat_number">0</div>
             <div>Historias Clínicas</div>
         </div>
     </div>
@@ -137,7 +136,7 @@
         <div class="card">
             <div class="card_header">
                 <h3>Mis Citas</h3>
-                <a th:href="@{/agendamientos/crear}" class="profile_button" style="padding: 5px 10px; text-decoration: none;">+ Agendar</a>
+                <a th:href="@{/agendamientos/nuevo}" class="profile_button" style="padding: 5px 10px; text-decoration: none;">+ Agendar</a>
             </div>
 
             <div class="card_body">
@@ -147,31 +146,58 @@
                             <th>Fecha</th>
                             <th>Hora</th>
                             <th>Médico</th>
-                            <th>Tipo</th>
+                            <th>Especialidad</th>
                             <th>Estado</th>
+                            <th style="width: 180px;">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>12/12/2025</td>
-                            <td>08:00</td>
-                            <td>Dr. Roberto Díaz</td>
-                            <td>Consulta General</td>
-                            <td><span class="status_badge warning">Programada</span></td>
+                        <tr th:if="${citas == null or citas.isEmpty()}">
+                            <td colspan="6" style="text-align: center; padding: 2rem;">
+                                <p style="color: #666;">No tienes citas agendadas</p>
+                                <a th:href="@{/agendamientos/nuevo}" class="profile_button" style="margin-top: 1rem; display: inline-block;">
+                                    Agendar mi primera cita
+                                </a>
+                            </td>
                         </tr>
-                        <tr>
-                            <td>05/11/2025</td>
-                            <td>10:00</td>
-                            <td>Dr. Ana Torres</td>
-                            <td>Pediatría</td>
-                            <td><span class="status_badge info">Hoy</span></td>
-                        </tr>
-                        <tr>
-                            <td>28/10/2025</td>
-                            <td>09:30</td>
-                            <td>Dr. Pedro Gómez</td>
-                            <td>Psicología</td>
-                            <td><span class="status_badge secondary">Completada</span></td>
+                        <tr th:each="cita : ${citas}">
+                            <td th:text="${#dates.format(cita.fecha, 'dd/MM/yyyy')}">12/12/2025</td>
+                            <td th:text="${cita.hora}">08:00</td>
+                            <td th:text="${cita.medico != null ? 'Dr. ' + cita.medico.nombre + ' ' + cita.medico.apellido : 'No asignado'}">Dr. Nombre</td>
+                            <td th:text="${cita.cita}">Consulta General</td>
+                            <td>
+                                <span class="status_badge warning" 
+                                      th:if="${cita.fecha.toLocalDate().isAfter(T(java.time.LocalDate).now())}">
+                                    Programada
+                                </span>
+                                <span class="status_badge info" 
+                                      th:if="${cita.fecha.toLocalDate().isEqual(T(java.time.LocalDate).now())}">
+                                    Hoy
+                                </span>
+                                <span class="status_badge secondary" 
+                                      th:if="${cita.fecha.toLocalDate().isBefore(T(java.time.LocalDate).now())}">
+                                    Completada
+                                </span>
+                            </td>
+                            <td>
+                                <div th:if="${cita.fecha.toLocalDate().isAfter(T(java.time.LocalDate).now())}" 
+                                     style="display: flex; gap: 0.5rem; justify-content: center;">
+                                    <a th:href="@{/agendamientos/editar/{id}(id=${cita.idAgendamiento})}"
+                                       style="background: #f59e0b; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 0.3rem; cursor: pointer; font-size: 0.85rem; text-decoration: none; display: inline-block;">
+                                        Editar
+                                    </a>
+                                    <form th:action="@{/agendamientos/eliminar/{id}(id=${cita.idAgendamiento})}"
+                                          method="POST"
+                                          style="display:inline; margin: 0;">
+                                        <button type="submit"
+                                                style="background: #dc2626; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 0.3rem; cursor: pointer; font-size: 0.85rem;"
+                                                onclick="return confirm('¿Está seguro de cancelar esta cita?')">
+                                            Cancelar
+                                        </button>
+                                    </form>
+                                </div>
+                                <span th:if="${!cita.fecha.toLocalDate().isAfter(T(java.time.LocalDate).now())}" style="color: #999;">-</span>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
