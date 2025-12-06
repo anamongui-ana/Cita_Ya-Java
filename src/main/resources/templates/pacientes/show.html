@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Detalle del Paciente</title>
+
+    <link rel="stylesheet" th:href="@{/Assets/CSS/show.css}">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="card">
+            <h1>Detalle del Paciente</h1>
+
+            <div class="card-body">
+
+                <p><strong>ID:</strong> <span th:text="${paciente.id_paciente}"></span></p>
+
+                <p><strong>Documento:</strong>
+                    <span th:text="${paciente.tipo_doc + ' ' + paciente.numero_doc}"></span>
+                </p>
+
+                <p><strong>Nombre:</strong>
+                    <span th:text="${paciente.nombre + ' ' + paciente.apellido}"></span>
+                </p>
+
+                <p><strong>Género:</strong>
+                    <span th:text="${paciente.genero}"></span>
+                </p>
+
+                <p><strong>Fecha de Nacimiento:</strong>
+                    <span th:text="${paciente.fecha_nacimiento}"></span>
+                </p>
+
+                <p><strong>Tipo de Sangre:</strong>
+                    <span th:text="${paciente.tipo_sangre}"></span>
+                </p>
+
+                <p><strong>Dirección:</strong>
+                    <span th:text="${paciente.direccion}"></span>
+                </p>
+
+                <p><strong>Teléfono:</strong>
+                    <span th:text="${paciente.telefono}"></span>
+                </p>
+
+                <p><strong>Correo:</strong>
+                    <span th:text="${paciente.correo}"></span>
+                </p>
+
+            </div>
+
+            <div class="actions">
+
+                <a th:href="@{/pacientes}" class="btn btn-secondary">
+                    Volver
+                </a>
+
+                <a th:href="@{'/pacientes/' + ${paciente.id_paciente} + '/edit'}" class="btn btn-warning">
+                    Editar Información
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>

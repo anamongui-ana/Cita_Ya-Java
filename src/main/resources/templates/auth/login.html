@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image" th:href="@{/Assets/img/logoti.png}">
+    <link rel="stylesheet" th:href="@{/Assets/css/login.css}">
+    <title>Cita Ya - Iniciar Sesión</title>
+</head>
+
+<body class="body">
+
+    <div class="container_login">
+
+        <div class="apartado_1">
+            <div class="container_login-form">
+
+                <div class="logo-name">
+                    <img th:src="@{/Assets/img/nom.png}">
+                </div>
+
+                <!-- FORMULARIO - LA ACTION DEBE SER /login -->
+                <form class="container_formulario-login" method="POST" th:action="@{/login}">
+
+                    <!-- Mensaje de error -->
+                    <div th:if="${param.error}" 
+                         style="background:#ffe6e6; color:#900; padding:10px; border-radius:6px; margin-bottom:12px;">
+                        <p>❌ Documento o contraseña incorrectos</p>
+                    </div>
+
+                    <!-- Mensaje de logout -->
+                    <div th:if="${param.logout}" 
+                         style="background:#e6ffe6; color:#090; padding:10px; border-radius:6px; margin-bottom:12px;">
+                        <p>✓ Sesión cerrada exitosamente</p>
+                    </div>
+
+                    <!-- Documento -->
+                    <div class="label">
+                        <label class="text" for="numero">Número de documento</label>
+                    </div>
+
+                    <div class="input">
+                        <input type="text" id="numero" name="numerodoc" 
+                               placeholder="Ej: 123456789" required>
+                    </div>
+
+                    <!-- Contraseña -->
+                    <div class="label">
+                        <label class="text" for="clave">Contraseña</label>
+                    </div>
+
+                    <div class="input">
+                        <input type="password" id="clave" name="contrasena" 
+                               placeholder="••••••••" required>
+                    </div>
+
+                    <!-- Botón -->
+                    <button type="submit" class="login_button">Iniciar Sesión</button>
+
+                    <!-- Links -->
+                    <div class="cuenta">
+                        <a th:href="@{/restablecer}">¿Olvidaste tu contraseña?</a>
+                    </div>
+
+                    <div class="no-cuenta">
+                        <p>¿No tienes cuenta?
+                            <a th:href="@{/registro}">Regístrate</a>
+                        </p>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+
+        <div class="apartado_2">
+            <div class="emoji-icon">
+                <img th:src="@{/Assets/img/logoti.png}">
+            </div>
+
+            <div class="h1-info">
+                <h1>¡Bienvenido!</h1>
+            </div>
+
+            <div class="P-info">
+                <p>Accede a tu portal médico y gestiona tus citas de forma fácil y segura</p>
+            </div>
+
+            <div class="p-info">
+                <p>✓ Agenda citas 24/7</p>
+                <p>✓ Consulta tu historial médico</p>
+                <p>✓ Recibe recordatorios de tus citas</p>
+            </div>
+        </div>
+
+    </div>
+    <!-- Mensaje de registro exitoso -->
+<div th:if="${param.registro}" 
+     style="background:#e6ffe6; color:#090; padding:10px; border-radius:6px; margin-bottom:12px;">
+    <p>✓ ¡Registro exitoso! Ahora puedes iniciar sesión</p>
+</div>
+</body>
+</html>
+

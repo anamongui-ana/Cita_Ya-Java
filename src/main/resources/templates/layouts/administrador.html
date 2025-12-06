@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title != null ? title : 'Layouts Administrativo'}">Layouts Administrativo</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        * {
+            font-family: arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            padding-top: 100px;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .container_header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+
+        .logo {
+            width: 5rem;
+            height: 5rem;
+            position: relative;
+            left: 6rem;
+        }
+
+        .profile_dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .profile_button {
+            background-color: #059669;
+            color: white;
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+            position: relative;
+            right: 6rem;
+        }
+
+        .profile_button:hover {
+            background-color: #10b981;
+        }
+
+        .dropdown_content {
+            display: none;
+            position: absolute;
+            right: 6rem;
+            background-color: white;
+            min-width: 200px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            z-index: 1001;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+
+        .dropdown_content.show {
+            display: block;
+        }
+
+        .dropdown_item {
+            color: #333;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.2s;
+            cursor: pointer;
+            background: #fff;
+            border: none;
+            width: 100%;
+        }
+
+        .dropdown_item:hover {
+            background-color: #f1f1f1;
+        }
+
+        .admin-navbar {
+            background-color: #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            padding: 0.8rem 1.5rem;
+            border-bottom: 3px solid #059669;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        .admin-navbar .navbar-nav {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: center;
+            list-style: none;
+        }
+
+        .admin-navbar .nav-link {
+            color: #3b82f6;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.6rem 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            text-decoration: none;
+        }
+
+        .admin-navbar .nav-link:hover {
+            background: #f0fdf4;
+            color: #059669;
+            transform: translateY(-2px);
+        }
+
+        .admin-navbar .nav-link i {
+            font-size: 1rem;
+            color: #059669;
+            transition: color 0.3s;
+        }
+
+        .admin-navbar .nav-link:hover i {
+            color: #10b981;
+        }
+
+        .container_main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .welcome_section {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .welcome_title {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 1px 1px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .welcome_subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+
+        .card_header {
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card_title {
+            font-size: 1.3rem;
+            color: #059669;
+            font-weight: bold;
+        }
+
+        .card_body {
+            padding: 1.5rem;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .info_grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .info_label {
+            font-weight: bold;
+            color: #059669;
+        }
+
+        .btn_primary {
+            background: #059669;
+            color: white;
+        }
+
+        .modal_footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #e2e8f0;
+            text-align: right;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background-color: #059669;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+            text-decoration: none;
+        }
+
+        .info_label {
+            font-weight: bold;
+            color: #059669;
+        }
+
+        .form_label {
+            display: block;
+            font-weight: bold;
+            color: #059669;
+            margin-bottom: 0.5rem;
+        }
+
+        .form_input,
+        .form_select,
+        .form_textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+            margin-bottom: 1rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal.show {
+            display: block;
+        }
+
+        .modal_content {
+            background: white;
+            margin: 3% auto;
+            border-radius: 1rem;
+            width: 90%;
+            max-width: 800px;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .modal_header {
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #059669, #10b981);
+            color: white;
+            border-radius: 1rem 1rem 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal_body {
+            padding: 1.5rem;
+        }
+
+        .modal_footer {
+            padding: 1rem 1.5rem;
+            text-align: right;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .close {
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            border: none;
+            background: none;
+        }
+
+        .alert {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .alert-success {
+            background-color: #d1fae5;
+            color: #065f46;
+            border: 1px solid #6ee7b7;
+        }
+
+        .alert-danger {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+
+        .btn-close {
+            margin-left: auto;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: inherit;
+        }
+
+        @media (max-width: 768px) {
+            .container_main {
+                padding: 1rem;
+            }
+
+            .welcome_title {
+                font-size: 2rem;
+            }
+
+            .card_body {
+                max-height: 400px;
+            }
+        }
+    </style>
+
+</head>
+
+<body class="bg-light">
+    <header>
+        <div class="container_header">
+            <img class="logo" th:src="@{/Assets/img/logo.png}" alt="Cita Ya Logo">
+
+            <div class="profile_dropdown">
+                <button class="profile_button" onclick="toggleDropdown()">
+                    <i class="fas fa-user-cog"></i>
+                    <span th:if="${session.nombreCompleto}" th:text="'Admin ' + ${session.nombreCompleto}"></span>
+                    <span th:unless="${session.nombreCompleto}">Admin Usuario</span>
+                </button>
+                <div class="dropdown_content" id="profileDropdown">
+                    <button class="dropdown_item" onclick="openProfileModal()">Ver Mi Perfil</button>
+                    <button class="dropdown_item" onclick="openEditModal()">Editar Perfil</button>
+                    <hr style="margin: 0;">
+                    <form method="POST" th:action="@{/logout}" style="margin: 0;">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                        <button type="submit" class="dropdown_item">Cerrar Sesión</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <nav class="navbar navbar-expand-lg admin-navbar">
+        <div class="container">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/pacientes}">
+                            <i class="fas fa-users me-1"></i>
+                            Pacientes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/medicos}">
+                            <i class="fas fa-user-md me-1"></i>
+                            Médicos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/agendamientos}">
+                            <i class="fas fa-calendar-alt me-1"></i>
+                            Citas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/historiales}">
+                            <i class="fas fa-file-medical me-1"></i>
+                            Historiales
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/administradores}">
+                            <i class="fas fa-user-shield me-1"></i>
+                            Administradores
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content py-4">
+        <div class="container">
+            <div class="welcome_section">
+                <h1 class="welcome_title">Panel de Administración</h1>
+                <p class="welcome_subtitle">Gestiona todos los aspectos del sistema médico</p>
+            </div>
+
+            <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle me-2"></i>
+                <span th:text="${success}"></span>
+                <button type="button" class="btn-close"
+                    onclick="this.parentElement.style.display='none'">&times;</button>
+            </div>
+
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                <span th:text="${error}"></span>
+                <button type="button" class="btn-close"
+                    onclick="this.parentElement.style.display='none'">&times;</button>
+            </div>
+
+        </div>
+    </main>
+
+    <div class="modal" id="profileModal">
+        <div class="modal_content">
+            <div class="modal_header">
+                <h2>Mi Información</h2>
+                <button class="close" onclick="closeModal('profileModal')">&times;</button>
+            </div>
+            <div class="modal_body">
+                <div class="info_grid" th:if="${session.usuario}">
+                    <div class="info_item">
+                        <span class="info_label">Nombre:</span>
+                        <p id="profile_nombre" th:text="${session.usuario.nombre}">No especificado</p>
+                    </div>
+                    <div class="info_item">
+                        <span class="info_label">Apellido:</span>
+                        <p id="profile_apellido" th:text="${session.usuario.apellido}">No especificado</p>
+                    </div>
+                    <div class="info_item">
+                        <span class="info_label">Tipo Documento:</span>
+                        <p th:text="${session.usuario.tipoDoc == 1 ? 'Cédula de Ciudadanía' : 
+                                      (session.usuario.tipoDoc == 2 ? 'Cédula de Extranjería' : 
+                                      (session.usuario.tipoDoc == 3 ? 'Tarjeta de Identidad' : 
+                                      (session.usuario.tipoDoc == 4 ? 'Pasaporte' : 'No especificado')))}">No especificado</p>
+                    </div>
+                    <div class="info_item">
+                        <span class="info_label">Número Documento:</span>
+                        <p th:text="${session.usuario.numeroDoc}">No especificado</p>
+                    </div>
+                    <div class="info_item">
+                        <span class="info_label">Género:</span>
+                        <p th:text="${session.usuario.genero}">No especificado</p>
+                    </div>
+                    <div class="info_item">
+                        <span class="info_label">Teléfono:</span>
+                        <p th:text="${session.usuario.telefono}">No especificado</p>
+                    </div>
+                    <div class="info_item">
+                        <span class="info_label">Correo:</span>
+                        <p id="profile_email" th:text="${session.usuario.correo}">No especificado</p>
+                    </div>
+                    <div class="info_item">
+                        <span class="info_label">Rol:</span>
+                        <p th:text="${session.tipoUsuario}">Administrador</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal_footer">
+                <button class="btn btn-primary" onclick="openEditModal(); closeModal('profileModal');">Editar
+                    Información</button>
+                <button class="btn btn-secondary" onclick="closeModal('profileModal')">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="editModal">
+        <div class="modal_content">
+            <div class="modal_header">
+                <h5>Editar Mi Información</h5>
+                <button class="close" onclick="closeModal('editModal')">&times;</button>
+            </div>
+            <form id="editProfileForm">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <div class="modal_body" th:if="${session.usuario}">
+                    <div class="form_group">
+                        <label class="form_label" for="edit_nombre">Nombre:</label>
+                        <input type="text" id="edit_nombre" name="nombre" class="form_input"
+                            th:value="${session.usuario.nombre}" required>
+                    </div>
+                    <div class="form_group">
+                        <label class="form_label" for="edit_apellido">Apellido:</label>
+                        <input type="text" id="edit_apellido" name="apellido" class="form_input"
+                            th:value="${session.usuario.apellido}" required>
+                    </div>
+                    <div class="form_group">
+                        <label class="form_label" for="edit_tipo_doc">Tipo Documento:</label>
+                        <select id="edit_tipo_doc" name="tipoDoc" class="form_select" required>
+                            <option value="1" th:selected="${session.usuario.tipoDoc == 1}">Cédula de Ciudadanía</option>
+                            <option value="2" th:selected="${session.usuario.tipoDoc == 2}">Cédula de Extranjería</option>
+                            <option value="3" th:selected="${session.usuario.tipoDoc == 3}">Tarjeta de Identidad</option>
+                            <option value="4" th:selected="${session.usuario.tipoDoc == 4}">Pasaporte</option>
+                        </select>
+                    </div>
+                    <div class="form_group">
+                        <label class="form_label" for="edit_numero_doc">Número Documento:</label>
+                        <input type="text" id="edit_numero_doc" name="numeroDoc" class="form_input"
+                            th:value="${session.usuario.numeroDoc}" required>
+                    </div>
+                    <div class="form_group">
+                        <label class="form_label" for="edit_genero">Género:</label>
+                        <select id="edit_genero" name="genero" class="form_select" required>
+                            <option value="M" th:selected="${session.usuario.genero == 'M'}">Masculino</option>
+                            <option value="F" th:selected="${session.usuario.genero == 'F'}">Femenino</option>
+                            <option value="Otro" th:selected="${session.usuario.genero == 'Otro'}">Otro</option>
+                        </select>
+                    </div>
+                    <div class="form_group">
+                        <label class="form_label" for="edit_telefono">Teléfono:</label>
+                        <input type="text" id="edit_telefono" name="telefono" class="form_input"
+                            th:value="${session.usuario.telefono}">
+                    </div>
+                    <div class="form_group">
+                        <label class="form_label" for="edit_correo">Correo:</label>
+                        <input type="email" id="edit_correo" name="correo" class="form_input"
+                            th:value="${session.usuario.correo}" required>
+                    </div>
+                    <div class="form_group">
+                        <label class="form_label" for="edit_contraseña">Nueva Contraseña (opcional):</label>
+                        <input type="password" id="edit_contraseña" name="contraseña" class="form_input"
+                            placeholder="Dejar en blanco para mantener la actual">
+                    </div>
+                </div>
+                <div class="modal_footer">
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('editModal')">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script th:inline="javascript">
+        function toggleDropdown() {
+            document.getElementById("profileDropdown").classList.toggle("show");
+        }
+
+        window.onclick = function (event) {
+            if (!event.target.matches('.profile_button')) {
+                var dropdowns = document.getElementsByClassName("dropdown_content");
+                for (var i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+
+            var modals = document.getElementsByClassName('modal');
+            for (var i = 0; i < modals.length; i++) {
+                if (event.target == modals[i]) {
+                    modals[i].classList.remove('show');
+                }
+            }
+        }
+
+        function openProfileModal() {
+            document.getElementById('profileModal').classList.add('show');
+            closeDropdown();
+        }
+
+        function openEditModal() {
+            document.getElementById('editModal').classList.add('show');
+            closeDropdown();
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        function closeDropdown() {
+            document.getElementById("profileDropdown").classList.remove("show");
+        }
+
+        document.getElementById('editProfileForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+            const csrfToken = /*[[${_csrf.token}]]*/ '';
+
+            fetch('/admin/profile/update', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json'
+                },
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Perfil actualizado exitosamente');
+                        closeModal('editModal');
+
+                        document.getElementById('profile_nombre').textContent = formData.get('nombre');
+                        document.getElementById('profile_apellido').textContent = formData.get('apellido');
+                        document.getElementById('profile_email').textContent = formData.get('correo');
+
+                        document.querySelector('.profile_button').innerHTML = `<i class="fas fa-user-cog"></i> Admin ${formData.get('nombre')} ${formData.get('apellido')} ▼`;
+
+                    } else {
+                        alert('Error al actualizar el perfil: ' + (data.message || 'Error desconocido'));
+                        if (data.errors) {
+                            console.error('Errores de validación:', data.errors);
+                            let errorMessages = [];
+                            Object.keys(data.errors).forEach(key => {
+                                errorMessages.push(data.errors[key].join(', '));
+                            });
+                            alert('Errores: ' + errorMessages.join('\n'));
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al actualizar el perfil');
+                });
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll('.admin-navbar .nav-link');
+
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') && currentPath.includes(link.getAttribute('href'))) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalle del Médico</title>
+
+    <link rel="stylesheet" th:href="@{/Assets/CSS/show.css}">
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <h1>Detalle del Médico</h1>
+        <div class="card-body">
+
+            <p><strong>ID:</strong> <span th:text="${medico.id_medico}"></span></p>
+
+            <p><strong>Documento:</strong> 
+                <span th:text="${medico.tipo_doc}"></span>
+                <span th:text="${medico.numero_doc}"></span>
+            </p>
+
+            <p><strong>Nombre:</strong> 
+                <span th:text="${medico.nombre}"></span>
+                <span th:text="${medico.apellido}"></span>
+            </p>
+
+            <p><strong>Género:</strong> 
+                <span th:text="${medico.genero}"></span>
+            </p>
+
+            <p><strong>Especialidad:</strong>
+                <span th:text="${medico.especialidad}"></span>
+            </p>
+
+            <p><strong>Teléfono:</strong>
+                <span th:text="${medico.telefono}"></span>
+            </p>
+
+            <p><strong>Correo:</strong>
+                <span th:text="${medico.correo}"></span>
+            </p>
+
+            <p><strong>Estado:</strong>
+                <span th:text="${medico.estado ? 'Activo' : 'Inactivo'}"></span>
+            </p>
+
+        </div>
+
+        <div class="actions">
+
+            <a th:href="@{/medicos}" class="btn btn-secondary mt-3">Volver</a>
+
+            <a th:href="@{/medicos/edit/{id}(id=${medico.id_medico})}" 
+               class="btn btn-warning mt-3">Editar</a>
+
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>
