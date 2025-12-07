@@ -1,0 +1,21 @@
+*   [33mec28db6[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m Merge branch 'main' of https://github.com/anamongui-ana/Cita_Ya-Java
+[31m|[m[32m\[m  
+[31m|[m *   [33m1611dbc[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Merge pull request #2 from anamongui-ana/final
+[31m|[m [33m|[m[34m\[m  
+[31m|[m [33m|[m * [33md0cb148[m[33m ([m[1;31morigin/final[m[33m)[m mis cambios
+[31m|[m [33m|[m[33m/[m  
+* [33m/[m [33ma859d7e[m Guardo mis cambios locales antes de combinar con main de registro
+[33m|[m[33m/[m  
+* [33m7bda40c[m Actualización completa del proyecto
+*   [33mf9475f3[m Merge branch 'main' of https://github.com/anamongui-ana/Cita_Ya-Java
+[35m|[m[36m\[m  
+[35m|[m *   [33mb782ae7[m Conflictos resueltos quedándome con mi versión de inicio sesion
+[35m|[m [1;31m|[m[1;32m\[m  
+[35m|[m [1;31m|[m * [33m0b1eb37[m Loguin completo  el dashboard esta  en Layouts
+[35m|[m [1;31m|[m * [33m8df4652[m login hecho entra a los dashboards
+[35m|[m [1;31m|[m * [33m2820733[m Campos validados en Formularios a mitad
+[35m|[m * [1;32m|[m [33m164e809[m registro hecho
+[35m|[m * [1;32m|[m [33md40e0f2[m registro medio hecho
+[35m|[m [1;32m|[m[1;32m/[m  
+[35m|[m * [33m83e8cf3[m login medio hecho
+* [33m7b71d34[m Login Dashboard paciente totalmente funcional con crud

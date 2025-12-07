@@ -127,7 +127,7 @@
         </div>
 
         <div class="stat_card success">
-            <div class="stat_number">0</div>
+            <div class="stat_number" th:text="${totalHistoriales != null ? totalHistoriales : 0}">0</div>
             <div>Historias Clínicas</div>
         </div>
     </div>
@@ -180,7 +180,7 @@
                                 </span>
                             </td>
                             <td>
-                                <div th:if="${cita.fecha.toLocalDate().isAfter(T(java.time.LocalDate).now())}" 
+                                <div th:if="${cita.fecha.toLocalDate().isAfter(T(java.time.LocalDate).now()) or cita.fecha.toLocalDate().isEqual(T(java.time.LocalDate).now())}" 
                                      style="display: flex; gap: 0.5rem; justify-content: center;">
                                     <a th:href="@{/agendamientos/editar/{id}(id=${cita.idAgendamiento})}"
                                        style="background: #f59e0b; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 0.3rem; cursor: pointer; font-size: 0.85rem; text-decoration: none; display: inline-block;">
@@ -196,7 +196,7 @@
                                         </button>
                                     </form>
                                 </div>
-                                <span th:if="${!cita.fecha.toLocalDate().isAfter(T(java.time.LocalDate).now())}" style="color: #999;">-</span>
+                                <span th:if="${cita.fecha.toLocalDate().isBefore(T(java.time.LocalDate).now())}" style="color: #999;">-</span>
                             </td>
                         </tr>
                     </tbody>
@@ -210,17 +210,17 @@
             </div>
 
             <div class="card_body">
-                <div class="history_card">
-                    <strong>10/10/2025</strong>
-                    <p>Consulta con Dr. Gómez - Psicología</p>
+                <div th:if="${historiales == null or historiales.isEmpty()}" style="text-align: center; padding: 2rem; color: #666;">
+                    <p>No tienes historiales clínicos registrados</p>
                 </div>
-                <div class="history_card">
-                    <strong>02/09/2025</strong>
-                    <p>Consulta general - Dr. Díaz</p>
-                </div>
-                <div class="history_card">
-                    <strong>22/08/2025</strong>
-                    <p>Dermatología - Dra. Torres</p>
+                <div class="history_card" th:each="historial : ${historiales}">
+                    <strong th:text="${#dates.format(historial.fechaAtencion, 'dd/MM/yyyy')}">10/10/2025</strong>
+                    <p>
+                        <span th:text="${historial.diagnostico}">Diagnóstico</span>
+                        <span th:if="${historial.medico != null}">
+                            - Dr. <span th:text="${historial.medico.nombre + ' ' + historial.medico.apellido}">Médico</span>
+                        </span>
+                    </p>
                 </div>
             </div>
         </div>

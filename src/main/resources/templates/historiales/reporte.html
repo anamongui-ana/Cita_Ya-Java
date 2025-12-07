@@ -133,6 +133,7 @@
             font-style: italic;
         }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -150,7 +151,7 @@
         
         <!-- Botones de Acción -->
         <div class="no-print" style="margin-bottom: 20px;">
-            <button onclick="window.print()" class="btn-print">🖨️ Imprimir Reporte</button>
+            <button onclick="generarPDF()" class="btn-print">📄 Descargar PDF</button>
             <a th:href="@{/historiales}" class="btn-back">← Volver al Listado</a>
             <a th:href="@{/layouts/administrador}" class="btn-back">← Dashboard</a>
         </div>
@@ -200,5 +201,26 @@
             <p>© 2024 Cita Ya - Todos los derechos reservados</p>
         </div>
     </div>
+    
+    <script>
+        function generarPDF() {
+            const element = document.querySelector('.container');
+            const opt = {
+                margin: 10,
+                filename: 'Reporte_Historiales_Clinicos_' + new Date().toISOString().split('T')[0] + '.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+            };
+            
+            // Ocultar botones antes de generar PDF
+            document.querySelector('.no-print').style.display = 'none';
+            
+            html2pdf().set(opt).from(element).save().then(() => {
+                // Mostrar botones nuevamente
+                document.querySelector('.no-print').style.display = 'block';
+            });
+        }
+    </script>
 </body>
 </html>

@@ -69,8 +69,10 @@ public class AgendamientoController {
 
     @GetMapping("/nuevo")
     public String nuevo(Model model, HttpSession session) {
-        Paciente paciente = (Paciente) session.getAttribute("usuario");
-        if (paciente == null) {
+        Object usuario = session.getAttribute("usuario");
+        String tipoUsuario = (String) session.getAttribute("tipoUsuario");
+        
+        if (usuario == null) {
             return "redirect:/login";
         }
         
@@ -84,11 +86,24 @@ public class AgendamientoController {
             model.addAttribute("agendamiento", new Agendamiento());
             model.addAttribute("citasPorFecha", citasPorFecha);
             model.addAttribute("fechaMinima", LocalDate.now().plusDays(1).toString());
+            model.addAttribute("tipoUsuario", tipoUsuario);
+            
+            // Si es médico, agregar lista de pacientes y el médico logueado
+            if ("medico".equals(tipoUsuario)) {
+                model.addAttribute("pacientes", pacienteRepository.findAll());
+                model.addAttribute("medicoLogueado", (proyecto.conexiondb.JPA.Entity.Medico) usuario);
+            }
         } catch (Exception e) {
             // Si hay error al cargar citas, continuar sin mostrarlas
             model.addAttribute("agendamiento", new Agendamiento());
             model.addAttribute("citasPorFecha", new java.util.HashMap<>());
             model.addAttribute("fechaMinima", LocalDate.now().plusDays(1).toString());
+            model.addAttribute("tipoUsuario", tipoUsuario);
+            
+            if ("medico".equals(tipoUsuario)) {
+                model.addAttribute("pacientes", pacienteRepository.findAll());
+                model.addAttribute("medicoLogueado", (proyecto.conexiondb.JPA.Entity.Medico) usuario);
+            }
         }
         
         return "agendamientos/create";
@@ -133,11 +148,29 @@ public class AgendamientoController {
                          @RequestParam("fecha") String fechaStr,
                          @RequestParam("hora") String hora,
                          @RequestParam("idMedico") Long idMedico,
+                         @RequestParam(value = "idPaciente", required = false) Long idPaciente,
                          HttpSession session,
                          RedirectAttributes redirectAttrs) {
-        Paciente paciente = (Paciente) session.getAttribute("usuario");
-        if (paciente == null) {
+        Object usuario = session.getAttribute("usuario");
+        String tipoUsuario = (String) session.getAttribute("tipoUsuario");
+        
+        if (usuario == null) {
             return "redirect:/login";
+        }
+        
+        Paciente paciente;
+        
+        // Si es médico, obtener el paciente del parámetro
+        if ("medico".equals(tipoUsuario)) {
+            if (idPaciente == null) {
+                redirectAttrs.addFlashAttribute("error", "Debe seleccionar un paciente");
+                return "redirect:/agendamientos/nuevo";
+            }
+            paciente = pacienteRepository.findById(idPaciente)
+                .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
+        } else {
+            // Si es paciente, usar el de la sesión
+            paciente = (Paciente) usuario;
         }
         
         try {
@@ -176,7 +209,13 @@ public class AgendamientoController {
             agendamientoRepository.save(agendamiento);
             
             redirectAttrs.addFlashAttribute("success", "Cita agendada exitosamente con " + medico.getNombre() + " " + medico.getApellido());
-            return "redirect:/Layouts/paciente";
+            
+            // Redirigir según el tipo de usuario
+            if ("medico".equals(tipoUsuario)) {
+                return "redirect:/medico/dashboard";
+            } else {
+                return "redirect:/Layouts/paciente";
+            }
             
         } catch (Exception e) {
             redirectAttrs.addFlashAttribute("error", "Error al agendar la cita. Por favor intente nuevamente.");
@@ -199,12 +238,12 @@ public class AgendamientoController {
             
         if (agendamiento == null) {
             redirectAttrs.addFlashAttribute("error", "Cita no encontrada");
-            return "redirect:/agendamientos";
+            return "redirect:/pacientes/dashboard";
         }
         
         if (!agendamiento.getPaciente().getIdPaciente().equals(paciente.getIdPaciente())) {
             redirectAttrs.addFlashAttribute("error", "No tiene permiso para editar esta cita");
-            return "redirect:/agendamientos";
+            return "redirect:/pacientes/dashboard";
         }
         
         try {
@@ -289,7 +328,7 @@ public class AgendamientoController {
             agendamientoRepository.save(agendamiento);
             
             redirectAttrs.addFlashAttribute("success", "Cita actualizada exitosamente");
-            return "redirect:/agendamientos";
+            return "redirect:/pacientes/dashboard";
             
         } catch (Exception e) {
             redirectAttrs.addFlashAttribute("error", "Error al actualizar la cita. Por favor intente nuevamente.");
@@ -315,6 +354,6 @@ public class AgendamientoController {
             }
         });
         
-        return "redirect:/agendamientos";
+        return "redirect:/pacientes/dashboard";
     }
 }

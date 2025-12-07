@@ -11,16 +11,15 @@
     <div class="card">
         <h1>Detalle del Administrador</h1>
         <div class="card-body">
-            <p><strong>ID:</strong> <span th:text="${admin.id_admin}"></span></p>
-            <p><strong>Documento:</strong> <span th:text="${admin.tipo_doc} + ' ' + ${admin.numero_doc}"></span></p>
-            <p><strong>Nombre:</strong> <span th:text="${admin.nombre} + ' ' + ${admin.apellido}"></span></p>
-            <p><strong>Género:</strong> <span th:text="${admin.genero}"></span></p>
-            <p><strong>Teléfono:</strong> <span th:text="${admin.telefono}"></span></p>
-            <p><strong>Correo:</strong> <span th:text="${admin.correo}"></span></p>
+            <p><strong>ID:</strong> <span th:text="${administrador.id}"></span></p>
+            <p><strong>Documento:</strong> <span th:text="${administrador.tipoDoc} + ' ' + ${administrador.numeroDoc}"></span></p>
+            <p><strong>Nombre:</strong> <span th:text="${administrador.nombre} + ' ' + ${administrador.apellido}"></span></p>
+            <p><strong>Género:</strong> <span th:text="${administrador.genero}"></span></p>
+            <p><strong>Teléfono:</strong> <span th:text="${administrador.telefono}"></span></p>
+            <p><strong>Correo:</strong> <span th:text="${administrador.correo}"></span></p>
         </div>
         <div class="actions">
             <a th:href="@{/administradores}" class="btn btn-secondary mt-3">Volver</a>
-            <a th:href="@{/administradores/edit/{id}(id=${admin.id_admin})}" class="btn btn-warning mt-3">Editar</a>
         </div>
     </div>
 </div>

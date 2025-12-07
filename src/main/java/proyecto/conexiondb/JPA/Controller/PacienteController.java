@@ -17,11 +17,14 @@ public class PacienteController {
 
     private final PacienteRepository pacienteRepository;
     private final proyecto.conexiondb.JPA.Repository.AgendamientoRepository agendamientoRepository;
+    private final proyecto.conexiondb.JPA.Repository.HistoriaClinicaRepository historiaClinicaRepository;
 
     public PacienteController(PacienteRepository pacienteRepository,
-                             proyecto.conexiondb.JPA.Repository.AgendamientoRepository agendamientoRepository) {
+                             proyecto.conexiondb.JPA.Repository.AgendamientoRepository agendamientoRepository,
+                             proyecto.conexiondb.JPA.Repository.HistoriaClinicaRepository historiaClinicaRepository) {
         this.pacienteRepository = pacienteRepository;
         this.agendamientoRepository = agendamientoRepository;
+        this.historiaClinicaRepository = historiaClinicaRepository;
     }
     
     @GetMapping("/dashboard")
@@ -37,8 +40,14 @@ public class PacienteController {
         java.util.List<proyecto.conexiondb.JPA.Entity.Agendamiento> citas = 
             agendamientoRepository.findByPaciente(paciente);
         
+        // Obtener los historiales clínicos del paciente
+        java.util.List<proyecto.conexiondb.JPA.Entity.Historia_Clinica> historiales = 
+            historiaClinicaRepository.findByPacienteOrderByFechaAtencionDesc(paciente);
+        
         model.addAttribute("citas", citas);
         model.addAttribute("totalCitas", citas.size());
+        model.addAttribute("historiales", historiales);
+        model.addAttribute("totalHistoriales", historiales.size());
         
         return "layouts/paciente";
     }

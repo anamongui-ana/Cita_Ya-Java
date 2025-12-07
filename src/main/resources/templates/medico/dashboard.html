@@ -185,6 +185,24 @@
             margin-top: 1rem;
             flex-wrap: wrap;
         }
+        .alert {
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #6ee7b7;
+        }
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
     </style>
 </head>
 <body>
@@ -210,6 +228,14 @@
 </header>
 
 <div class="container_main">
+    <div th:if="${success}" class="alert alert-success">
+        <strong>✓ Éxito:</strong> <span th:text="${success}"></span>
+    </div>
+    
+    <div th:if="${error}" class="alert alert-error">
+        <strong>✗ Error:</strong> <span th:text="${error}"></span>
+    </div>
+
     <div class="welcome_section">
         <h1 class="welcome_title">Dr. <span th:text="${medico.nombre + ' ' + medico.apellido}">Usuario</span></h1>
         <p th:text="${medico.especialidad}">Especialidad</p>
@@ -231,6 +257,7 @@
     </div>
 
     <div class="nav-links">
+        <a th:href="@{/agendamientos/nuevo}" class="btn btn-primary">➕ Agendar Cita</a>
         <a th:href="@{/medico/dashboard/citas}" class="btn btn-primary">📅 Ver Todas Mis Citas</a>
         <a th:href="@{/medico/dashboard/pacientes}" class="btn btn-primary">👥 Ver Mis Pacientes</a>
         <a th:href="@{/medico/dashboard/historias-clinicas}" class="btn btn-primary">📋 Historias Clínicas</a>

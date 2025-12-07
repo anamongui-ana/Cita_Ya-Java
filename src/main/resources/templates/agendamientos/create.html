@@ -154,7 +154,7 @@
     <div class="container-main">
         <div class="form-container">
             <div class="header-with-back">
-                <a th:href="@{/Layouts/paciente}" class="btn-back">
+                <a th:href="${tipoUsuario == 'medico' ? '/medico/dashboard' : '/Layouts/paciente'}" class="btn-back">
                     ← Volver al Dashboard
                 </a>
             </div>
@@ -170,6 +170,25 @@
             </div>
             
             <form th:action="@{/agendamientos/guardar}" method="POST">
+                
+                <div class="form-group" th:if="${tipoUsuario == 'medico'}">
+                    <label for="buscarPaciente">Buscar Paciente: *</label>
+                    <div style="position: relative;">
+                        <input type="text" 
+                               id="buscarPaciente" 
+                               class="form-control" 
+                               placeholder="Buscar por nombre o documento..."
+                               autocomplete="off"
+                               style="padding-right: 2.5rem;">
+                        <span style="position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%); color: #6b7280; pointer-events: none;">🔍</span>
+                    </div>
+                    <input type="hidden" id="idPaciente" name="idPaciente" required>
+                    <div id="resultadosBusqueda" style="display: none; position: absolute; background: white; border: 1px solid #ddd; border-radius: 0.5rem; max-height: 200px; overflow-y: auto; width: calc(100% - 4rem); z-index: 1000; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"></div>
+                    <div id="pacienteSeleccionado" style="margin-top: 0.5rem; padding: 0.75rem; background: #e7f3ff; border-radius: 0.5rem; display: none;">
+                        <strong>Paciente seleccionado:</strong> <span id="nombrePacienteSeleccionado"></span>
+                        <button type="button" onclick="limpiarSeleccion()" style="float: right; background: #dc2626; color: white; border: none; padding: 0.25rem 0.5rem; border-radius: 0.25rem; cursor: pointer; font-size: 0.85rem;">✕ Cambiar</button>
+                    </div>
+                </div>
                 
                 <div class="form-group">
                     <label for="cita">Tipo de Cita / Especialidad: *</label>
@@ -227,7 +246,7 @@
 
                 <div class="btn-group">
                     <button type="submit" class="btn btn-primary">Agendar Cita</button>
-                    <a th:href="@{/Layouts/paciente}" class="btn btn-secondary">Cancelar</a>
+                    <a th:href="${tipoUsuario == 'medico' ? '/medico/dashboard' : '/Layouts/paciente'}" class="btn btn-secondary">Cancelar</a>
                 </div>
             </form>
         </div>
@@ -252,13 +271,78 @@
         </div>
     </div>
 
-    <script>
+    <script th:inline="javascript">
         // Establecer fecha mínima
         const fechaInput = document.getElementById('fecha');
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate() + 1);
         const minDate = tomorrow.toISOString().split('T')[0];
         fechaInput.setAttribute('min', minDate);
+
+        // Búsqueda de pacientes (solo para médicos)
+        const tipoUsuario = /*[[${tipoUsuario}]]*/ '';
+        
+        if (tipoUsuario === 'medico') {
+            const pacientes = /*[[${pacientes}]]*/ [];
+            const buscarInput = document.getElementById('buscarPaciente');
+            const resultadosDiv = document.getElementById('resultadosBusqueda');
+            const idPacienteInput = document.getElementById('idPaciente');
+            const pacienteSeleccionadoDiv = document.getElementById('pacienteSeleccionado');
+            const nombrePacienteSpan = document.getElementById('nombrePacienteSeleccionado');
+
+            buscarInput.addEventListener('input', function() {
+                const termino = this.value.toLowerCase().trim();
+                
+                if (termino.length < 2) {
+                    resultadosDiv.style.display = 'none';
+                    return;
+                }
+
+                const resultados = pacientes.filter(p => 
+                    p.nombre.toLowerCase().includes(termino) ||
+                    p.apellido.toLowerCase().includes(termino) ||
+                    p.numeroDoc.includes(termino)
+                );
+
+                if (resultados.length === 0) {
+                    resultadosDiv.innerHTML = '<div style="padding: 1rem; color: #6b7280;">No se encontraron pacientes</div>';
+                    resultadosDiv.style.display = 'block';
+                    return;
+                }
+
+                resultadosDiv.innerHTML = resultados.map(p => 
+                    `<div class="resultado-item" onclick="seleccionarPaciente(${p.idPaciente}, '${p.nombre} ${p.apellido}', '${p.numeroDoc}')" 
+                         style="padding: 0.75rem; cursor: pointer; border-bottom: 1px solid #e5e7eb;">
+                        <strong>${p.nombre} ${p.apellido}</strong><br>
+                        <small style="color: #6b7280;">Doc: ${p.numeroDoc}</small>
+                    </div>`
+                ).join('');
+                
+                resultadosDiv.style.display = 'block';
+            });
+
+            // Cerrar resultados al hacer clic fuera
+            document.addEventListener('click', function(e) {
+                if (!buscarInput.contains(e.target) && !resultadosDiv.contains(e.target)) {
+                    resultadosDiv.style.display = 'none';
+                }
+            });
+        }
+
+        function seleccionarPaciente(id, nombre, doc) {
+            document.getElementById('idPaciente').value = id;
+            document.getElementById('buscarPaciente').value = '';
+            document.getElementById('nombrePacienteSeleccionado').textContent = nombre + ' - Doc: ' + doc;
+            document.getElementById('pacienteSeleccionado').style.display = 'block';
+            document.getElementById('resultadosBusqueda').style.display = 'none';
+        }
+
+        function limpiarSeleccion() {
+            document.getElementById('idPaciente').value = '';
+            document.getElementById('buscarPaciente').value = '';
+            document.getElementById('pacienteSeleccionado').style.display = 'none';
+            document.getElementById('buscarPaciente').focus();
+        }
 
         // Cargar médicos disponibles
         async function cargarMedicos() {
@@ -270,7 +354,6 @@
             const medicoInfo = document.getElementById('medicoInfo');
 
             if (!especialidad || !fecha || !hora) {
-                medicoGroup.style.display = 'none';
                 return;
             }
 
@@ -324,7 +407,13 @@
         }
 
         // Agregar eventos para recargar médicos cuando cambien los filtros
-        document.getElementById('cita').addEventListener('change', cargarMedicos);
+        document.getElementById('cita').addEventListener('change', function() {
+            // Mostrar el selector de médico cuando se selecciona una especialidad
+            if (this.value) {
+                document.getElementById('medicoGroup').style.display = 'block';
+            }
+            cargarMedicos();
+        });
         document.getElementById('fecha').addEventListener('change', cargarMedicos);
     </script>
 </body>

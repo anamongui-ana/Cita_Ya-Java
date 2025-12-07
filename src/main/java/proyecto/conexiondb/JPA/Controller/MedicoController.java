@@ -101,4 +101,10 @@ public class MedicoController {
         }
         return "redirect:/medicos";
     }
+    
+    @GetMapping("/reporte")
+    public String reporte(Model model) {
+        model.addAttribute("medicos", medicoRepository.findAll(Sort.by(Sort.Direction.ASC, "especialidad")));
+        return "medicos/reporte";
+    }
 }
