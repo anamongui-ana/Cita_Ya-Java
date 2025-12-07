@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agendar Nueva Cita</title>
+    <style>
+        * {
+            font-family: arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background-color: #f8f9fa;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin-bottom: 1rem;
+        }
+        .card h2 {
+            color: #059669;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #059669;
+            padding-bottom: 0.5rem;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #374151;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #059669;
+        }
+        .search-box {
+            position: relative;
+        }
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .search-results.show {
+            display: block;
+        }
+        .search-item {
+            padding: 0.75rem;
+            cursor: pointer;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .search-item:hover {
+            background: #f9fafb;
+        }
+        .search-item:last-child {
+            border-bottom: none;
+        }
+        .selected-patient {
+            background: #d1fae5;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+        .selected-patient.show {
+            display: block;
+        }
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.25rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-left: 0.5rem;
+        }
+        .badge-success {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+        .badge-danger {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+        .medico-info {
+            background: #f9fafb;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+        .btn-back {
+            background-color: #6b7280;
+            color: white;
+        }
+        .btn-save {
+            background-color: #059669;
+            color: white;
+        }
+        .btn:hover {
+            opacity: 0.9;
+        }
+        .alert {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .alert-error {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #dc2626;
+        }
+        .alert-success {
+            background-color: #d1fae5;
+            color: #065f46;
+            border: 1px solid #059669;
+        }
+        .required {
+            color: #dc2626;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <a th:href="@{/medico/dashboard}" class="btn btn-back">← Volver al Dashboard</a>
+    
+    <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    
+    <div class="card">
+        <h2>Agendar Nueva Cita</h2>
+        
+        <form th:action="@{/medico/dashboard/agendar-cita/guardar}" method="POST" id="citaForm">
+            <div class="form-group">
+                <label>Buscar Paciente <span class="required">*</span></label>
+                <div class="search-box">
+                    <input type="text" 
+                           id="searchPaciente" 
+                           placeholder="Escribe nombre o documento del paciente..."
+                           autocomplete="off">
+                    <div class="search-results" id="searchResults"></div>
+                </div>
+                <input type="hidden" name="idPaciente" id="idPaciente" required>
+                <div class="selected-patient" id="selectedPatient"></div>
+            </div>
+
+            <div class="form-group">
+                <label>Médico <span class="required">*</span></label>
+                <select name="idMedico" id="selectMedico" required onchange="updateMedicoInfo()">
+                    <option value="">-- Selecciona un médico --</option>
+                    <option th:each="medico : ${medicos}" 
+                            th:value="${medico.idMedico}"
+                            th:text="${'Dr. ' + medico.nombre + ' ' + medico.apellido}"
+                            th:data-especialidad="${medico.especialidad}"
+                            th:selected="${medico.idMedico == medicoActual.idMedico}">
+                    </option>
+                </select>
+                <div class="medico-info" id="medicoInfo" style="display:none;">
+                    <strong>Especialidad:</strong> <span id="especialidadText"></span>
+                    <span id="disponibilidadBadge"></span>
+                </div>
+                <input type="hidden" name="tipoCita" id="tipoCita">
+            </div>
+            
+            <div class="form-group">
+                <label>Fecha <span class="required">*</span></label>
+                <input type="date" name="fecha" required th:min="${fechaMinima}">
+            </div>
+
+            <div class="form-group">
+                <label>Hora <span class="required">*</span></label>
+                <select name="hora" required>
+                    <option value="">-- Selecciona --</option>
+                    <option value="08:00">08:00 AM</option>
+                    <option value="09:00">09:00 AM</option>
+                    <option value="10:00">10:00 AM</option>
+                    <option value="11:00">11:00 AM</option>
+                    <option value="12:00">12:00 PM</option>
+                    <option value="14:00">02:00 PM</option>
+                    <option value="15:00">03:00 PM</option>
+                    <option value="16:00">04:00 PM</option>
+                    <option value="17:00">05:00 PM</option>
+                </select>
+            </div>
+
+            <div style="margin-top: 2rem;">
+                <button type="submit" class="btn btn-save">Agendar Cita</button>
+                <a th:href="@{/medico/dashboard}" class="btn btn-back">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    // Datos de pacientes
+    const pacientes = /*[[${pacientes}]]*/ [];
+    
+    // Búsqueda de pacientes
+    const searchInput = document.getElementById('searchPaciente');
+    const searchResults = document.getElementById('searchResults');
+    const selectedPatient = document.getElementById('selectedPatient');
+    const idPacienteInput = document.getElementById('idPaciente');
+    
+    searchInput.addEventListener('input', function() {
+        const query = this.value.toLowerCase().trim();
+        
+        if (query.length < 2) {
+            searchResults.classList.remove('show');
+            return;
+        }
+        
+        const filtered = pacientes.filter(p => {
+            const nombreCompleto = (p.nombre + ' ' + p.apellido).toLowerCase();
+            const documento = p.numeroDoc.toLowerCase();
+            return nombreCompleto.includes(query) || documento.includes(query);
+        });
+        
+        if (filtered.length > 0) {
+            searchResults.innerHTML = filtered.slice(0, 10).map(p => 
+                `<div class="search-item" onclick="selectPaciente(${p.idPaciente}, '${p.nombre}', '${p.apellido}', '${p.tipoDoc}', '${p.numeroDoc}')">
+                    <strong>${p.nombre} ${p.apellido}</strong><br>
+                    <small>${p.tipoDoc} ${p.numeroDoc}</small>
+                </div>`
+            ).join('');
+            searchResults.classList.add('show');
+        } else {
+            searchResults.innerHTML = '<div class="search-item">No se encontraron pacientes</div>';
+            searchResults.classList.add('show');
+        }
+    });
+    
+    function selectPaciente(id, nombre, apellido, tipoDoc, numeroDoc) {
+        idPacienteInput.value = id;
+        searchInput.value = nombre + ' ' + apellido;
+        selectedPatient.innerHTML = `<strong>Paciente seleccionado:</strong> ${nombre} ${apellido} - ${tipoDoc} ${numeroDoc}`;
+        selectedPatient.classList.add('show');
+        searchResults.classList.remove('show');
+    }
+    
+    // Cerrar resultados al hacer clic fuera
+    document.addEventListener('click', function(e) {
+        if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+            searchResults.classList.remove('show');
+        }
+    });
+    
+    // Actualizar info del médico y verificar disponibilidad
+    function updateMedicoInfo() {
+        const select = document.getElementById('selectMedico');
+        const option = select.options[select.selectedIndex];
+        const medicoInfo = document.getElementById('medicoInfo');
+        const especialidadText = document.getElementById('especialidadText');
+        const tipoCitaInput = document.getElementById('tipoCita');
+        
+        if (option.value) {
+            const especialidad = option.getAttribute('data-especialidad');
+            especialidadText.textContent = especialidad;
+            tipoCitaInput.value = especialidad; // Usar la especialidad como tipo de cita
+            medicoInfo.style.display = 'block';
+            checkDisponibilidad();
+        } else {
+            medicoInfo.style.display = 'none';
+        }
+    }
+    
+    // Verificar disponibilidad cuando cambian fecha u hora
+    document.getElementById('citaForm').addEventListener('change', function(e) {
+        if (e.target.name === 'fecha' || e.target.name === 'hora') {
+            checkDisponibilidad();
+        }
+    });
+    
+    function checkDisponibilidad() {
+        const idMedico = document.getElementById('selectMedico').value;
+        const fecha = document.querySelector('input[name="fecha"]').value;
+        const hora = document.querySelector('select[name="hora"]').value;
+        const badge = document.getElementById('disponibilidadBadge');
+        
+        if (idMedico && fecha && hora) {
+            // Aquí podrías hacer una llamada AJAX para verificar disponibilidad real
+            // Por ahora mostramos un indicador genérico
+            badge.innerHTML = '<span class="badge badge-success">✓ Verificando disponibilidad...</span>';
+        } else {
+            badge.innerHTML = '';
+        }
+    }
+    
+    // Inicializar si hay médico preseleccionado
+    window.onload = function() {
+        updateMedicoInfo();
+    };
+</script>
+
+</body>
+</html>

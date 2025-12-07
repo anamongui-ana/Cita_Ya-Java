@@ -72,6 +72,17 @@
 <div class="container">
     <a th:href="@{/medico/dashboard/citas}" class="btn btn-back">← Volver a Mis Citas</a>
     
+    <form th:action="@{/medico/dashboard/citas/{id}/cancelar(id=${cita.idAgendamiento})}" 
+          method="POST" 
+          style="display:inline; float:right;"
+          onsubmit="return confirm('¿Estás seguro de cancelar esta cita?');">
+        <button type="submit" style="background:#dc2626; color:white; padding:0.5rem 1rem; border:none; border-radius:0.5rem; cursor:pointer;">
+            Cancelar Cita
+        </button>
+    </form>
+    
+    <div style="clear:both; margin-bottom:1rem;"></div>
+    
     <div class="card">
         <h2>Información de la Cita</h2>
         <div class="info-row">

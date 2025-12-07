@@ -54,13 +54,26 @@ public class MedicoDashboardController {
         
         List<Paciente> pacientesUnicos = agendamientoRepository.findDistinctPacientesByMedico(medico);
         long totalPacientes = pacientesUnicos.size();
+        
+        // Debug: Verificar citas del médico
+        System.out.println("=== DEBUG DASHBOARD MÉDICO ===");
+        System.out.println("Médico ID: " + medico.getIdMedico());
+        System.out.println("Médico: " + medico.getNombre() + " " + medico.getApellido());
+        System.out.println("Citas del día: " + citasDelDia);
+        System.out.println("Citas del mes: " + citasDelMes);
+        System.out.println("Total pacientes: " + totalPacientes);
 
-        // Obtener próximas citas (limitadas a 5)
+        // Obtener próximas citas (del día de hoy en adelante, limitadas a 5)
         List<Agendamiento> todasLasCitas = agendamientoRepository.findByMedicoOrderByFechaAscHoraAsc(medico);
+        System.out.println("Total de citas del médico: " + todasLasCitas.size());
+        
         List<Agendamiento> proximasCitas = todasLasCitas.stream()
-            .filter(cita -> !cita.getFecha().before(hoy))
+            .filter(cita -> !cita.getFecha().before(hoy)) // Incluye hoy y futuras
             .limit(5)
             .collect(Collectors.toList());
+        
+        System.out.println("Próximas citas (hoy y futuras): " + proximasCitas.size());
+        System.out.println("==============================");
 
         model.addAttribute("citasDelDia", citasDelDia);
         model.addAttribute("citasDelMes", citasDelMes);
@@ -138,6 +151,33 @@ public class MedicoDashboardController {
         model.addAttribute("medico", medico);
 
         return "medico/cita-detalle";
+    }
+
+    @PostMapping("/citas/{id}/cancelar")
+    public String cancelarCita(@PathVariable Long id, HttpSession session, RedirectAttributes redirectAttrs) {
+        Medico medico = obtenerMedicoSesion(session);
+        if (medico == null) {
+            return "redirect:/login";
+        }
+
+        Agendamiento cita = agendamientoRepository.findById(id).orElse(null);
+        
+        if (cita == null) {
+            redirectAttrs.addFlashAttribute("error", "Cita no encontrada");
+            return "redirect:/medico/dashboard/citas";
+        }
+
+        // Verificar que la cita pertenece al médico
+        if (cita.getMedico() == null || !cita.getMedico().getIdMedico().equals(medico.getIdMedico())) {
+            redirectAttrs.addFlashAttribute("error", "No tiene permiso para cancelar esta cita");
+            return "redirect:/medico/dashboard/citas";
+        }
+
+        // Eliminar la cita
+        agendamientoRepository.deleteById(id);
+        
+        redirectAttrs.addFlashAttribute("success", "Cita cancelada exitosamente");
+        return "redirect:/medico/dashboard/citas";
     }
 
     @GetMapping("/pacientes")
@@ -409,6 +449,88 @@ public class MedicoDashboardController {
         model.addAttribute("medico", medico);
 
         return "medico/buscar-paciente";
+    }
+
+    @GetMapping("/agendar-cita")
+    public String agendarCita(HttpSession session, Model model) {
+        Medico medico = obtenerMedicoSesion(session);
+        if (medico == null) {
+            return "redirect:/login";
+        }
+
+        // Obtener todos los pacientes y médicos activos
+        List<Paciente> todosPacientes = pacienteRepository.findAll();
+        List<Medico> todosMedicos = medicoRepository.findAll().stream()
+            .filter(m -> m.getEstado() == 1)
+            .collect(Collectors.toList());
+        
+        model.addAttribute("pacientes", todosPacientes);
+        model.addAttribute("medicos", todosMedicos);
+        model.addAttribute("medicoActual", medico);
+        model.addAttribute("fechaMinima", LocalDate.now().plusDays(1).toString());
+
+        return "medico/agendar-cita";
+    }
+
+    @PostMapping("/agendar-cita/guardar")
+    public String guardarCita(@RequestParam Long idPaciente,
+                             @RequestParam Long idMedico,
+                             @RequestParam String tipoCita,
+                             @RequestParam String fecha,
+                             @RequestParam String hora,
+                             HttpSession session,
+                             RedirectAttributes redirectAttrs) {
+        Medico medicoActual = obtenerMedicoSesion(session);
+        if (medicoActual == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            // Validar fecha
+            LocalDate fechaLocal = LocalDate.parse(fecha);
+            Date fechaSql = Date.valueOf(fechaLocal);
+            
+            LocalDate manana = LocalDate.now().plusDays(1);
+            if (fechaLocal.isBefore(manana)) {
+                redirectAttrs.addFlashAttribute("error", "La fecha debe ser al menos mañana");
+                return "redirect:/medico/dashboard/agendar-cita";
+            }
+
+            // Buscar el médico seleccionado
+            Medico medicoSeleccionado = medicoRepository.findById(idMedico)
+                .orElseThrow(() -> new RuntimeException("Médico no encontrado"));
+
+            // Verificar disponibilidad del médico seleccionado
+            long citasEnHorario = agendamientoRepository.countByMedicoAndFechaAndHora(
+                idMedico, fechaSql, hora
+            );
+
+            if (citasEnHorario >= 1) {
+                redirectAttrs.addFlashAttribute("error", "El médico " + medicoSeleccionado.getNombre() + " " + medicoSeleccionado.getApellido() + " ya tiene una cita en ese horario");
+                return "redirect:/medico/dashboard/agendar-cita";
+            }
+
+            // Buscar paciente
+            Paciente paciente = pacienteRepository.findById(idPaciente)
+                .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
+
+            // Crear agendamiento
+            Agendamiento agendamiento = new Agendamiento();
+            agendamiento.setCita(tipoCita);
+            agendamiento.setFecha(fechaSql);
+            agendamiento.setHora(hora);
+            agendamiento.setPaciente(paciente);
+            agendamiento.setMedico(medicoSeleccionado);
+
+            agendamientoRepository.save(agendamiento);
+
+            redirectAttrs.addFlashAttribute("success", "Cita agendada exitosamente con " + medicoSeleccionado.getNombre() + " " + medicoSeleccionado.getApellido());
+            return "redirect:/medico/dashboard";
+
+        } catch (Exception e) {
+            redirectAttrs.addFlashAttribute("error", "Error al agendar la cita: " + e.getMessage());
+            return "redirect:/medico/dashboard/agendar-cita";
+        }
     }
 
     private Medico obtenerMedicoSesion(HttpSession session) {

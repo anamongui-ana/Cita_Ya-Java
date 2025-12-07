@@ -62,6 +62,14 @@
 <div class="container">
     <a th:href="@{/medico/dashboard}" class="btn btn-back">← Volver al Dashboard</a>
     
+    <div th:if="${success}" style="padding: 1rem; background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; border-radius: 0.5rem; margin: 1rem 0;">
+        <strong>✓</strong> <span th:text="${success}"></span>
+    </div>
+    
+    <div th:if="${error}" style="padding: 1rem; background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; border-radius: 0.5rem; margin: 1rem 0;">
+        <strong>✗</strong> <span th:text="${error}"></span>
+    </div>
+    
     <h1>Mis Citas Programadas</h1>
 
     <div class="filter-form">
@@ -103,6 +111,12 @@
             <td th:text="${cita.paciente.tipoDoc + ' ' + cita.paciente.numeroDoc}">Documento</td>
             <td>
                 <a th:href="@{/medico/dashboard/citas/{id}(id=${cita.idAgendamiento})}" class="btn btn-info btn-sm">Ver Detalle</a>
+                <form th:action="@{/medico/dashboard/citas/{id}/cancelar(id=${cita.idAgendamiento})}" 
+                      method="POST" 
+                      style="display:inline;"
+                      onsubmit="return confirm('¿Estás seguro de cancelar esta cita?');">
+                    <button type="submit" class="btn btn-danger btn-sm">Cancelar</button>
+                </form>
             </td>
         </tr>
         <tr th:if="${#lists.isEmpty(citas)}">

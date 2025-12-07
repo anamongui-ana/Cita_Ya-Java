@@ -201,7 +201,7 @@
             <strong>✗ Error:</strong> <span th:text="${error}"></span>
         </div>
 
-        <form th:action="@{/pacientes/editar}" th:object="${paciente}" method="post"></form>
+        <form th:action="@{/pacientes/editar}" th:object="${paciente}" method="post">
 
             <div class="form-group">
                 <label class="form-label">Tipo de Documento</label>
