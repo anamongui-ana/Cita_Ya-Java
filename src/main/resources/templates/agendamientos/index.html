@@ -84,8 +84,22 @@
 
             <h1>Citas Médicas</h1>
 
-            <div class="mb-3 d-flex gap-2" th:if="${tipoUsuario == 'paciente'}">
-                <a th:href="@{/agendamientos/nuevo}" class="btn-new">Nueva Cita</a>
+            <div class="mb-3 d-flex gap-2">
+                <!-- Botón para Administradores -->
+                <a th:if="${tipoUsuario == 'administrador'}" th:href="@{/agendamientos/create}" class="btn-new">
+                    <i class="fas fa-plus me-1"></i>Crear Nueva Cita
+                </a>
+                
+                <!-- Botón para Pacientes -->
+                <a th:if="${tipoUsuario == 'paciente'}" th:href="@{/agendamientos/nuevo}" class="btn-new">
+                    <i class="fas fa-plus me-1"></i>Agendar Cita
+                </a>
+                
+                <!-- Botón de reporte solo para administradores -->
+                <a th:href="@{/agendamientos/reporte}" target="_blank" class="btn-report" th:if="${tipoUsuario == 'administrador'}">
+                    <i class="fas fa-file-pdf me-1"></i>Generar Reporte PDF
+                </a>
+                                
             </div>
 
             <table class="table mt-3">
@@ -97,12 +111,12 @@
                         <th>Hora</th>
                         <th>Paciente</th>
                         <th>Médico</th>
-                        <th th:if="${tipoUsuario == 'paciente'}">Acciones</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr th:if="${agendamientos == null or agendamientos.isEmpty()}">
-                        <td th:colspan="${tipoUsuario == 'paciente' ? 7 : 6}" class="text-center"><em>No hay citas registradas</em></td>
+                        <td colspan="7" class="text-center"><em>No hay citas registradas</em></td>
                     </tr>
                     <tr th:each="a : ${agendamientos}">
                         <td th:text="${a.idAgendamiento}">1</td>
@@ -117,11 +131,28 @@
                             <span th:if="${a.medico != null}" th:text="${a.medico.nombre + ' ' + a.medico.apellido}">Médico</span>
                             <span th:unless="${a.medico != null}">Sin médico</span>
                         </td>
-                        <td th:if="${tipoUsuario == 'paciente'}">
-                            <a th:href="@{/agendamientos/editar/{id}(id=${a.idAgendamiento})}" class="btn btn-warning btn-sm">Editar</a>
-                            <form th:action="@{/agendamientos/eliminar/{id}(id=${a.idAgendamiento})}" method="POST" style="display:inline;">
-                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Cancelar esta cita?')">Cancelar</button>
-                            </form>
+                        <td>
+                            <!-- Botones para Administrador -->
+                            <div th:if="${tipoUsuario == 'administrador'}">
+                                <a th:href="@{/agendamientos/{id}(id=${a.idAgendamiento})}" class="btn btn-info btn-sm">Ver</a>
+                                <a th:href="@{/agendamientos/editar/{id}(id=${a.idAgendamiento})}" class="btn btn-warning btn-sm">Editar</a>
+                                <form th:action="@{/agendamientos/eliminar/{id}(id=${a.idAgendamiento})}" method="POST" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar esta cita?')">Eliminar</button>
+                                </form>
+                            </div>
+                            
+                            <!-- Botones para Paciente -->
+                            <div th:if="${tipoUsuario == 'paciente'}">
+                                <a th:href="@{/agendamientos/editar/{id}(id=${a.idAgendamiento})}" class="btn btn-warning btn-sm">Editar</a>
+                                <form th:action="@{/agendamientos/eliminar/{id}(id=${a.idAgendamiento})}" method="POST" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Cancelar esta cita?')">Cancelar</button>
+                                </form>
+                            </div>
+                            
+                            <!-- Botones para Médico -->
+                            <div th:if="${tipoUsuario == 'medico'}">
+                                <a th:href="@{/agendamientos/{id}(id=${a.idAgendamiento})}" class="btn btn-info btn-sm">Ver Detalles</a>
+                            </div>
                         </td>
                     </tr>
                 </tbody>

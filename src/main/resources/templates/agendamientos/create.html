@@ -154,12 +154,16 @@
     <div class="container-main">
         <div class="form-container">
             <div class="header-with-back">
-                <a th:href="@{/Layouts/paciente}" class="btn-back">
+                <a th:if="${session.tipoUsuario == 'paciente'}" th:href="@{/Layouts/paciente}" class="btn-back">
                     ← Volver al Dashboard
+                </a>
+                <a th:if="${session.tipoUsuario == 'administrador'}" th:href="@{/agendamientos}" class="btn-back">
+                    ← Volver a Citas
                 </a>
             </div>
             
-            <h1>Agendar Nueva Cita</h1>
+            <h1 th:if="${session.tipoUsuario == 'paciente'}">Agendar Nueva Cita</h1>
+            <h1 th:if="${session.tipoUsuario == 'administrador'}">Crear Nueva Cita</h1>
             
             <div th:if="${error}" class="alert alert-error">
                 <strong>Error:</strong> <span th:text="${error}"></span>
@@ -169,7 +173,19 @@
                 <strong>Importante:</strong> Las citas deben agendarse con al menos 1 día de anticipación.
             </div>
             
-            <form th:action="@{/agendamientos/guardar}" method="POST">
+            <form th:action="${session.tipoUsuario == 'administrador' ? '/agendamientos/store' : '/agendamientos/guardar'}" method="POST">
+                
+                <!-- Campo de selección de paciente solo para administradores -->
+                <div th:if="${session.tipoUsuario == 'administrador'}" class="form-group">
+                    <label for="idPaciente">Seleccionar Paciente: *</label>
+                    <select id="idPaciente" name="idPaciente" class="form-control" required>
+                        <option value="">Seleccione un paciente</option>
+                        <option th:each="paciente : ${pacientes}" 
+                                th:value="${paciente.idPaciente}" 
+                                th:text="${paciente.nombre + ' ' + paciente.apellido + ' - ' + paciente.tipoDoc + ' ' + paciente.numeroDoc}">
+                        </option>
+                    </select>
+                </div>
                 
                 <div class="form-group">
                     <label for="cita">Tipo de Cita / Especialidad: *</label>
@@ -226,8 +242,9 @@
                 </div>
 
                 <div class="btn-group">
-                    <button type="submit" class="btn btn-primary">Agendar Cita</button>
-                    <a th:href="@{/Layouts/paciente}" class="btn btn-secondary">Cancelar</a>
+                    <button type="submit" class="btn btn-primary" th:text="${session.tipoUsuario == 'administrador' ? 'Crear Cita' : 'Agendar Cita'}">Agendar Cita</button>
+                    <a th:if="${session.tipoUsuario == 'paciente'}" th:href="@{/Layouts/paciente}" class="btn btn-secondary">Cancelar</a>
+                    <a th:if="${session.tipoUsuario == 'administrador'}" th:href="@{/agendamientos}" class="btn btn-secondary">Cancelar</a>
                 </div>
             </form>
         </div>
