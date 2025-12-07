@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte de Historiales Clínicos - Cita Ya</title>
+    <link rel="icon" type="image" th:href="@{/Assets/img/logoti.png}">
+    <style>
+        @media print {
+            .no-print {
+                display: none;
+            }
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: white;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #007bff;
+        }
+        
+        .header h1 {
+            color: #333;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #6c757d;
+            font-size: 14px;
+        }
+        
+        .report-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+        
+        .report-info p {
+            margin: 5px 0;
+            color: #495057;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        
+        thead {
+            background: #007bff;
+            color: white;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #dee2e6;
+        }
+        
+        th {
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+        
+        tbody tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        .btn-print {
+            padding: 12px 24px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        
+        .btn-print:hover {
+            background: #218838;
+        }
+        
+        .btn-back {
+            padding: 12px 24px;
+            background: #6c757d;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            display: inline-block;
+        }
+        
+        .btn-back:hover {
+            background: #545b62;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #dee2e6;
+            color: #6c757d;
+            font-size: 12px;
+        }
+        
+        .empty-message {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Encabezado -->
+        <div class="header">
+            <h1>📊 Reporte de Historiales Clínicos</h1>
+            <p>Sistema de Gestión de Citas Médicas - Cita Ya</p>
+        </div>
+        
+        <!-- Información del Reporte -->
+        <div class="report-info">
+            <p><strong>Fecha de Generación:</strong> <span th:text="${#dates.format(#dates.createNow(), 'dd/MM/yyyy HH:mm')}">07/12/2024 10:30</span></p>
+            <p><strong>Total de Registros:</strong> <span th:text="${historias != null ? historias.size() : 0}">0</span></p>
+        </div>
+        
+        <!-- Botones de Acción -->
+        <div class="no-print" style="margin-bottom: 20px;">
+            <button onclick="window.print()" class="btn-print">🖨️ Imprimir Reporte</button>
+            <a th:href="@{/historiales}" class="btn-back">← Volver al Listado</a>
+            <a th:href="@{/layouts/administrador}" class="btn-back">← Dashboard</a>
+        </div>
+        
+        <!-- Tabla de Historiales -->
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Fecha</th>
+                    <th>Paciente</th>
+                    <th>Médico</th>
+                    <th>Diagnóstico</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:if="${historias == null or historias.isEmpty()}">
+                    <td colspan="5" class="empty-message">
+                        No hay historiales clínicos para mostrar en el reporte
+                    </td>
+                </tr>
+                <tr th:each="h : ${historias}">
+                    <td th:text="${h.idHistorial}">1</td>
+                    <td th:text="${h.fechaCreacion != null ? #dates.format(h.fechaCreacion, 'dd/MM/yyyy') : 'N/A'}">01/01/2024</td>
+                    <td>
+                        <span th:if="${h.paciente != null}" th:text="${h.paciente.nombre + ' ' + h.paciente.apellido}">Paciente</span>
+                        <span th:unless="${h.paciente != null}">Sin paciente</span>
+                    </td>
+                    <td>
+                        <span th:if="${h.medico != null}" th:text="${h.medico.nombre + ' ' + h.medico.apellido}">Médico</span>
+                        <span th:unless="${h.medico != null}">Sin médico</span>
+                    </td>
+                    <td>
+                        <span th:if="${h.diagnostico != null and h.diagnostico.length() > 80}" 
+                              th:text="${h.diagnostico.substring(0, 80) + '...'}">Diagnóstico largo...</span>
+                        <span th:if="${h.diagnostico != null and h.diagnostico.length() <= 80}" 
+                              th:text="${h.diagnostico}">Diagnóstico</span>
+                        <span th:unless="${h.diagnostico != null}">Sin diagnóstico</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <!-- Pie de Página -->
+        <div class="footer">
+            <p>Este reporte fue generado automáticamente por el Sistema Cita Ya</p>
+            <p>© 2024 Cita Ya - Todos los derechos reservados</p>
+        </div>
+    </div>
+</body>
+</html>
