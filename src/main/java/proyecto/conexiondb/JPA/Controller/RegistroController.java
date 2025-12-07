@@ -26,88 +26,76 @@ public class RegistroController {
 
     @PostMapping("/registro")
     public String registrarPaciente(
-            @RequestParam("tipodoc") String tipoDoc,
-            @RequestParam("numerodoc") String numeroDoc,
-            @RequestParam("nombrecompleto") String nombreCompleto,
-            @RequestParam("genero") String genero,
-            @RequestParam("fechanacimiento") String fechaNacimiento,
-            @RequestParam(value = "tiposangre", required = false) String tipoSangre,
-            @RequestParam(value = "direccion", required = false) String direccion,
-            @RequestParam("telefono") String telefono,
-            @RequestParam("correo") String correo,
-            @RequestParam("contrasena") String contrasena,
-            @RequestParam("confirmarContrasena") String confirmarContrasena,
+            @org.springframework.web.bind.annotation.ModelAttribute Paciente paciente,
+            @RequestParam(value = "confirmarContrasena", required = false) String confirmarContrasena,
             Model model) {
 
         try {
-            // Validar documento (6-10 dígitos)
-            if (numeroDoc == null || !numeroDoc.matches("\\d{6,10}")) {
-                model.addAttribute("error", "El número de documento debe tener entre 6 y 10 dígitos.");
+            // Validar documento (5-10 dígitos)
+            if (paciente.getNumeroDoc() == null || !paciente.getNumeroDoc().matches("\\d{5,10}")) {
+                model.addAttribute("error", "El número de documento debe tener entre 5 y 10 dígitos.");
+                model.addAttribute("paciente", paciente);
                 return "auth/registro";
             }
 
-            // Validar teléfono (7-10 dígitos)
-            if (telefono == null || !telefono.matches("\\d{7,10}")) {
-                model.addAttribute("error", "El teléfono debe tener entre 7 y 10 dígitos.");
+            // Validar teléfono (10 dígitos)
+            if (paciente.getTelefono() == null || !paciente.getTelefono().matches("\\d{10}")) {
+                model.addAttribute("error", "El teléfono debe tener exactamente 10 dígitos.");
+                model.addAttribute("paciente", paciente);
                 return "auth/registro";
             }
 
-            // Validar contraseña (mínimo 8 caracteres, mayúsculas, minúsculas, números y caracteres especiales)
-            String passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&.#-])[A-Za-z\\d@$!%*?&.#-]{8,}$";
-            if (contrasena == null || !contrasena.matches(passwordRegex)) {
-                model.addAttribute("error", "La contraseña debe tener mínimo 8 caracteres con mayúsculas, minúsculas, números y caracteres especiales.");
+            // Validar contraseña (mínimo 10 caracteres, mayúsculas, minúsculas, números y caracteres especiales)
+            String passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&.#-])[A-Za-z\\d@$!%*?&.#-]{10,}$";
+            if (paciente.getContrasena() == null || !paciente.getContrasena().matches(passwordRegex)) {
+                model.addAttribute("error", "La contraseña debe tener mínimo 10 caracteres con mayúsculas, minúsculas, números y caracteres especiales.");
+                model.addAttribute("paciente", paciente);
                 return "auth/registro";
             }
 
             // Validar que las contraseñas coincidan
-            if (!contrasena.equals(confirmarContrasena)) {
+            if (!paciente.getContrasena().equals(confirmarContrasena)) {
                 model.addAttribute("error", "Las contraseñas no coinciden.");
+                model.addAttribute("paciente", paciente);
                 return "auth/registro";
             }
 
             // Validar que el documento no esté registrado
-            if (pacienteRepository.findByNumeroDoc(numeroDoc) != null) {
+            if (pacienteRepository.findByNumeroDoc(paciente.getNumeroDoc()) != null) {
                 model.addAttribute("error", "El número de documento ya está registrado.");
+                model.addAttribute("paciente", paciente);
                 return "auth/registro";
             }
 
             // Validar que el correo no esté registrado
-            if (pacienteRepository.findByCorreo(correo) != null) {
+            if (pacienteRepository.findByCorreo(paciente.getCorreo()) != null) {
                 model.addAttribute("error", "El correo electrónico ya está registrado.");
+                model.addAttribute("paciente", paciente);
                 return "auth/registro";
             }
 
-            // Separar nombre completo en nombre y apellido
-            String[] partes = nombreCompleto.trim().split("\\s+", 2);
-            String nombre = partes[0];
-            String apellido = partes.length > 1 ? partes[1] : "";
+            // Validar nombre (mínimo 5 caracteres sin espacios)
+            if (paciente.getNombre() == null || paciente.getNombre().replace(" ", "").length() < 5) {
+                model.addAttribute("error", "El nombre debe tener al menos 5 caracteres.");
+                model.addAttribute("paciente", paciente);
+                return "auth/registro";
+            }
 
-            // Crear el paciente
-            Paciente paciente = new Paciente();
-            paciente.setTipoDoc(tipoDoc);
-            paciente.setNumeroDoc(numeroDoc);
-            paciente.setNombre(nombre);
-            paciente.setApellido(apellido);
-            paciente.setGenero(genero);
-            
-            // Convertir fecha
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-            Date fecha = formatter.parse(fechaNacimiento);
-            paciente.setFechaNacimiento(fecha);
-            
-            paciente.setTipoSangre(tipoSangre);
-            paciente.setDireccion(direccion);
-            paciente.setTelefono(telefono);
-            paciente.setCorreo(correo);
-            paciente.setContrasena(contrasena); // En producción, deberías encriptar la contraseña
+            // Validar apellido (mínimo 5 caracteres sin espacios)
+            if (paciente.getApellido() == null || paciente.getApellido().replace(" ", "").length() < 5) {
+                model.addAttribute("error", "El apellido debe tener al menos 5 caracteres.");
+                model.addAttribute("paciente", paciente);
+                return "auth/registro";
+            }
 
-            // Guardar
+            // Guardar (en producción, deberías encriptar la contraseña)
             pacienteRepository.save(paciente);
 
             return "redirect:/login?registro=exitoso";
 
         } catch (Exception e) {
             model.addAttribute("error", "Error al registrar: " + e.getMessage());
+            model.addAttribute("paciente", paciente);
             return "auth/registro";
         }
     }

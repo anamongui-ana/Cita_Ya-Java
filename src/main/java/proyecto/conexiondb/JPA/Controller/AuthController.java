@@ -11,13 +11,4 @@ public class AuthController {
         return "redirect:/login";
     }
 
-    @GetMapping("/login")
-    public String login() {
-        return "auth/login";  // Debe estar en templates/auth/login.html
-    }
-
-    @GetMapping("/restablecer")
-    public String restablecer() {
-        return "auth/restablecer";
-    }
 }

@@ -175,7 +175,6 @@
                     <button class="dropdown_item" onclick="openEditModal()">Editar Perfil</button>
                     <hr style="margin: 0;">
                     <form method="POST" th:action="@{/logout}" style="margin: 0;">
-                        <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                         <button type="submit" class="dropdown_item">Cerrar Sesión</button>
                     </form>
                 </div>

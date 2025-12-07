@@ -1,161 +1,148 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Médicos - Panel Administrativo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" th:href="@{/Assets/CSS/table.css}">
+    <style>
+        * { font-family: arial, sans-serif; margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: #f8f9fa; padding-top: 100px; }
+        header { position: fixed; top: 0; width: 100%; z-index: 1000; background-color: #fff; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); }
+        .container_header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; }
+        .logo { width: 5rem; height: 5rem; position: relative; left: 6rem; }
+        .profile_dropdown { position: relative; display: inline-block; }
+        .profile_button { background-color: #059669; color: white; padding: 0.7rem 1.5rem; border: none; border-radius: 0.5rem; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 0.5rem; transition: all 0.2s; position: relative; right: 6rem; }
+        .profile_button:hover { background-color: #10b981; }
+        .dropdown_content { display: none; position: absolute; right: 6rem; background-color: white; min-width: 200px; box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2); z-index: 1001; border-radius: 0.5rem; overflow: hidden; }
+        .dropdown_content.show { display: block; }
+        .dropdown_item { color: #333; padding: 12px 16px; text-decoration: none; display: block; transition: background-color 0.2s; cursor: pointer; background: #fff; border: none; width: 100%; }
+        .dropdown_item:hover { background-color: #f1f1f1; }
+        .admin-navbar { background-color: #fff; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); padding: 0.8rem 1.5rem; border-bottom: 3px solid #059669; position: sticky; top: 0; z-index: 999; }
+        .admin-navbar .navbar-nav { display: flex; flex-direction: row; align-items: center; gap: 0.5rem; justify-content: center; list-style: none; }
+        .admin-navbar .nav-link { color: #3b82f6; font-weight: 600; display: flex; align-items: center; gap: 0.4rem; padding: 0.6rem 1rem; border-radius: 0.5rem; transition: all 0.3s ease; white-space: nowrap; text-decoration: none; }
+        .admin-navbar .nav-link:hover, .admin-navbar .nav-link.active { background: #f0fdf4; color: #059669; transform: translateY(-2px); }
+        .admin-navbar .nav-link i { font-size: 1rem; color: #059669; transition: color 0.3s; }
+        .admin-navbar .nav-link:hover i { color: #10b981; }
+        .container { max-width: 1400px; margin: 2rem auto; padding: 0 2rem; }
+        .alert { padding: 1rem; margin-bottom: 1rem; border-radius: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
+        .alert-success { background-color: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+        .alert-danger { background-color: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+        .btn-close { margin-left: auto; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: inherit; }
+    </style>
 </head>
 <body>
-<div class="container">
-    <h1>Médicos</h1>
-    
-    <div class="mb-3 d-flex gap-2">
-        <a th:href="@{/medicos/create}" class="btn-new">Nuevo Médico</a>
-        <a th:href="@{/medicos/reporte(pdf=true)}"
-           target="_blank"
-           class="btn-report">
-            Generar Reporte PDF
-        </a>
-    </div>
-
-    <!-- FORMULARIO DE FILTROS -->
-    <div class="card mb-3">
-        <div class="card-header">
-            <strong>Filtros de Búsqueda</strong>
-        </div>
-        <div class="card-body">
-            <form th:action="@{/medicos}" method="GET">
-                <div class="row g-3">
-
-                    <!-- Búsqueda General -->
-                    <div class="col-md-4">
-                        <label class="form-label">Búsqueda General</label>
-                        <input type="text"
-                               name="buscar"
-                               class="form-control"
-                               placeholder="Nombre, documento, correo..."
-                               th:value="${buscar}">
-                    </div>
-
-                    <!-- Tipo Doc -->
-                    <div class="col-md-2">
-                        <label class="form-label">Tipo Doc.</label>
-                        <select name="tipo_doc" class="form-select">
-                            <option value="">Todos</option>
-                            <option value="CC">CC</option>
-                            <option value="TI">TI</option>
-                            <option value="CE">CE</option>
-                            <option value="RC">RC</option>
-                            <option value="PA">PA</option>
-                        </select>
-                    </div>
-
-                    <!-- Género -->
-                    <div class="col-md-2">
-                        <label class="form-label">Género</label>
-                        <select name="genero" class="form-select">
-                            <option value="">Todos</option>
-                            <option value="M">Masculino</option>
-                            <option value="F">Femenino</option>
-                            <option value="Otro">Otro</option>
-                        </select>
-                    </div>
-
-                    <!-- Especialidad -->
-                    <div class="col-md-3">
-                        <label class="form-label">Especialidad</label>
-                        <select name="especialidad" class="form-select">
-                            <option value="">Todas</option>
-                            <option>Medicina General</option>
-                            <option>Ortopedia</option>
-                            <option>Cardiología</option>
-                            <option>Psicología</option>
-                            <option>Pediatría</option>
-                            <option>Dermatología</option>
-                        </select>
-                    </div>
-
-                    <!-- Estado -->
-                    <div class="col-md-2">
-                        <label class="form-label">Estado</label>
-                        <select name="estado" class="form-select">
-                            <option value="">Todos</option>
-                            <option value="1">Activo</option>
-                            <option value="0">Inactivo</option>
-                        </select>
-                    </div>
-
-                    <!-- Orden -->
-                    <div class="col-md-2">
-                        <label class="form-label">Orden</label>
-                        <select name="orden" class="form-select">
-                            <option value="desc">Más recientes</option>
-                            <option value="asc">Más antiguos</option>
-                        </select>
-                    </div>
-
-                    <!-- BOTONES -->
-                    <div class="col-md-5 d-flex align-items-end gap-2">
-                        <button type="submit" class="btn btn-primary">
-                            Filtrar
-                        </button>
-
-                        <a th:href="@{/medicos}" class="btn btn-secondary">
-                            Limpiar Filtros
-                        </a>
-                    </div>
-
+    <header>
+        <div class="container_header">
+            <img class="logo" th:src="@{/Assets/img/logo.png}" alt="Cita Ya Logo">
+            <div class="profile_dropdown">
+                <button class="profile_button" onclick="toggleDropdown()">
+                    <i class="fas fa-user-cog"></i>
+                    <span th:if="${session.nombreCompleto}" th:text="'Admin ' + ${session.nombreCompleto}"></span>
+                    <span th:unless="${session.nombreCompleto}">Admin Usuario</span>
+                </button>
+                <div class="dropdown_content" id="profileDropdown">
+                    <button class="dropdown_item">Ver Mi Perfil</button>
+                    <button class="dropdown_item">Editar Perfil</button>
+                    <hr style="margin: 0;">
+                    <form method="POST" th:action="@{/logout}" style="margin: 0;">
+                        <button type="submit" class="dropdown_item">Cerrar Sesión</button>
+                    </form>
                 </div>
-            </form>
+            </div>
         </div>
-    </div>
+    </header>
 
-    <!-- TABLA -->
-    <table class="table mt-3">
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>Documento</th>
-            <th>Nombre</th>
-            <th>Especialidad</th>
-            <th>Correo</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="medico : ${medicos}">
-            <td th:text="${medico.idMedico}"></td>
-            <td th:text="${medico.tipoDoc} + ' ' + ${medico.numeroDoc}"></td>
-            <td th:text="${medico.nombre} + ' ' + ${medico.apellido}"></td>
-            <td th:text="${medico.especialidad}"></td>
-            <td th:text="${medico.correo}"></td>
-            <td th:text="${medico.estado == 1 ? 'Activo' : 'Inactivo'}"></td>
-            <td>
-                <a th:href="@{/medicos/show/{id}(id=${medico.idMedico})}" class="btn btn-info btn-sm">Ver</a>
-                <a th:href="@{/medicos/edit/{id}(id=${medico.idMedico})}" class="btn btn-warning btn-sm">Editar</a>
-                <form th:action="@{/medicos/delete/{id}(id=${medico.idMedico})}"
-                      method="POST"
-                      style="display:inline;">
-                    <button type="submit"
-                            class="btn btn-danger btn-sm"
-                            onclick="return confirm('¿Eliminar este médico?')">
-                        Eliminar
-                    </button>
-                </form>
-            </td>
-        </tr>
+    <nav class="navbar navbar-expand-lg admin-navbar">
+        <div class="container">
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" th:href="@{/pacientes}"><i class="fas fa-users me-1"></i>Pacientes</a></li>
+                    <li class="nav-item"><a class="nav-link active" th:href="@{/medicos}"><i class="fas fa-user-md me-1"></i>Médicos</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/agendamientos}"><i class="fas fa-calendar-alt me-1"></i>Citas</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/historiales}"><i class="fas fa-file-medical me-1"></i>Historiales</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/administradores}"><i class="fas fa-user-shield me-1"></i>Administradores</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
-        <tr th:if="${#lists.isEmpty(medicos)}">
-            <td colspan="7" class="text-center">
-                <em>No se encontraron médicos con los filtros aplicados</em>
-            </td>
-        </tr>
+    <main class="main-content py-4">
+        <div class="container">
+            <div th:if="${success}" class="alert alert-success alert-dismissible fade show">
+                <i class="fas fa-check-circle me-2"></i>
+                <span th:text="${success}"></span>
+                <button type="button" class="btn-close" onclick="this.parentElement.style.display='none'">&times;</button>
+            </div>
 
-        </tbody>
-    </table>
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                <span th:text="${error}"></span>
+                <button type="button" class="btn-close" onclick="this.parentElement.style.display='none'">&times;</button>
+            </div>
 
-</div>
+            <h1>Médicos</h1>
+
+            <div class="mb-3 d-flex gap-2">
+                <a th:href="@{/medicos/create}" class="btn-new">Nuevo Médico</a>
+                <a th:href="@{/medicos/reporte}" target="_blank" class="btn-report">Generar Reporte PDF</a>
+            </div>
+
+            <table class="table mt-3">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Documento</th>
+                        <th>Nombre</th>
+                        <th>Especialidad</th>
+                        <th>Correo</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${medicos == null or medicos.isEmpty()}">
+                        <td colspan="7" class="text-center"><em>No hay médicos registrados</em></td>
+                    </tr>
+                    <tr th:each="m : ${medicos}">
+                        <td th:text="${m.idMedico}">1</td>
+                        <td th:text="${m.tipoDoc + ' ' + m.numeroDoc}">CC 123456</td>
+                        <td th:text="${m.nombre + ' ' + m.apellido}">Médico</td>
+                        <td th:text="${m.especialidad}">Especialidad</td>
+                        <td th:text="${m.correo}">correo@ejemplo.com</td>
+                        <td>
+                            <span th:if="${m.estado == 1}" style="color: green;">Activo</span>
+                            <span th:unless="${m.estado == 1}" style="color: red;">Inactivo</span>
+                        </td>
+                        <td>
+                            <a th:href="@{/medicos/{id}(id=${m.idMedico})}" class="btn btn-info btn-sm">Ver</a>
+                            <a th:href="@{/medicos/edit/{id}(id=${m.idMedico})}" class="btn btn-warning btn-sm">Editar</a>
+                            <form th:action="@{/medicos/delete/{id}(id=${m.idMedico})}" method="POST" style="display:inline;">
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar este médico?')">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        function toggleDropdown() {
+            document.getElementById("profileDropdown").classList.toggle("show");
+        }
+        window.onclick = function (event) {
+            if (!event.target.matches('.profile_button')) {
+                var dropdowns = document.getElementsByClassName("dropdown_content");
+                for (var i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+    </script>
 </body>
 </html>
