@@ -15,6 +15,9 @@ public interface AgendamientoRepository extends JpaRepository<Agendamiento, Long
     // Buscar agendamientos por paciente
     List<Agendamiento> findByPaciente(Paciente paciente);
     
+    // Buscar agendamientos por médico
+    List<Agendamiento> findByMedico(Medico medico);
+    
     // Buscar agendamientos por fecha
     List<Agendamiento> findByFecha(Date fecha);
     

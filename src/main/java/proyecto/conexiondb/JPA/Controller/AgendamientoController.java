@@ -35,13 +35,35 @@ public class AgendamientoController {
 
     @GetMapping
     public String listar(Model model, HttpSession session) {
-        Paciente paciente = (Paciente) session.getAttribute("usuario");
-        if (paciente == null) {
+        Object usuario = session.getAttribute("usuario");
+        String tipoUsuario = (String) session.getAttribute("tipoUsuario");
+        
+        if (usuario == null) {
             return "redirect:/login";
         }
         
-        List<Agendamiento> agendamientos = agendamientoRepository.findByPaciente(paciente);
+        List<Agendamiento> agendamientos;
+        
+        // Si es administrador, mostrar todas las citas
+        if ("administrador".equals(tipoUsuario)) {
+            agendamientos = agendamientoRepository.findAll();
+        } 
+        // Si es paciente, mostrar solo sus citas
+        else if ("paciente".equals(tipoUsuario)) {
+            Paciente paciente = (Paciente) usuario;
+            agendamientos = agendamientoRepository.findByPaciente(paciente);
+        }
+        // Si es médico, mostrar solo sus citas
+        else if ("medico".equals(tipoUsuario)) {
+            proyecto.conexiondb.JPA.Entity.Medico medico = (proyecto.conexiondb.JPA.Entity.Medico) usuario;
+            agendamientos = agendamientoRepository.findByMedico(medico);
+        }
+        else {
+            return "redirect:/login";
+        }
+        
         model.addAttribute("agendamientos", agendamientos);
+        model.addAttribute("tipoUsuario", tipoUsuario);
         return "agendamientos/index";
     }
 

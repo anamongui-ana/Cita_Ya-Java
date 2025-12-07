@@ -627,12 +627,10 @@
             e.preventDefault();
 
             const formData = new FormData(this);
-            const csrfToken = /*[[${_csrf.token}]]*/ '';
 
             fetch('/administradores/profile/update', {
                 method: 'POST',
                 headers: {
-                    'X-CSRF-TOKEN': csrfToken,
                     'Accept': 'application/json'
                 },
                 body: formData
