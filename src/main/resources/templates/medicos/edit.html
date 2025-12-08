@@ -1,116 +1,358 @@
-<link rel="stylesheet" th:href="@{/Assets/CSS/edit.css}">
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-<div class="container">
-    <h1>Editar Médico</h1>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/Assets/CSS/edit.css}">
+    <title>Editar Médico - Panel Administrativo</title>
 
-    <!-- ERRORES -->
-    <div class="alert alert-danger" th:if="${errors != null}">
-        <ul>
-            <li th:each="err : ${errors}" th:text="${err}"></li>
-        </ul>
-    </div>
+    <style>
+        * {
+            font-family: arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    <form th:action="@{/medicos/update/{id}(id=${medico.idMedico})}" method="POST">
+        body {
+            background-color: #f8f9fa;
+            padding-top: 100px;
+        }
 
-        <!-- Tipo Documento -->
-        <div class="mb-3">
-            <label class="form-label">Tipo de Documento</label>
-            <select name="tipoDoc" class="form-select" required>
-                <option value="">-- Selecciona --</option>
-                <option value="CC" th:selected="${medico.tipoDoc == 'CC'}">CC</option>
-                <option value="TI" th:selected="${medico.tipoDoc == 'TI'}">TI</option>
-                <option value="CE" th:selected="${medico.tipoDoc == 'CE'}">CE</option>
-                <option value="PA" th:selected="${medico.tipoDoc == 'PA'}">PA</option>
-                <option value="DNI" th:selected="${medico.tipoDoc == 'DNI'}">DNI</option>
-            </select>
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .container_header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+
+        .logo {
+            width: 5rem;
+            height: 5rem;
+            position: relative;
+            left: 6rem;
+        }
+
+        .profile_dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .profile_button {
+            background-color: #059669;
+            color: white;
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+            position: relative;
+            right: 6rem;
+        }
+
+        .profile_button:hover {
+            background-color: #10b981;
+        }
+
+        .dropdown_content {
+            display: none;
+            position: absolute;
+            right: 6rem;
+            background-color: white;
+            min-width: 200px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            z-index: 1001;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+
+        .dropdown_content.show {
+            display: block;
+        }
+
+        .dropdown_item {
+            color: #333;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.2s;
+            cursor: pointer;
+            background: #fff;
+            border: none;
+            width: 100%;
+        }
+
+        .dropdown_item:hover {
+            background-color: #f1f1f1;
+        }
+
+        .admin-navbar {
+            background-color: #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            padding: 0.8rem 1.5rem;
+            border-bottom: 3px solid #059669;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        .admin-navbar .navbar-nav {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: center;
+            list-style: none;
+        }
+
+        .admin-navbar .nav-link {
+            color: #3b82f6;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.6rem 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            text-decoration: none;
+        }
+
+        .admin-navbar .nav-link:hover,
+        .admin-navbar .nav-link.active {
+            background: #f0fdf4;
+            color: #059669;
+            transform: translateY(-2px);
+        }
+
+        .admin-navbar .nav-link i {
+            font-size: 1rem;
+            color: #059669;
+            transition: color 0.3s;
+        }
+
+        .admin-navbar .nav-link:hover i {
+            color: #10b981;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+    <header>
+        <div class="container_header">
+            <img class="logo" th:src="@{/Assets/img/logo.png}" alt="Cita Ya Logo">
+
+            <div class="profile_dropdown">
+                <button class="profile_button" onclick="toggleDropdown()">
+                    <i class="fas fa-user-cog"></i>
+                    <span th:if="${session.nombreCompleto}" th:text="'Admin ' + ${session.nombreCompleto}"></span>
+                    <span th:unless="${session.nombreCompleto}">Admin Usuario</span>
+                </button>
+                <div class="dropdown_content" id="profileDropdown">
+                    <button class="dropdown_item" onclick="openProfileModal()">Ver Mi Perfil</button>
+                    <button class="dropdown_item" onclick="openEditModal()">Editar Perfil</button>
+                    <hr style="margin: 0;">
+                    <form method="POST" th:action="@{/logout}" style="margin: 0;">
+                        <button type="submit" class="dropdown_item">Cerrar Sesión</button>
+                    </form>
+                </div>
+            </div>
         </div>
+    </header>
 
-        <!-- Número Documento -->
-        <div class="mb-3">
-            <label class="form-label">Número de Documento</label>
-            <input type="text" name="numeroDoc" maxlength="10"
-                   oninput="soloNumeros(this)" class="form-control"
-                   th:value="${medico.numeroDoc}" required>
+    <nav class="navbar navbar-expand-lg admin-navbar">
+        <div class="container">
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/pacientes}">
+                            <i class="fas fa-users me-1"></i>
+                            Pacientes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/medicos}">
+                            <i class="fas fa-user-md me-1"></i>
+                            Médicos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/agendamientos}">
+                            <i class="fas fa-calendar-alt me-1"></i>
+                            Citas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/historiales}">
+                            <i class="fas fa-file-medical me-1"></i>
+                            Historiales
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/administradores}">
+                            <i class="fas fa-user-shield me-1"></i>
+                            Administradores
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </div>
+    </nav>
 
-        <!-- Nombre -->
-        <div class="mb-3">
-            <label class="form-label">Nombre</label>
-            <input type="text" name="nombre" maxlength="50"
-                   oninput="soloLetras(this)" class="form-control"
-                   th:value="${medico.nombre}" required>
+    <main class="main-content py-4">
+        <div class="container">
+            <h1>Editar Médico</h1>
+
+            <!-- ERRORES -->
+            <div class="alert alert-danger" th:if="${errors != null}">
+                <ul>
+                    <li th:each="err : ${errors}" th:text="${err}"></li>
+                </ul>
+            </div>
+
+            <form th:action="@{/medicos/update/{id}(id=${medico.idMedico})}" method="POST">
+
+                <!-- Tipo Documento -->
+                <div class="mb-3">
+                    <label class="form-label">Tipo de Documento</label>
+                    <select name="tipoDoc" class="form-select" required>
+                        <option value="">-- Selecciona --</option>
+                        <option value="CC" th:selected="${medico.tipoDoc == 'CC'}">CC</option>
+                        <option value="TI" th:selected="${medico.tipoDoc == 'TI'}">TI</option>
+                        <option value="CE" th:selected="${medico.tipoDoc == 'CE'}">CE</option>
+                        <option value="PA" th:selected="${medico.tipoDoc == 'PA'}">PA</option>
+                        <option value="DNI" th:selected="${medico.tipoDoc == 'DNI'}">DNI</option>
+                    </select>
+                </div>
+
+                <!-- Número Documento -->
+                <div class="mb-3">
+                    <label class="form-label">Número de Documento</label>
+                    <input type="text" name="numeroDoc" maxlength="30"
+                           oninput="soloNumeros(this)" class="form-control"
+                           th:value="${medico.numeroDoc}" required>
+                </div>
+
+                <!-- Nombre -->
+                <div class="mb-3">
+                    <label class="form-label">Nombre</label>
+                    <input type="text" name="nombre" maxlength="100"
+                           oninput="soloLetras(this)" class="form-control"
+                           th:value="${medico.nombre}" required>
+                </div>
+
+                <!-- Apellido -->
+                <div class="mb-3">
+                    <label class="form-label">Apellido</label>
+                    <input type="text" name="apellido" maxlength="100"
+                           oninput="soloLetras(this)" class="form-control"
+                           th:value="${medico.apellido}" required>
+                </div>
+
+                <!-- Género -->
+                <div class="mb-3">
+                    <label class="form-label">Género</label>
+                    <select name="genero" class="form-select" required>
+                        <option value="">-- Selecciona --</option>
+                        <option value="M" th:selected="${medico.genero == 'M'}">Masculino</option>
+                        <option value="F" th:selected="${medico.genero == 'F'}">Femenino</option>
+                        <option value="Otro" th:selected="${medico.genero == 'Otro'}">Otro</option>
+                    </select>
+                </div>
+
+                <!-- Especialidad -->
+                <div class="mb-3">
+                    <label class="form-label">Especialidad</label>
+                    <select name="especialidad" class="form-select" required>
+                        <option value="">-- Selecciona --</option>
+                        <option value="Medicina General" th:selected="${medico.especialidad == 'Medicina General'}">Medicina General</option>
+                        <option value="Ortopedia" th:selected="${medico.especialidad == 'Ortopedia'}">Ortopedia</option>
+                        <option value="Cardiología" th:selected="${medico.especialidad == 'Cardiología'}">Cardiología</option>
+                        <option value="Psicología" th:selected="${medico.especialidad == 'Psicología'}">Psicología</option>
+                        <option value="Pediatría" th:selected="${medico.especialidad == 'Pediatría'}">Pediatría</option>
+                        <option value="Dermatología" th:selected="${medico.especialidad == 'Dermatología'}">Dermatología</option>
+                    </select>
+                </div>
+
+                <!-- Teléfono -->
+                <div class="mb-3">
+                    <label class="form-label">Teléfono</label>
+                    <input type="text" name="telefono"
+                           maxlength="20" oninput="soloNumeros(this)"
+                           class="form-control"
+                           th:value="${medico.telefono}">
+                </div>
+
+                <!-- Correo -->
+                <div class="mb-3">
+                    <label class="form-label">Correo</label>
+                    <input type="email" name="correo"
+                           maxlength="255" class="form-control"
+                           th:value="${medico.correo}" required>
+                </div>
+
+                <!-- Contraseña -->
+                <div class="mb-3">
+                    <label class="form-label">Contraseña (deja en blanco si no quieres cambiarla)</label>
+                    <input type="password" name="contraseña" minlength="8"
+                           class="form-control">
+                </div>
+
+                <!-- Estado -->
+                <div class="mb-3 form-check">
+                    <input type="checkbox" name="estado" value="1"
+                           class="form-check-input"
+                           th:checked="${medico.estado == 1}">
+                    <label class="form-check-label">Activo</label>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Actualizar</button>
+                <a th:href="@{/medicos}" class="btn btn-secondary">Cancelar</a>
+
+            </form>
         </div>
+    </main>
 
-        <!-- Apellido -->
-        <div class="mb-3">
-            <label class="form-label">Apellido</label>
-            <input type="text" name="apellido" maxlength="50"
-                   oninput="soloLetras(this)" class="form-control"
-                   th:value="${medico.apellido}" required>
-        </div>
+    <script>
+        function soloNumeros(i){i.value=i.value.replace(/\D/g,'');}
+        function soloLetras(i){i.value=i.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g,'');}
 
-        <!-- Género -->
-        <div class="mb-3">
-            <label class="form-label">Género</label>
-            <select name="genero" class="form-select" required>
-                <option value="">-- Selecciona --</option>
-                <option value="M" th:selected="${medico.genero == 'M'}">Masculino</option>
-                <option value="F" th:selected="${medico.genero == 'F'}">Femenino</option>
-                <option value="Otro" th:selected="${medico.genero == 'Otro'}">Otro</option>
-            </select>
-        </div>
+        function toggleDropdown() {
+            document.getElementById("profileDropdown").classList.toggle("show");
+        }
 
-        <!-- Especialidad -->
-        <div class="mb-3">
-            <label class="form-label">Especialidad</label>
-            <input type="text" name="especialidad"
-                   maxlength="100" oninput="soloLetras(this)"
-                   class="form-control"
-                   th:value="${medico.especialidad}" required>
-        </div>
-
-        <!-- Teléfono -->
-        <div class="mb-3">
-            <label class="form-label">Teléfono</label>
-            <input type="text" name="telefono"
-                   maxlength="10" oninput="soloNumeros(this)"
-                   class="form-control"
-                   th:value="${medico.telefono}">
-        </div>
-
-        <!-- Correo -->
-        <div class="mb-3">
-            <label class="form-label">Correo</label>
-            <input type="email" name="correo"
-                   maxlength="100" class="form-control"
-                   th:value="${medico.correo}" required>
-        </div>
-
-        <!-- Contraseña -->
-        <div class="mb-3">
-            <label class="form-label">Contraseña (deja vacío si no quieres cambiarla)</label>
-            <input type="password" name="contraseña" minlength="8"
-                   class="form-control">
-        </div>
-
-        <!-- Estado -->
-        <div class="mb-3 form-check">
-            <input type="checkbox" name="estado" value="1"
-                   class="form-check-input"
-                   th:checked="${medico.estado == 1}">
-            <label class="form-check-label">Activo</label>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Actualizar</button>
-        <a th:href="@{/medicos}" class="btn btn-secondary">Cancelar</a>
-    </form>
-</div>
-
-<script>
-function soloNumeros(input) {
-    input.value = input.value.replace(/\D/g, '');
-}
-function soloLetras(input) {
-    input.value = input.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
-}
-</script>
+        window.onclick = function (event) {
+            if (!event.target.matches('.profile_button')) {
+                var dropdowns = document.getElementsByClassName("dropdown_content");
+                for (var i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>

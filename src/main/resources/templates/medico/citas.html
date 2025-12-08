@@ -56,6 +56,18 @@
             color: white;
             margin-bottom: 1rem;
         }
+        .estado-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.25rem;
+            font-weight: 600;
+            font-size: 0.75rem;
+        }
+        .estado-programada { background-color: #3b82f6; color: white; }
+        .estado-en-curso { background-color: #f59e0b; color: white; }
+        .estado-completada { background-color: #059669; color: white; }
+        .estado-cancelada { background-color: #6b7280; color: white; }
+        .estado-no-asistio { background-color: #dc2626; color: white; }
     </style>
 </head>
 <body>
@@ -76,6 +88,17 @@
                     <input type="text" name="buscar" th:value="${buscar}" placeholder="Nombre del paciente...">
                 </div>
                 <div class="filter-group">
+                    <label>Estado</label>
+                    <select name="estado">
+                        <option value="Todas" th:selected="${estado == null || estado == 'Todas'}">Todas</option>
+                        <option value="Programada" th:selected="${estado == 'Programada'}">Programada</option>
+                        <option value="En Curso" th:selected="${estado == 'En Curso'}">En Curso</option>
+                        <option value="Completada" th:selected="${estado == 'Completada'}">Completada</option>
+                        <option value="Cancelada" th:selected="${estado == 'Cancelada'}">Cancelada</option>
+                        <option value="No Asistió" th:selected="${estado == 'No Asistió'}">No Asistió</option>
+                    </select>
+                </div>
+                <div class="filter-group">
                     <button type="submit" class="btn btn-primary">Filtrar</button>
                     <a th:href="@{/medico/dashboard/citas}" class="btn btn-secondary">Limpiar</a>
                 </div>
@@ -86,6 +109,7 @@
     <table class="table">
         <thead>
         <tr>
+            <th>Estado</th>
             <th>Fecha</th>
             <th>Hora</th>
             <th>Tipo de Cita</th>
@@ -96,6 +120,10 @@
         </thead>
         <tbody>
         <tr th:each="cita : ${citas}">
+            <td>
+                <span th:class="'estado-badge estado-' + ${#strings.toLowerCase(#strings.replace(cita.estado, ' ', '-'))}" 
+                      th:text="${cita.estado}">Estado</span>
+            </td>
             <td th:text="${#dates.format(cita.fecha, 'dd/MM/yyyy')}">Fecha</td>
             <td th:text="${cita.hora}">Hora</td>
             <td th:text="${cita.cita}">Tipo</td>
@@ -106,7 +134,7 @@
             </td>
         </tr>
         <tr th:if="${#lists.isEmpty(citas)}">
-            <td colspan="6" style="text-align: center; padding: 2rem;">
+            <td colspan="7" style="text-align: center; padding: 2rem;">
                 <em>No se encontraron citas con los filtros aplicados</em>
             </td>
         </tr>

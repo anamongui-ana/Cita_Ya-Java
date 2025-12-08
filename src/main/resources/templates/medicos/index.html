@@ -116,7 +116,7 @@
                             <span th:unless="${m.estado == 1}" style="color: red;">Inactivo</span>
                         </td>
                         <td>
-                            <a th:href="@{/medicos/{id}(id=${m.idMedico})}" class="btn btn-info btn-sm">Ver</a>
+                            <a th:href="@{/medicos/show/{id}(id=${m.idMedico})}" class="btn btn-info btn-sm">Ver</a>
                             <a th:href="@{/medicos/edit/{id}(id=${m.idMedico})}" class="btn btn-warning btn-sm">Editar</a>
                             <form th:action="@{/medicos/delete/{id}(id=${m.idMedico})}" method="POST" style="display:inline;">
                                 <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar este médico?')">Eliminar</button>

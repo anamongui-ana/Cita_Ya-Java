@@ -66,6 +66,37 @@
         .btn-back:hover {
             background-color: #2563eb;
         }
+        .btn-success {
+            background-color: #059669;
+            color: white;
+        }
+        .btn-success:hover {
+            background-color: #047857;
+        }
+        .btn-danger {
+            background-color: #dc2626;
+            color: white;
+        }
+        .btn-danger:hover {
+            background-color: #b91c1c;
+        }
+        .estado-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        .estado-programada { background-color: #3b82f6; color: white; }
+        .estado-en-curso { background-color: #f59e0b; color: white; }
+        .estado-completada { background-color: #059669; color: white; }
+        .estado-cancelada { background-color: #6b7280; color: white; }
+        .estado-no-asistio { background-color: #dc2626; color: white; }
+        .actions {
+            margin-top: 2rem;
+            display: flex;
+            gap: 1rem;
+        }
     </style>
 </head>
 <body>
@@ -74,6 +105,13 @@
     
     <div class="card">
         <h2>Información de la Cita</h2>
+        <div class="info-row">
+            <div class="info-label">Estado:</div>
+            <div class="info-value">
+                <span th:class="'estado-badge estado-' + ${#strings.toLowerCase(#strings.replace(cita.estado, ' ', '-'))}" 
+                      th:text="${cita.estado}">Estado</span>
+            </div>
+        </div>
         <div class="info-row">
             <div class="info-label">Fecha:</div>
             <div class="info-value" th:text="${#dates.format(cita.fecha, 'dd/MM/yyyy')}">Fecha</div>
@@ -109,6 +147,47 @@
         <div class="info-row">
             <div class="info-label">Correo:</div>
             <div class="info-value" th:text="${cita.paciente.correo}">Correo</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Acciones</h2>
+        <div class="actions">
+            <!-- Botón Atender Paciente - solo visible si es HOY y está Programada o En Curso -->
+            <a th:if="${(cita.estado == 'Programada' || cita.estado == 'En Curso') && 
+                       cita.fecha.toString() == #dates.format(#dates.createNow(), 'yyyy-MM-dd')}"
+               th:href="@{/medico/dashboard/pacientes/{id}/historia/nueva(id=${cita.paciente.idPaciente}, citaId=${cita.idAgendamiento})}" 
+               class="btn btn-success">
+                ✓ Atender Paciente
+            </a>
+            
+            <!-- Mensaje si la cita es futura -->
+            <p th:if="${(cita.estado == 'Programada' || cita.estado == 'En Curso') && 
+                       cita.fecha.toString() != #dates.format(#dates.createNow(), 'yyyy-MM-dd')}"
+               style="color: #3b82f6; font-weight: 600;">
+                📅 Esta cita está programada para el <span th:text="${#dates.format(cita.fecha, 'dd/MM/yyyy')}"></span>. 
+                Podrá atender al paciente el día de la cita.
+            </p>
+            
+            <!-- Botón Cancelar Cita - solo visible si está Programada o En Curso -->
+            <form th:if="${cita.estado == 'Programada' || cita.estado == 'En Curso'}"
+                  th:action="@{/medico/dashboard/citas/{id}/cancelar(id=${cita.idAgendamiento})}" 
+                  method="POST" 
+                  onsubmit="return confirm('¿Está seguro de que desea cancelar esta cita?');"
+                  style="display: inline;">
+                <button type="submit" class="btn btn-danger">✗ Cancelar Cita</button>
+            </form>
+            
+            <!-- Mensaje si la cita ya fue atendida/cancelada -->
+            <p th:if="${cita.estado == 'Completada'}" style="color: #059669; font-weight: 600;">
+                ✓ Esta cita ya fue completada
+            </p>
+            <p th:if="${cita.estado == 'Cancelada'}" style="color: #6b7280; font-weight: 600;">
+                Esta cita fue cancelada
+            </p>
+            <p th:if="${cita.estado == 'No Asistió'}" style="color: #dc2626; font-weight: 600;">
+                El paciente no asistió a esta cita
+            </p>
         </div>
     </div>
 </div>

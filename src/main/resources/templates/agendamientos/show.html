@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detalle del Médico - Panel Administrativo</title>
+    <title>Detalle de la Cita - Panel Administrativo</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" th:href="@{/Assets/CSS/show.css}">
@@ -193,13 +193,13 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" th:href="@{/medicos}">
+                        <a class="nav-link" th:href="@{/medicos}">
                             <i class="fas fa-user-md me-1"></i>
                             Médicos
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/agendamientos}">
+                        <a class="nav-link active" th:href="@{/agendamientos}">
                             <i class="fas fa-calendar-alt me-1"></i>
                             Citas
                         </a>
@@ -224,50 +224,50 @@
     <main class="main-content py-4">
         <div class="container">
             <div class="card">
-                <h1>Detalle del Médico</h1>
+                <h1>Detalle de la Cita</h1>
 
                 <div class="card-body">
 
-                    <p><strong>ID:</strong> <span th:text="${medico.idMedico}"></span></p>
+                    <p><strong>ID:</strong> <span th:text="${agendamiento.idAgendamiento}"></span></p>
 
-                    <p><strong>Documento:</strong>
-                        <span th:text="${medico.tipoDoc + ' ' + medico.numeroDoc}"></span>
+                    <p><strong>Tipo de Cita:</strong>
+                        <span th:text="${agendamiento.cita}"></span>
                     </p>
 
-                    <p><strong>Nombre:</strong>
-                        <span th:text="${medico.nombre + ' ' + medico.apellido}"></span>
+                    <p><strong>Fecha:</strong>
+                        <span th:text="${#dates.format(agendamiento.fecha, 'dd/MM/yyyy')}"></span>
                     </p>
 
-                    <p><strong>Género:</strong>
-                        <span th:text="${medico.genero}"></span>
+                    <p><strong>Hora:</strong>
+                        <span th:text="${agendamiento.hora}"></span>
+                    </p>
+
+                    <p><strong>Paciente:</strong>
+                        <span th:text="${agendamiento.paciente.nombre + ' ' + agendamiento.paciente.apellido}"></span>
+                    </p>
+
+                    <p><strong>Documento del Paciente:</strong>
+                        <span th:text="${agendamiento.paciente.tipoDoc + ' ' + agendamiento.paciente.numeroDoc}"></span>
+                    </p>
+
+                    <p><strong>Médico:</strong>
+                        <span th:text="${agendamiento.medico.nombre + ' ' + agendamiento.medico.apellido}"></span>
                     </p>
 
                     <p><strong>Especialidad:</strong>
-                        <span th:text="${medico.especialidad}"></span>
-                    </p>
-
-                    <p><strong>Teléfono:</strong>
-                        <span th:text="${medico.telefono}"></span>
-                    </p>
-
-                    <p><strong>Correo:</strong>
-                        <span th:text="${medico.correo}"></span>
-                    </p>
-
-                    <p><strong>Estado:</strong>
-                        <span th:text="${medico.estado == 1 ? 'Activo' : 'Inactivo'}"></span>
+                        <span th:text="${agendamiento.medico.especialidad}"></span>
                     </p>
 
                 </div>
 
                 <div class="actions">
 
-                    <a th:href="@{/medicos}" class="btn btn-secondary">
+                    <a th:href="@{/agendamientos}" class="btn btn-secondary">
                         Volver
                     </a>
 
-                    <a th:href="@{'/medicos/edit/' + ${medico.idMedico}}" class="btn btn-warning">
-                        Editar Médico
+                    <a th:href="@{'/agendamientos/editar/' + ${agendamiento.idAgendamiento}}" class="btn btn-warning">
+                        Editar Cita
                     </a>
 
                 </div>

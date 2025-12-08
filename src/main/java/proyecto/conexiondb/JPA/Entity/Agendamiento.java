@@ -30,6 +30,9 @@ public class Agendamiento {
     @Column(name="hora",nullable = false)
     private String hora;
 
+    @Column(name="estado", length = 50, nullable = false)
+    private String estado; // Programada, En Curso, Completada, Cancelada, No Asistió
+
     // RELACIÓN con paciente
     @ManyToOne
     @JoinColumn(name = "id_paciente", nullable = false)
@@ -88,6 +91,14 @@ public class Agendamiento {
 
     public void setMedico(Medico medico) {
         this.medico = medico;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
     
 }

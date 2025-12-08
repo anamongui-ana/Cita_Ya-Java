@@ -211,4 +211,13 @@ public class PacienteController {
         }
         return "redirect:/pacientes";
     }
+
+    @GetMapping("/reporte")
+    public String generarReporte(Model model) {
+        java.util.List<Paciente> pacientes = pacienteRepository.findAll(Sort.by(Sort.Direction.ASC, "idPaciente"));
+        model.addAttribute("pacientes", pacientes);
+        model.addAttribute("fechaActual", java.time.LocalDate.now().toString());
+        model.addAttribute("filtros", new java.util.HashMap<>());
+        return "pacientes/reporte";
+    }
 }

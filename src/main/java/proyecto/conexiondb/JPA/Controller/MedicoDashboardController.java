@@ -14,6 +14,8 @@ import proyecto.conexiondb.JPA.Repository.MedicoRepository;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,27 +45,47 @@ public class MedicoDashboardController {
             return "redirect:/login";
         }
 
+        // Actualizar estados de citas antes de mostrar
+        actualizarEstadosCitas(medico);
+
         // Calcular estadísticas
         Date hoy = Date.valueOf(LocalDate.now());
-        long citasDelDia = agendamientoRepository.countByMedicoAndFecha(medico, hoy);
+        long citasDelDia = agendamientoRepository.countByMedicoAndFechaAndEstado(medico, hoy, "Programada");
         
         LocalDate ahora = LocalDate.now();
         long citasDelMes = agendamientoRepository.countByMedicoAndMesAndAnio(
             medico, ahora.getMonthValue(), ahora.getYear()
         );
         
+        long citasCompletadasMes = agendamientoRepository.countByMedicoAndMesAndAnioAndEstado(
+            medico, ahora.getMonthValue(), ahora.getYear(), "Completada"
+        );
+        
+        long citasNoAsistioMes = agendamientoRepository.countByMedicoAndMesAndAnioAndEstado(
+            medico, ahora.getMonthValue(), ahora.getYear(), "No Asistió"
+        );
+        
         List<Paciente> pacientesUnicos = agendamientoRepository.findDistinctPacientesByMedico(medico);
         long totalPacientes = pacientesUnicos.size();
+
+        // Calcular porcentaje de asistencia
+        long citasTotalesMes = citasCompletadasMes + citasNoAsistioMes;
+        double porcentajeAsistencia = citasTotalesMes > 0 ? 
+            (citasCompletadasMes * 100.0 / citasTotalesMes) : 0;
 
         // Obtener próximas citas (limitadas a 5)
         List<Agendamiento> todasLasCitas = agendamientoRepository.findByMedicoOrderByFechaAscHoraAsc(medico);
         List<Agendamiento> proximasCitas = todasLasCitas.stream()
-            .filter(cita -> !cita.getFecha().before(hoy))
+            .filter(cita -> !cita.getFecha().before(hoy) && 
+                   ("Programada".equals(cita.getEstado()) || "En Curso".equals(cita.getEstado())))
             .limit(5)
             .collect(Collectors.toList());
 
         model.addAttribute("citasDelDia", citasDelDia);
         model.addAttribute("citasDelMes", citasDelMes);
+        model.addAttribute("citasCompletadasMes", citasCompletadasMes);
+        model.addAttribute("citasNoAsistioMes", citasNoAsistioMes);
+        model.addAttribute("porcentajeAsistencia", String.format("%.1f", porcentajeAsistencia));
         model.addAttribute("totalPacientes", totalPacientes);
         model.addAttribute("proximasCitas", proximasCitas);
         model.addAttribute("medico", medico);
@@ -74,11 +96,15 @@ public class MedicoDashboardController {
     @GetMapping("/citas")
     public String misCitas(HttpSession session, Model model,
                           @RequestParam(required = false) String fecha,
-                          @RequestParam(required = false) String buscar) {
+                          @RequestParam(required = false) String buscar,
+                          @RequestParam(required = false) String estado) {
         Medico medico = obtenerMedicoSesion(session);
         if (medico == null) {
             return "redirect:/login";
         }
+
+        // Actualizar estados antes de mostrar
+        actualizarEstadosCitas(medico);
 
         List<Agendamiento> citas = agendamientoRepository.findByMedicoOrderByFechaAscHoraAsc(medico);
 
@@ -92,6 +118,13 @@ public class MedicoDashboardController {
             } catch (Exception e) {
                 // Ignorar error de fecha inválida
             }
+        }
+
+        // Filtrar por estado si se proporciona
+        if (estado != null && !estado.isEmpty() && !"Todas".equals(estado)) {
+            citas = citas.stream()
+                .filter(c -> estado.equals(c.getEstado()))
+                .collect(Collectors.toList());
         }
 
         // Filtrar por nombre de paciente si se proporciona
@@ -109,6 +142,7 @@ public class MedicoDashboardController {
         model.addAttribute("citas", citas);
         model.addAttribute("fecha", fecha);
         model.addAttribute("buscar", buscar);
+        model.addAttribute("estado", estado);
         model.addAttribute("medico", medico);
 
         return "medico/citas";
@@ -134,10 +168,48 @@ public class MedicoDashboardController {
             return "redirect:/medico/dashboard/citas";
         }
 
+        // Actualizar estado de esta cita específica
+        actualizarEstadoCita(cita);
+        agendamientoRepository.save(cita);
+
         model.addAttribute("cita", cita);
         model.addAttribute("medico", medico);
 
         return "medico/cita-detalle";
+    }
+
+    @PostMapping("/citas/{id}/cancelar")
+    public String cancelarCita(@PathVariable Long id, HttpSession session, RedirectAttributes redirectAttrs) {
+        Medico medico = obtenerMedicoSesion(session);
+        if (medico == null) {
+            return "redirect:/login";
+        }
+
+        Agendamiento cita = agendamientoRepository.findById(id).orElse(null);
+        
+        if (cita == null) {
+            redirectAttrs.addFlashAttribute("error", "Cita no encontrada");
+            return "redirect:/medico/dashboard/citas";
+        }
+
+        // Verificar que la cita pertenece al médico
+        if (cita.getMedico() == null || !cita.getMedico().getIdMedico().equals(medico.getIdMedico())) {
+            redirectAttrs.addFlashAttribute("error", "No tiene permiso para cancelar esta cita");
+            return "redirect:/medico/dashboard/citas";
+        }
+
+        // Solo se pueden cancelar citas programadas o en curso
+        if ("Completada".equals(cita.getEstado()) || "Cancelada".equals(cita.getEstado()) || 
+            "No Asistió".equals(cita.getEstado())) {
+            redirectAttrs.addFlashAttribute("error", "No se puede cancelar una cita con estado: " + cita.getEstado());
+            return "redirect:/medico/dashboard/citas/" + id;
+        }
+
+        cita.setEstado("Cancelada");
+        agendamientoRepository.save(cita);
+
+        redirectAttrs.addFlashAttribute("success", "Cita cancelada exitosamente");
+        return "redirect:/medico/dashboard/citas";
     }
 
     @GetMapping("/pacientes")
@@ -332,6 +404,7 @@ public class MedicoDashboardController {
                                   @RequestParam String diagnostico,
                                   @RequestParam String tratamiento,
                                   @RequestParam(required = false) String observaciones,
+                                  @RequestParam(required = false) Long citaId,
                                   HttpSession session,
                                   RedirectAttributes redirectAttrs) {
         Medico medico = obtenerMedicoSesion(session);
@@ -380,7 +453,22 @@ public class MedicoDashboardController {
 
         historiaClinicaRepository.save(historia);
 
+        // Si viene de una cita, marcarla como completada
+        if (citaId != null) {
+            Agendamiento cita = agendamientoRepository.findById(citaId).orElse(null);
+            if (cita != null && cita.getMedico().getIdMedico().equals(medico.getIdMedico())) {
+                cita.setEstado("Completada");
+                agendamientoRepository.save(cita);
+            }
+        }
+
         redirectAttrs.addFlashAttribute("success", "Historia clínica creada exitosamente");
+        
+        // Si viene de una cita, redirigir a las citas
+        if (citaId != null) {
+            return "redirect:/medico/dashboard/citas";
+        }
+        
         return "redirect:/medico/dashboard/pacientes/" + id + "/historia";
     }
 
@@ -419,5 +507,65 @@ public class MedicoDashboardController {
             return (Medico) usuario;
         }
         return null;
+    }
+
+    private void actualizarEstadosCitas(Medico medico) {
+        List<Agendamiento> citas = agendamientoRepository.findByMedicoOrderByFechaAscHoraAsc(medico);
+        
+        for (Agendamiento cita : citas) {
+            if (actualizarEstadoCita(cita)) {
+                agendamientoRepository.save(cita);
+            }
+        }
+    }
+
+    private boolean actualizarEstadoCita(Agendamiento cita) {
+        // No actualizar citas ya completadas, canceladas o marcadas como no asistió
+        if ("Completada".equals(cita.getEstado()) || 
+            "Cancelada".equals(cita.getEstado()) || 
+            "No Asistió".equals(cita.getEstado())) {
+            return false;
+        }
+
+        LocalDateTime ahora = LocalDateTime.now();
+        LocalDate fechaCita = cita.getFecha().toLocalDate();
+        
+        // Parsear la hora (formato HH:mm)
+        LocalTime horaCita;
+        try {
+            horaCita = LocalTime.parse(cita.getHora());
+        } catch (Exception e) {
+            // Si no se puede parsear, mantener el estado actual
+            return false;
+        }
+        
+        LocalDateTime fechaHoraCita = LocalDateTime.of(fechaCita, horaCita);
+        LocalDateTime fechaHoraLimite = fechaHoraCita.plusMinutes(30);
+        
+        // Si la cita es en el futuro, debe estar "Programada"
+        if (fechaHoraCita.isAfter(ahora)) {
+            if (!"Programada".equals(cita.getEstado())) {
+                cita.setEstado("Programada");
+                return true;
+            }
+            return false;
+        }
+        
+        // Si estamos dentro de los 30 minutos de la cita, está "En Curso"
+        if (ahora.isBefore(fechaHoraLimite)) {
+            if (!"En Curso".equals(cita.getEstado())) {
+                cita.setEstado("En Curso");
+                return true;
+            }
+            return false;
+        }
+        
+        // Si pasaron más de 30 minutos y no fue atendida, marcar como "No Asistió"
+        if (!"No Asistió".equals(cita.getEstado())) {
+            cita.setEstado("No Asistió");
+            return true;
+        }
+        
+        return false;
     }
 }

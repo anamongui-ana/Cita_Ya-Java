@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar Cita - Cita Ya</title>
+    <title>Agendar Cita - Cita Ya</title>
     <link rel="stylesheet" th:href="@{/Assets/CSS/table.css}">
     <style>
         body {
@@ -154,12 +154,16 @@
     <div class="container-main">
         <div class="form-container">
             <div class="header-with-back">
-                <a th:href="@{/pacientes/dashboard}" class="btn-back">
-                    ← Volver a Mis Citas
+                <a th:if="${session.tipoUsuario == 'paciente'}" th:href="@{/Layouts/paciente}" class="btn-back">
+                    ← Volver al Dashboard
+                </a>
+                <a th:if="${session.tipoUsuario == 'administrador'}" th:href="@{/agendamientos}" class="btn-back">
+                    ← Volver a Citas
                 </a>
             </div>
             
-            <h1>Editar Cita</h1>
+            <h1 th:if="${session.tipoUsuario == 'paciente'}">Agendar Nueva Cita</h1>
+            <h1 th:if="${session.tipoUsuario == 'administrador'}">Crear Nueva Cita</h1>
             
             <div th:if="${error}" class="alert alert-error">
                 <strong>Error:</strong> <span th:text="${error}"></span>
@@ -169,18 +173,30 @@
                 <strong>Importante:</strong> Las citas deben agendarse con al menos 1 día de anticipación.
             </div>
             
-            <form th:action="@{/agendamientos/actualizar/{id}(id=${agendamiento.idAgendamiento})}" method="POST">
+            <form th:action="${session.tipoUsuario == 'administrador' ? '/agendamientos/store' : '/agendamientos/guardar'}" method="POST">
+                
+                <!-- Campo de selección de paciente solo para administradores -->
+                <div th:if="${session.tipoUsuario == 'administrador'}" class="form-group">
+                    <label for="idPaciente">Seleccionar Paciente: *</label>
+                    <select id="idPaciente" name="idPaciente" class="form-control" required>
+                        <option value="">Seleccione un paciente</option>
+                        <option th:each="paciente : ${pacientes}" 
+                                th:value="${paciente.idPaciente}" 
+                                th:text="${paciente.nombre + ' ' + paciente.apellido + ' - ' + paciente.tipoDoc + ' ' + paciente.numeroDoc}">
+                        </option>
+                    </select>
+                </div>
                 
                 <div class="form-group">
                     <label for="cita">Tipo de Cita / Especialidad: *</label>
                     <select id="cita" name="cita" class="form-control" required>
                         <option value="">Seleccione una especialidad</option>
-                        <option value="Medicina General" th:selected="${agendamiento.cita == 'Medicina General'}">Medicina General</option>
-                        <option value="Ortopedia" th:selected="${agendamiento.cita == 'Ortopedia'}">Ortopedia</option>
-                        <option value="Cardiología" th:selected="${agendamiento.cita == 'Cardiología'}">Cardiología</option>
-                        <option value="Psicología" th:selected="${agendamiento.cita == 'Psicología'}">Psicología</option>
-                        <option value="Pediatría" th:selected="${agendamiento.cita == 'Pediatría'}">Pediatría</option>
-                        <option value="Dermatología" th:selected="${agendamiento.cita == 'Dermatología'}">Dermatología</option>
+                        <option value="Medicina General">Medicina General</option>
+                        <option value="Ortopedia">Ortopedia</option>
+                        <option value="Cardiología">Cardiología</option>
+                        <option value="Psicología">Psicología</option>
+                        <option value="Pediatría">Pediatría</option>
+                        <option value="Dermatología">Dermatología</option>
                     </select>
                 </div>
 
@@ -189,7 +205,6 @@
                     <input type="date" 
                            id="fecha" 
                            name="fecha"
-                           th:value="${#dates.format(agendamiento.fecha, 'yyyy-MM-dd')}"
                            th:min="${fechaMinima}"
                            class="form-control" 
                            required>
@@ -200,29 +215,24 @@
                     <label for="hora">Hora de la Cita: *</label>
                     <select id="hora" name="hora" class="form-control" required onchange="cargarMedicos()">
                         <option value="">Seleccione una hora</option>
-                        <option value="08:00" th:selected="${agendamiento.hora == '08:00'}">08:00 AM</option>
-                        <option value="09:00" th:selected="${agendamiento.hora == '09:00'}">09:00 AM</option>
-                        <option value="10:00" th:selected="${agendamiento.hora == '10:00'}">10:00 AM</option>
-                        <option value="11:00" th:selected="${agendamiento.hora == '11:00'}">11:00 AM</option>
-                        <option value="14:00" th:selected="${agendamiento.hora == '14:00'}">02:00 PM</option>
-                        <option value="15:00" th:selected="${agendamiento.hora == '15:00'}">03:00 PM</option>
-                        <option value="16:00" th:selected="${agendamiento.hora == '16:00'}">04:00 PM</option>
-                        <option value="17:00" th:selected="${agendamiento.hora == '17:00'}">05:00 PM</option>
+                        <option value="08:00">08:00 AM</option>
+                        <option value="09:00">09:00 AM</option>
+                        <option value="10:00">10:00 AM</option>
+                        <option value="11:00">11:00 AM</option>
+                        <option value="14:00">02:00 PM</option>
+                        <option value="15:00">03:00 PM</option>
+                        <option value="16:00">04:00 PM</option>
+                        <option value="17:00">05:00 PM</option>
                     </select>
-                    <small style="color: #666;">Cada médico solo puede atender 1 paciente por horario</small>
+                    <small style="color: #666;">Cada médico solo puede atender 1 paciente por horario
                 </div>
 
-                <div class="form-group" id="medicoGroup">
+                <div class="form-group" id="medicoGroup" style="display: none;">
                     <label for="idMedico">Seleccione un Médico: *</label>
                     <select id="idMedico" name="idMedico" class="form-control" required>
-                        <option value="" th:selected="${agendamiento.medico == null}">Seleccione un médico</option>
-                        <option th:value="${agendamiento.medico.idMedico}" 
-                                th:text="${agendamiento.medico.nombre + ' ' + agendamiento.medico.apellido + ' (Actual)'}"
-                                th:if="${agendamiento.medico != null}"
-                                selected>
-                        </option>
+                        <option value="">Cargando médicos...</option>
                     </select>
-                    <small id="medicoInfo" style="color: #666;">Cambie la especialidad, fecha u hora para ver otros médicos disponibles</small>
+                    <small id="medicoInfo" style="color: #666;"></small>
                 </div>
 
                 <div class="horarios-disponibles">
@@ -232,8 +242,9 @@
                 </div>
 
                 <div class="btn-group">
-                    <button type="submit" class="btn btn-primary">Actualizar Cita</button>
-                    <a th:href="@{/pacientes/dashboard}" class="btn btn-secondary">Cancelar</a>
+                    <button type="submit" class="btn btn-primary" th:text="${session.tipoUsuario == 'administrador' ? 'Crear Cita' : 'Agendar Cita'}">Agendar Cita</button>
+                    <a th:if="${session.tipoUsuario == 'paciente'}" th:href="@{/Layouts/paciente}" class="btn btn-secondary">Cancelar</a>
+                    <a th:if="${session.tipoUsuario == 'administrador'}" th:href="@{/agendamientos}" class="btn btn-secondary">Cancelar</a>
                 </div>
             </form>
         </div>
@@ -258,16 +269,13 @@
         </div>
     </div>
 
-    <script th:inline="javascript">
+    <script>
         // Establecer fecha mínima
         const fechaInput = document.getElementById('fecha');
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate() + 1);
         const minDate = tomorrow.toISOString().split('T')[0];
         fechaInput.setAttribute('min', minDate);
-
-        // ID del médico actual
-        const medicoActualId = /*[[${agendamiento.medico?.idMedico}]]*/ null;
 
         // Cargar médicos disponibles
         async function cargarMedicos() {
@@ -279,6 +287,7 @@
             const medicoInfo = document.getElementById('medicoInfo');
 
             if (!especialidad || !fecha || !hora) {
+                medicoGroup.style.display = 'none';
                 return;
             }
 
@@ -298,15 +307,8 @@
                         const option = document.createElement('option');
                         option.value = medico.id;
                         
-                        // Si es el médico actual, siempre mostrarlo como disponible
-                        const esMedicoActual = medicoActualId && medico.id == medicoActualId;
-                        
-                        if (medico.disponible || esMedicoActual) {
+                        if (medico.disponible) {
                             option.textContent = `${medico.nombre} ✓ Disponible`;
-                            if (esMedicoActual) {
-                                option.textContent += ' (Actual)';
-                                option.selected = true;
-                            }
                             option.style.color = '#059669';
                             option.style.fontWeight = 'bold';
                             hayDisponibles = true;

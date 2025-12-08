@@ -55,4 +55,11 @@ public interface AgendamientoRepository extends JpaRepository<Agendamiento, Long
     // Obtener pacientes únicos de un médico
     @Query("SELECT DISTINCT a.paciente FROM Agendamiento a WHERE a.medico = :medico ORDER BY a.paciente.nombre ASC")
     List<Paciente> findDistinctPacientesByMedico(@Param("medico") Medico medico);
+    
+    // Contar citas por médico, fecha y estado
+    long countByMedicoAndFechaAndEstado(Medico medico, Date fecha, String estado);
+    
+    // Contar citas por médico, mes, año y estado
+    @Query("SELECT COUNT(a) FROM Agendamiento a WHERE a.medico = :medico AND MONTH(a.fecha) = :mes AND YEAR(a.fecha) = :anio AND a.estado = :estado")
+    long countByMedicoAndMesAndAnioAndEstado(@Param("medico") Medico medico, @Param("mes") int mes, @Param("anio") int anio, @Param("estado") String estado);
 }

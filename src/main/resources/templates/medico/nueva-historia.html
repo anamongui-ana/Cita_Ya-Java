@@ -115,6 +115,9 @@
         </div>
         
         <form th:action="@{/medico/dashboard/pacientes/{id}/historia/guardar(id=${paciente.idPaciente})}" method="POST">
+            <!-- Campo oculto para el ID de la cita si viene desde una cita -->
+            <input type="hidden" name="citaId" th:value="${param.citaId}" th:if="${param.citaId != null}">
+            
             <div class="form-group">
                 <label>Fecha de Atención <span class="required">*</span></label>
                 <input type="date" name="fechaAtencion" required th:max="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}">

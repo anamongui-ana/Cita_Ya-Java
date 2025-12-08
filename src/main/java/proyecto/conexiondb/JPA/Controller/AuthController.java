@@ -6,9 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class AuthController {
 
-    @GetMapping("/")
-    public String home() {
-        return "redirect:/login";
-    }
+    // El mapeo "/" fue movido a HomeController para mostrar la página de inicio
+    // en lugar de redirigir automáticamente al login
 
 }
