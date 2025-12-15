@@ -5,6 +5,52 @@
     <title>Reporte de Pacientes - Cita Ya</title>
 
     <link rel="stylesheet" th:href="@{/Assets/CSS/reporte.css}">
+    <style>
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            justify-content: center;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+        
+        .btn-success {
+            background-color: #10b981;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: #059669;
+        }
+        
+        .btn-secondary {
+            background-color: #6b7280;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #4b5563;
+        }
+        
+        .btn-primary {
+            background-color: #3b82f6;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2563eb;
+        }
+    </style>
 </head>
 <body>
     <div class="content-wrap">
@@ -20,45 +66,43 @@
             <div class="fecha">
                 <p>
                     <strong>Fecha:</strong>
-                    <span th:text="${fechaActual}"></span>
+                    <span th:text="${#temporals.format(T(java.time.LocalDate).now(), 'dd/MM/yyyy')}"></span>
                 </p>
             </div>
         </header>
 
         <h2>Reporte de Pacientes</h2>
+        
+        <!-- Botones de acción -->
+        <div class="action-buttons">
+            <button class="btn btn-success" onclick="descargarPDF()">Descargar PDF</button>
+            <a th:href="@{/pacientes}" class="btn btn-secondary">Volver al Listado</a>
+            <a th:href="@{/layouts/administrador}" class="btn btn-primary">Dashboard</a>
+        </div>
 
 
 
         <!-- FILTROS APLICADOS -->
         <div class="filtros-aplicados"
-             th:if="${filtros != null and (
-                filtros.buscar != null or
-                filtros.tipo_doc != null or
-                filtros.genero != null or
-                filtros.tipo_sangre != null or
-                filtros.fecha_desde != null or
-                filtros.fecha_hasta != null
-            )}"
+             th:if="${filtros != null and !filtros.isEmpty()}"
         >
 
             <strong>Filtros Aplicados:</strong><br>
 
-            <span th:if="${filtros.buscar != null}">Búsqueda: <span th:text="${filtros.buscar}"></span></span>
+            <span th:if="${filtros['buscar'] != null}">Búsqueda: <span th:text="${filtros['buscar']}"></span> | </span>
 
-            <span th:if="${filtros.tipo_doc != null}">Tipo de Documento: <span th:text="${filtros.tipo_doc}"></span></span>
+            <span th:if="${filtros['tipo_doc'] != null}">Tipo de Documento: <span th:text="${filtros['tipo_doc']}"></span> | </span>
 
-            <span th:if="${filtros.genero != null}">Género: <span th:text="${filtros.genero}"></span></span>
+            <span th:if="${filtros['genero'] != null}">Género: <span th:text="${filtros['genero']}"></span> | </span>
 
-            <span th:if="${filtros.tipo_sangre != null}">Tipo de Sangre: <span th:text="${filtros.tipo_sangre}"></span></span>
+            <span th:if="${filtros['tipo_sangre'] != null}">Tipo de Sangre: <span th:text="${filtros['tipo_sangre']}"></span> | </span>
 
-            <span th:if="${filtros.fecha_desde != null}">
-                Fecha Desde:
-                <span th:text="${filtros.fecha_desde}"></span>
+            <span th:if="${filtros['fecha_desde'] != null}">
+                Fecha Desde: <span th:text="${filtros['fecha_desde']}"></span> | 
             </span>
 
-            <span th:if="${filtros.fecha_hasta != null}">
-                Fecha Hasta:
-                <span th:text="${filtros.fecha_hasta}"></span>
+            <span th:if="${filtros['fecha_hasta'] != null}">
+                Fecha Hasta: <span th:text="${filtros['fecha_hasta']}"></span>
             </span>
 
         </div>
@@ -85,16 +129,16 @@
 
                 <tbody>
                     <tr th:each="paciente : ${pacientes}">
-                        <td th:text="${paciente.id_paciente}"></td>
-                        <td th:text="${paciente.tipo_doc + ' ' + paciente.numero_doc}"></td>
+                        <td th:text="${paciente.idPaciente}"></td>
+                        <td th:text="${paciente.tipoDoc + ' ' + paciente.numeroDoc}"></td>
                         <td th:text="${paciente.nombre}"></td>
                         <td th:text="${paciente.apellido}"></td>
                         <td th:text="${paciente.genero}"></td>
-                        <td th:text="${paciente.fecha_nacimiento}"></td>
-                        <td th:text="${paciente.tipo_sangre}"></td>
-                        <td th:text="${paciente.direccion}"></td>
-                        <td th:text="${paciente.telefono}"></td>
-                        <td th:text="${paciente.correo}"></td>
+                        <td th:text="${paciente.fechaNacimiento != null ? #dates.format(paciente.fechaNacimiento, 'dd/MM/yyyy') : 'N/A'}"></td>
+                        <td th:text="${paciente.tipoSangre != null ? paciente.tipoSangre : 'N/A'}"></td>
+                        <td th:text="${paciente.direccion != null ? paciente.direccion : 'N/A'}"></td>
+                        <td th:text="${paciente.telefono != null ? paciente.telefono : 'N/A'}"></td>
+                        <td th:text="${paciente.correo != null ? paciente.correo : 'N/A'}"></td>
                     </tr>
                 </tbody>
             </table>
@@ -114,5 +158,26 @@
         </div>
 
     </div>
+    
+    <script>
+        function descargarPDF() {
+            // Obtener los parámetros de filtro actuales de la URL si existen
+            const urlParams = new URLSearchParams(window.location.search);
+            const params = new URLSearchParams();
+            
+            // Agregar todos los parámetros existentes
+            for (const [key, value] of urlParams) {
+                if (value) params.append(key, value);
+            }
+            
+            // Redirigir a la ruta de descarga PDF
+            window.location.href = '/pacientes/reporte/pdf?' + params.toString();
+        }
+        
+        // Función para imprimir
+        function imprimirReporte() {
+            window.print();
+        }
+    </script>
 </body>
 </html>

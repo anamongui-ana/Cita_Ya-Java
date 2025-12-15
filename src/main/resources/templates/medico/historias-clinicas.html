@@ -4,16 +4,250 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Historias Clínicas - Dashboard Médico</title>
-    <link rel="stylesheet" th:href="@{/Assets/CSS/table.css}">
     <style>
+        * {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background-color: #f7f8fa;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* Botón Volver */
         .btn-back {
-            background-color: #3b82f6;
+            background: #3b82f6;
             color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 0.25rem;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
             text-decoration: none;
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+        }
+        .btn-back:hover {
+            background: #2563eb;
+            transform: translateX(-3px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+        
+        /* Título Mejorado */
+        .page-header {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
             margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 3px solid #8b5cf6;
+        }
+        .page-header-icon {
+            font-size: 2rem;
+        }
+        .page-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1f2937;
+        }
+        
+        /* Descripción */
+        .page-description {
+            color: #6b7280;
+            font-size: 1rem;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid #8b5cf6;
+        }
+        
+        /* Barra de Filtros */
+        .filter-card {
+            background: white;
+            padding: 1.8rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        .filter-row {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr 1fr auto;
+            gap: 1rem;
+            align-items: end;
+        }
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .filter-group label {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            margin-bottom: 0.6rem;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.9rem;
+        }
+        .filter-group input,
+        .filter-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+        .filter-group input:focus,
+        .filter-group select:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+        .filter-actions {
+            display: flex;
+            gap: 0.8rem;
+        }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white;
+            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #7c3aed, #6d28d9);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+        }
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #374151;
+        }
+        .btn-secondary:hover {
+            background: #d1d5db;
+            transform: translateY(-2px);
+        }
+        
+        /* Tabla Mejorada */
+        .table-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .table thead {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        }
+        .table thead th {
+            padding: 1.2rem 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: white;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .table tbody tr {
+            border-bottom: 1px solid #f3f4f6;
+            transition: all 0.2s ease;
+        }
+        .table tbody tr:nth-child(even) {
+            background: #f9fafb;
+        }
+        .table tbody tr:hover {
+            background: #f0fdf4;
+            transform: scale(1.01);
+        }
+        .table tbody td {
+            padding: 1.2rem 1rem;
+            color: #374151;
+            font-size: 0.95rem;
+        }
+        
+        /* Diagnóstico Destacado */
+        .diagnostico-principal {
+            font-weight: 700;
+            color: #1f2937;
+            font-size: 1.05rem;
+            margin-bottom: 0.3rem;
+        }
+        .diagnostico-detalle {
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+        
+        /* Botón de Acción */
+        .btn-info {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
+        }
+        .btn-info:hover {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.4);
+        }
+        
+        /* Estado Vacío */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #9ca3af;
+        }
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        .empty-state-text {
+            font-size: 1.1rem;
+        }
+        
+        @media (max-width: 1024px) {
+            .filter-row {
+                grid-template-columns: 1fr;
+            }
+            .filter-actions {
+                width: 100%;
+            }
+            .btn {
+                flex: 1;
+                justify-content: center;
+            }
         }
     </style>
 </head>
@@ -21,39 +255,76 @@
 <div class="container">
     <a th:href="@{/medico/dashboard}" class="btn-back">← Volver al Dashboard</a>
     
-    <h1>Historias Clínicas Creadas</h1>
+    <div class="page-header">
+        <span class="page-header-icon"></span>
+        <h1 class="page-title">Historias Clínicas Registradas</h1>
+    </div>
+    
+    <div class="page-description">
+        Aquí puedes ver todas las historias clínicas que has creado. Utiliza los filtros para encontrar registros específicos por paciente, fecha o diagnóstico.
+    </div>
+    
+    <div class="filter-card">
+        <form th:action="@{/medico/dashboard/historias-clinicas}" method="GET">
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label>Fecha</label>
+                    <input type="date" name="fecha" th:value="${fecha}">
+                </div>
+                <div class="filter-group">
+                    <label>Buscar Paciente</label>
+                    <input type="text" name="paciente" th:value="${paciente}" placeholder="Nombre del paciente...">
+                </div>
+                <div class="filter-group">
+                    <label>Diagnóstico</label>
+                    <input type="text" name="diagnostico" th:value="${diagnostico}" placeholder="Buscar por diagnóstico...">
+                </div>
+                <div class="filter-actions">
+                    <button type="submit" class="btn btn-primary">Buscar</button>
+                    <a th:href="@{/medico/dashboard/historias-clinicas}" class="btn btn-secondary">Limpiar</a>
+                </div>
+            </div>
+        </form>
+    </div>
 
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Fecha</th>
-            <th>Paciente</th>
-            <th>Diagnóstico</th>
-            <th>Médico</th>
-            <th>Acciones</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="historia : ${historias}">
-            <td th:text="${#dates.format(historia.fechaAtencion, 'dd/MM/yyyy')}">Fecha</td>
-            <td th:text="${historia.paciente.nombre + ' ' + historia.paciente.apellido}">Paciente</td>
-            <td th:text="${#strings.abbreviate(historia.diagnostico, 100)}">Diagnóstico</td>
-            <td>
-                Dr. <span th:text="${historia.medico.nombre + ' ' + historia.medico.apellido}">Médico</span>
-                <br><small th:text="${historia.medico.especialidad}">Especialidad</small>
-            </td>
-            <td>
-                <a th:href="@{/medico/dashboard/pacientes/{id}/historia(id=${historia.paciente.idPaciente})}" 
-                   class="btn btn-info btn-sm">Ver Todas del Paciente</a>
-            </td>
-        </tr>
-        <tr th:if="${#lists.isEmpty(historias)}">
-            <td colspan="4" style="text-align: center; padding: 2rem;">
-                <em>No has creado historias clínicas aún</em>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+    <div class="table-card">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Paciente</th>
+                <th>Diagnóstico</th>
+                <th>Médico</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="historia : ${historias}">
+                <td th:text="${#dates.format(historia.fechaAtencion, 'dd/MM/yyyy')}">Fecha</td>
+                <td th:text="${historia.paciente.nombre + ' ' + historia.paciente.apellido}">Paciente</td>
+                <td>
+                    <div class="diagnostico-principal" th:text="${#strings.abbreviate(historia.diagnostico, 60)}">Diagnóstico</div>
+                    <div class="diagnostico-detalle">Registro médico completo</div>
+                </td>
+                <td>
+                    Dr. <span th:text="${historia.medico.nombre + ' ' + historia.medico.apellido}">Médico</span>
+                    <br><small th:text="${historia.medico.especialidad}" style="color: #8b5cf6; font-weight: 600;">Especialidad</small>
+                </td>
+                <td>
+                    <a th:href="@{/medico/dashboard/pacientes/{id}/historia(id=${historia.paciente.idPaciente})}" 
+                       class="btn-info">
+                        Ver Historial
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        
+        <div class="empty-state" th:if="${#lists.isEmpty(historias)}">
+            <div class="empty-state-icon"></div>
+            <p class="empty-state-text">No has creado historias clínicas aún</p>
+        </div>
+    </div>
 </div>
 </body>
 </html>

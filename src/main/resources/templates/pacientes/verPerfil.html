@@ -5,16 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mi Perfil - Cita Ya</title>
     <link rel="icon" type="image" th:href="@{/Assets/img/logoti.png}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
-            font-family: arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
         body {
-            background-color: #f8f9fa;
+            background: linear-gradient(135deg, #BBE1FA 0%, #FFFFFF 100%);
             padding-top: 100px;
+            min-height: 100vh;
         }
         header {
             position: fixed;
@@ -39,7 +41,7 @@
             display: inline-block;
         }
         .profile_button {
-            background-color: #059669;
+            background-color: #0F4C75;
             color: white;
             padding: 0.7rem 1.5rem;
             border: none;
@@ -49,6 +51,11 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            transition: background-color 0.3s ease;
+        }
+        .profile_button:hover {
+            background-color: #A8E6CF;
+            color: #0F4C75;
         }
         .dropdown_content {
             display: none;
@@ -74,37 +81,114 @@
             background: #f1f1f1;
         }
         .container {
-            max-width: 800px;
+            max-width: 1000px;
             margin: 2rem auto;
             padding: 0 2rem;
         }
-        .card {
-            background: white;
+        .profile-header {
+            background: linear-gradient(135deg, #0F4C75, #3B7EA1);
+            color: white;
             padding: 2rem;
             border-radius: 1rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(15, 76, 117, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: #0F4C75;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .profile-info h1 {
+            color: white;
+            margin-bottom: 0.5rem;
+            font-size: 2rem;
+        }
+        .profile-meta {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 10px rgba(15, 76, 117, 0.1);
+            border: 1px solid #BBE1FA;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(15, 76, 117, 0.2);
+        }
+        .card-title {
+            color: #0F4C75;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #BBE1FA;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .card-title i {
+            color: #A8E6CF;
         }
         h1 {
             color: #1e3a8a;
             margin-bottom: 1.5rem;
         }
-        .info-group {
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid #e5e7eb;
+        .info-item {
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: start;
+            gap: 1rem;
         }
-        .info-group:last-child {
-            border-bottom: none;
+        .info-item:last-child {
+            margin-bottom: 0;
+        }
+        .info-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #BBE1FA, #0F4C75);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+        .info-content {
+            flex: 1;
         }
         .info-label {
-            font-weight: bold;
+            font-weight: 600;
             color: #6b7280;
-            font-size: 0.875rem;
-            margin-bottom: 0.25rem;
+            font-size: 0.85rem;
+            margin-bottom: 0.3rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         .info-value {
-            color: #1f2937;
-            font-size: 1rem;
+            color: #0F4C75;
+            font-size: 1.1rem;
+            font-weight: 600;
         }
         .btn-group {
             display: flex;
@@ -122,33 +206,80 @@
             text-align: center;
         }
         .btn-primary {
-            background: #059669;
+            background: #0F4C75;
             color: white;
+            transition: all 0.3s ease;
+            font-weight: bold;
         }
         .btn-primary:hover {
-            background: #047857;
+            background: #A8E6CF;
+            color: #0F4C75;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(15, 76, 117, 0.3);
         }
         .btn-secondary {
             background: #6b7280;
             color: white;
+            transition: all 0.3s ease;
         }
         .btn-secondary:hover {
             background: #4b5563;
+            transform: translateY(-2px);
         }
         .btn-back {
-            background: #6b7280;
+            background: #0F4C75;
             color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
+            padding: 1rem 2rem;
+            border-radius: 0.8rem;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
+            gap: 0.8rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(15, 76, 117, 0.3);
         }
         .btn-back:hover {
-            background: #4b5563;
+            background: #A8E6CF;
+            color: #0F4C75;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(15, 76, 117, 0.4);
+        }
+        .btn-back i {
+            font-size: 1.2rem;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            justify-content: center;
+        }
+        .action-buttons .btn {
+            flex: 1;
+            max-width: 250px;
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .profile-info h1 {
+                font-size: 1.5rem;
+            }
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+            .action-buttons {
+                flex-direction: column;
+            }
+            .action-buttons .btn {
+                max-width: 100%;
+            }
         }
     </style>
 </head>
@@ -178,61 +309,151 @@
 
 <div class="container">
     <a th:href="@{/Layouts/paciente}" class="btn-back">
-        ← Volver al Dashboard
+        <i class="fas fa-arrow-left"></i> Volver al Dashboard
     </a>
 
-    <div class="card">
-        <h1>Mi Perfil</h1>
+    <!-- Header del Perfil -->
+    <div class="profile-header">
+        <div class="profile-avatar">
+            <i class="fas fa-user"></i>
+        </div>
+        <div class="profile-info">
+            <h1 th:text="${paciente.nombre + ' ' + paciente.apellido}">Nombre Apellido</h1>
+            <div class="profile-meta">
+                <i class="fas fa-calendar-check"></i> Paciente desde 2019 • 
+                <i class="fas fa-clock"></i> Última actualización: hoy
+            </div>
+        </div>
+    </div>
 
-        <div class="info-group">
-            <div class="info-label">Tipo de Documento</div>
-            <div class="info-value" th:text="${paciente.tipoDoc}">CC</div>
+    <!-- Grid de Tarjetas -->
+    <div class="cards-grid">
+        
+        <!-- Tarjeta: Datos Personales -->
+        <div class="card">
+            <div class="card-title">
+                <i class="fas fa-user-circle"></i> Datos Personales
+            </div>
+            
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="fas fa-signature"></i>
+                </div>
+                <div class="info-content">
+                    <div class="info-label">Nombre Completo</div>
+                    <div class="info-value" th:text="${paciente.nombre + ' ' + paciente.apellido}">Nombre Apellido</div>
+                </div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="fas fa-id-card"></i>
+                </div>
+                <div class="info-content">
+                    <div class="info-label">Documento</div>
+                    <div class="info-value">
+                        <span th:text="${paciente.tipoDoc}">CC</span> 
+                        <span th:text="${paciente.numeroDoc}">123456789</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="fas fa-venus-mars"></i>
+                </div>
+                <div class="info-content">
+                    <div class="info-label">Género</div>
+                    <div class="info-value" th:text="${paciente.genero == 'M' ? 'Masculino' : (paciente.genero == 'F' ? 'Femenino' : 'Otro')}">Masculino</div>
+                </div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="fas fa-birthday-cake"></i>
+                </div>
+                <div class="info-content">
+                    <div class="info-label">Fecha de Nacimiento</div>
+                    <div class="info-value" th:text="${#dates.format(paciente.fechaNacimiento, 'dd/MM/yyyy')}">01/01/1990</div>
+                </div>
+            </div>
         </div>
 
-        <div class="info-group">
-            <div class="info-label">Número de Documento</div>
-            <div class="info-value" th:text="${paciente.numeroDoc}">123456789</div>
+        <!-- Tarjeta: Información de Contacto -->
+        <div class="card">
+            <div class="card-title">
+                <i class="fas fa-address-book"></i> Información de Contacto
+            </div>
+            
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="fas fa-phone"></i>
+                </div>
+                <div class="info-content">
+                    <div class="info-label">Teléfono</div>
+                    <div class="info-value" th:text="${paciente.telefono != null ? paciente.telefono : 'No especificado'}">3001234567</div>
+                </div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <div class="info-content">
+                    <div class="info-label">Correo Electrónico</div>
+                    <div class="info-value" th:text="${paciente.correo}">correo@ejemplo.com</div>
+                </div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <div class="info-content">
+                    <div class="info-label">Dirección</div>
+                    <div class="info-value" th:text="${paciente.direccion != null ? paciente.direccion : 'No especificada'}">Calle 123</div>
+                </div>
+            </div>
         </div>
 
-        <div class="info-group">
-            <div class="info-label">Nombre Completo</div>
-            <div class="info-value" th:text="${paciente.nombre + ' ' + paciente.apellido}">Nombre Apellido</div>
+        <!-- Tarjeta: Datos Médicos -->
+        <div class="card">
+            <div class="card-title">
+                <i class="fas fa-heartbeat"></i> Datos Médicos
+            </div>
+            
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="fas fa-tint"></i>
+                </div>
+                <div class="info-content">
+                    <div class="info-label">Tipo de Sangre</div>
+                    <div class="info-value" th:text="${paciente.tipoSangre != null ? paciente.tipoSangre : 'No especificado'}">O+</div>
+                </div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="fas fa-notes-medical"></i>
+                </div>
+                <div class="info-content">
+                    <div class="info-label">Estado</div>
+                    <div class="info-value" style="color: #10b981;">
+                        <i class="fas fa-check-circle"></i> Activo
+                    </div>
+                </div>
+            </div>
         </div>
+    </div>
 
-        <div class="info-group">
-            <div class="info-label">Género</div>
-            <div class="info-value" th:text="${paciente.genero == 'M' ? 'Masculino' : (paciente.genero == 'F' ? 'Femenino' : 'Otro')}">Masculino</div>
-        </div>
-
-        <div class="info-group">
-            <div class="info-label">Fecha de Nacimiento</div>
-            <div class="info-value" th:text="${#dates.format(paciente.fechaNacimiento, 'dd/MM/yyyy')}">01/01/1990</div>
-        </div>
-
-        <div class="info-group">
-            <div class="info-label">Tipo de Sangre</div>
-            <div class="info-value" th:text="${paciente.tipoSangre != null ? paciente.tipoSangre : 'No especificado'}">O+</div>
-        </div>
-
-        <div class="info-group">
-            <div class="info-label">Dirección</div>
-            <div class="info-value" th:text="${paciente.direccion != null ? paciente.direccion : 'No especificada'}">Calle 123</div>
-        </div>
-
-        <div class="info-group">
-            <div class="info-label">Teléfono</div>
-            <div class="info-value" th:text="${paciente.telefono != null ? paciente.telefono : 'No especificado'}">3001234567</div>
-        </div>
-
-        <div class="info-group">
-            <div class="info-label">Correo Electrónico</div>
-            <div class="info-value" th:text="${paciente.correo}">correo@ejemplo.com</div>
-        </div>
-
-        <div class="btn-group">
-            <a th:href="@{/pacientes/editar}" class="btn btn-primary">Editar Mi Perfil</a>
-            <a th:href="@{/Layouts/paciente}" class="btn btn-secondary">Volver al Dashboard</a>
-        </div>
+    <!-- Botones de Acción -->
+    <div class="action-buttons">
+        <a th:href="@{/pacientes/editar}" class="btn btn-primary">
+            <i class="fas fa-edit"></i> Editar Mi Perfil
+        </a>
+        <a th:href="@{/Layouts/paciente}" class="btn btn-secondary">
+            <i class="fas fa-home"></i> Volver al Dashboard
+        </a>
     </div>
 </div>
 

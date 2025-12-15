@@ -3,53 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agendar Cita - Cita Ya</title>
-    <link rel="stylesheet" th:href="@{/Assets/CSS/table.css}">
+    <title>Editar Cita - Cita Ya</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/Assets/css/table.css}">
     <style>
         body {
-            background: #f8f9fa;
+            background: linear-gradient(135deg, #BBE1FA 0%, #FFFFFF 100%);
             padding: 2rem;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         .container-main {
-            max-width: 1200px;
+            max-width: 1300px;
             margin: 0 auto;
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 65% 35%;
             gap: 2rem;
+        }
+        .current-appointment {
+            background: linear-gradient(135deg, #E8F5E9, #C8E6C9);
+            border-left: 4px solid #4CAF50;
+            padding: 1.5rem;
+            border-radius: 0.8rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 10px rgba(76, 175, 80, 0.2);
+        }
+        .current-appointment h3 {
+            color: #2E7D32;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .current-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+        .current-info-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #1B5E20;
+            font-weight: 500;
+        }
+        .current-info-item i {
+            color: #4CAF50;
+            font-size: 1.1rem;
         }
         .form-container {
             background: white;
-            padding: 2rem;
+            padding: 2.5rem;
             border-radius: 1rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 20px rgba(15, 76, 117, 0.15);
+            border: 1px solid #BBE1FA;
+        }
+        .form-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, #0F4C75, #3B7EA1);
+            border-radius: 1rem;
+            box-shadow: 0 4px 15px rgba(15, 76, 117, 0.3);
+        }
+        .form-header h1 {
+            color: white;
+            font-size: 2rem;
+            margin: 0;
+            font-weight: bold;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
         .citas-container {
             background: white;
-            padding: 2rem;
+            padding: 1.5rem;
             border-radius: 1rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            max-height: 600px;
-            overflow-y: auto;
+            box-shadow: 0 8px 20px rgba(15, 76, 117, 0.15);
+            border: 1px solid #BBE1FA;
+        }
+        .citas-container h2 {
+            color: #0F4C75;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #BBE1FA;
         }
         .form-group {
             margin-bottom: 1.5rem;
         }
         .form-group label {
             display: block;
-            margin-bottom: 0.5rem;
-            font-weight: bold;
-            color: #333;
+            margin-bottom: 0.6rem;
+            font-weight: 600;
+            color: #0F4C75;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .form-group label i {
+            color: #BBE1FA;
         }
         .form-control {
             width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #ddd;
-            border-radius: 0.5rem;
+            padding: 0.9rem;
+            border: 2px solid #BBE1FA;
+            border-radius: 0.6rem;
             font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #F8FCFF;
         }
         .form-control:focus {
             outline: none;
-            border-color: #059669;
+            border-color: #0F4C75;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(15, 76, 117, 0.1);
+        }
+        .form-control:hover {
+            border-color: #0F4C75;
+        }
+        .form-control:disabled {
+            background: #E8F4F8;
+            color: #0F4C75;
+            font-weight: 600;
+            cursor: not-allowed;
+            border-color: #BBE1FA;
         }
         .btn-group {
             display: flex;
@@ -67,12 +147,47 @@
             text-align: center;
         }
         .btn-primary {
-            background: #059669;
+            background: #0F4C75;
             color: white;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: #A8E6CF;
+            color: #0F4C75;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(15, 76, 117, 0.3);
         }
         .btn-secondary {
             background: #6b7280;
             color: white;
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background: #4b5563;
+            transform: translateY(-2px);
+        }
+        .btn-back {
+            background: #0F4C75;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 0.8rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(15, 76, 117, 0.3);
+        }
+        .btn-back:hover {
+            background: #A8E6CF;
+            color: #0F4C75;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(15, 76, 117, 0.4);
+        }
+        .btn-back i {
+            font-size: 1.2rem;
         }
         h1, h2 {
             color: #1e3a8a;
@@ -110,11 +225,32 @@
             margin-bottom: 0.5rem;
         }
         .cita-item {
-            padding: 0.5rem;
-            margin: 0.25rem 0;
-            background: white;
-            border-left: 3px solid #059669;
-            padding-left: 0.75rem;
+            padding: 0.8rem;
+            margin: 0.5rem 0;
+            background: #F0F8FF;
+            border-left: 4px solid #0F4C75;
+            padding-left: 1rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            transition: all 0.3s ease;
+        }
+        .cita-item:hover {
+            background: #BBE1FA;
+            transform: translateX(5px);
+        }
+        .cita-item-icon {
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(135deg, #0F4C75, #BBE1FA);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.9rem;
+            flex-shrink: 0;
         }
         .horarios-disponibles {
             margin-top: 1rem;
@@ -155,15 +291,39 @@
         <div class="form-container">
             <div class="header-with-back">
                 <a th:if="${session.tipoUsuario == 'paciente'}" th:href="@{/Layouts/paciente}" class="btn-back">
-                    ← Volver al Dashboard
+                    <i class="fas fa-arrow-left"></i> Volver al Dashboard
                 </a>
                 <a th:if="${session.tipoUsuario == 'administrador'}" th:href="@{/agendamientos}" class="btn-back">
-                    ← Volver a Citas
+                    <i class="fas fa-arrow-left"></i> Volver a Citas
                 </a>
             </div>
             
-            <h1 th:if="${session.tipoUsuario == 'paciente'}">Agendar Nueva Cita</h1>
-            <h1 th:if="${session.tipoUsuario == 'administrador'}">Crear Nueva Cita</h1>
+            <div class="form-header">
+                <h1><i class="fas fa-edit"></i> Editar Cita</h1>
+            </div>
+            
+            <!-- Información de la cita actual -->
+            <div class="current-appointment">
+                <h3><i class="fas fa-info-circle"></i> Cita Actual</h3>
+                <div class="current-info">
+                    <div class="current-info-item">
+                        <i class="fas fa-calendar-day"></i>
+                        <span th:text="${#dates.format(agendamiento.fecha, 'dd/MM/yyyy')}">09/12/2025</span>
+                    </div>
+                    <div class="current-info-item">
+                        <i class="fas fa-clock"></i>
+                        <span th:text="${agendamiento.hora}">08:00 AM</span>
+                    </div>
+                    <div class="current-info-item">
+                        <i class="fas fa-user-md"></i>
+                        <span th:text="${agendamiento.medico != null ? 'Dr. ' + agendamiento.medico.nombre + ' ' + agendamiento.medico.apellido : 'No asignado'}">Dr. Juan Pérez</span>
+                    </div>
+                    <div class="current-info-item">
+                        <i class="fas fa-stethoscope"></i>
+                        <span th:text="${agendamiento.cita}">Medicina General</span>
+                    </div>
+                </div>
+            </div>
             
             <div th:if="${error}" class="alert alert-error">
                 <strong>Error:</strong> <span th:text="${error}"></span>
@@ -173,7 +333,7 @@
                 <strong>Importante:</strong> Las citas deben agendarse con al menos 1 día de anticipación.
             </div>
             
-            <form th:action="${session.tipoUsuario == 'administrador' ? '/agendamientos/store' : '/agendamientos/guardar'}" method="POST">
+            <form th:action="@{/agendamientos/actualizar/{id}(id=${agendamiento.idAgendamiento})}" method="POST">
                 
                 <!-- Campo de selección de paciente solo para administradores -->
                 <div th:if="${session.tipoUsuario == 'administrador'}" class="form-group">
@@ -187,84 +347,118 @@
                     </select>
                 </div>
                 
+                <!-- Especialidad (solo lectura) -->
                 <div class="form-group">
-                    <label for="cita">Tipo de Cita / Especialidad: *</label>
-                    <select id="cita" name="cita" class="form-control" required>
-                        <option value="">Seleccione una especialidad</option>
-                        <option value="Medicina General">Medicina General</option>
-                        <option value="Ortopedia">Ortopedia</option>
-                        <option value="Cardiología">Cardiología</option>
-                        <option value="Psicología">Psicología</option>
-                        <option value="Pediatría">Pediatría</option>
-                        <option value="Dermatología">Dermatología</option>
-                    </select>
+                    <label for="cita">
+                        <i class="fas fa-stethoscope"></i> Especialidad (no modificable):
+                    </label>
+                    <input type="text" 
+                           class="form-control" 
+                           th:value="${agendamiento.cita}" 
+                           disabled>
+                    <input type="hidden" name="cita" th:value="${agendamiento.cita}">
+                    <small style="color: #666; font-size: 0.85rem; margin-top: 0.3rem; display: block;">
+                        <i class="fas fa-lock"></i> La especialidad no puede modificarse una vez agendada
+                    </small>
+                </div>
+                
+                <!-- Médico (solo lectura) -->
+                <div class="form-group">
+                    <label for="medicoActual">
+                        <i class="fas fa-user-md"></i> Médico Asignado (no modificable):
+                    </label>
+                    <input type="text" 
+                           class="form-control" 
+                           th:value="${agendamiento.medico != null ? 'Dr. ' + agendamiento.medico.nombre + ' ' + agendamiento.medico.apellido : 'No asignado'}" 
+                           disabled>
+                    <input type="hidden" name="idMedico" th:value="${agendamiento.medico != null ? agendamiento.medico.idMedico : ''}">
+                    <small style="color: #666; font-size: 0.85rem; margin-top: 0.3rem; display: block;">
+                        <i class="fas fa-lock"></i> El médico asignado no puede modificarse
+                    </small>
                 </div>
 
+                <!-- Fecha (editable) -->
                 <div class="form-group">
-                    <label for="fecha">Fecha de la Cita: *</label>
+                    <label for="fecha">
+                        <i class="fas fa-calendar-alt"></i> Nueva Fecha de la Cita: *
+                    </label>
                     <input type="date" 
                            id="fecha" 
                            name="fecha"
+                           th:value="${#dates.format(agendamiento.fecha, 'yyyy-MM-dd')}"
                            th:min="${fechaMinima}"
                            class="form-control" 
                            required>
-                    <small style="color: #666;">Seleccione una fecha a partir de mañana</small>
+                    <small style="color: #666; font-size: 0.85rem; margin-top: 0.3rem; display: block;">
+                        <i class="fas fa-info-circle"></i> Seleccione una fecha a partir de mañana
+                    </small>
                 </div>
 
+                <!-- Hora (editable) -->
                 <div class="form-group">
-                    <label for="hora">Hora de la Cita: *</label>
-                    <select id="hora" name="hora" class="form-control" required onchange="cargarMedicos()">
+                    <label for="hora">
+                        <i class="fas fa-clock"></i> Nueva Hora de la Cita: *
+                    </label>
+                    <select id="hora" name="hora" class="form-control" required>
                         <option value="">Seleccione una hora</option>
-                        <option value="08:00">08:00 AM</option>
-                        <option value="09:00">09:00 AM</option>
-                        <option value="10:00">10:00 AM</option>
-                        <option value="11:00">11:00 AM</option>
-                        <option value="14:00">02:00 PM</option>
-                        <option value="15:00">03:00 PM</option>
-                        <option value="16:00">04:00 PM</option>
-                        <option value="17:00">05:00 PM</option>
+                        <option value="08:00" th:selected="${agendamiento.hora == '08:00'}">🌅 08:00 AM</option>
+                        <option value="09:00" th:selected="${agendamiento.hora == '09:00'}">🌅 09:00 AM</option>
+                        <option value="10:00" th:selected="${agendamiento.hora == '10:00'}">☀️ 10:00 AM</option>
+                        <option value="11:00" th:selected="${agendamiento.hora == '11:00'}">☀️ 11:00 AM</option>
+                        <option value="14:00" th:selected="${agendamiento.hora == '14:00'}">🌤️ 02:00 PM</option>
+                        <option value="15:00" th:selected="${agendamiento.hora == '15:00'}">🌤️ 03:00 PM</option>
+                        <option value="16:00" th:selected="${agendamiento.hora == '16:00'}">🌆 04:00 PM</option>
+                        <option value="17:00" th:selected="${agendamiento.hora == '17:00'}">🌆 05:00 PM</option>
                     </select>
-                    <small style="color: #666;">Cada médico solo puede atender 1 paciente por horario
-                </div>
-
-                <div class="form-group" id="medicoGroup" style="display: none;">
-                    <label for="idMedico">Seleccione un Médico: *</label>
-                    <select id="idMedico" name="idMedico" class="form-control" required>
-                        <option value="">Cargando médicos...</option>
-                    </select>
-                    <small id="medicoInfo" style="color: #666;"></small>
-                </div>
-
-                <div class="horarios-disponibles">
-                    <strong>Horarios de atención:</strong><br>
-                    Lunes a Viernes: 8:00 AM - 5:00 PM<br>
-                    Sábados: 8:00 AM - 12:00 PM
+                    <small style="color: #666; font-size: 0.85rem; margin-top: 0.3rem; display: block;">
+                        <i class="fas fa-info-circle"></i> Seleccione un horario disponible
+                    </small>
                 </div>
 
                 <div class="btn-group">
-                    <button type="submit" class="btn btn-primary" th:text="${session.tipoUsuario == 'administrador' ? 'Crear Cita' : 'Agendar Cita'}">Agendar Cita</button>
-                    <a th:if="${session.tipoUsuario == 'paciente'}" th:href="@{/Layouts/paciente}" class="btn btn-secondary">Cancelar</a>
-                    <a th:if="${session.tipoUsuario == 'administrador'}" th:href="@{/agendamientos}" class="btn btn-secondary">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Guardar Cambios
+                    </button>
+                    <a th:if="${session.tipoUsuario == 'paciente'}" th:href="@{/Layouts/paciente}" class="btn btn-secondary">
+                        <i class="fas fa-times-circle"></i> Cancelar
+                    </a>
+                    <a th:if="${session.tipoUsuario == 'administrador'}" th:href="@{/agendamientos}" class="btn btn-secondary">
+                        <i class="fas fa-times-circle"></i> Cancelar
+                    </a>
                 </div>
             </form>
         </div>
 
         <div class="citas-container">
-            <h2>Citas Agendadas</h2>
+            <h2>
+                <i class="fas fa-calendar-check"></i> Otras Próximas Citas
+            </h2>
             
-            <div th:if="${citasPorFecha.isEmpty()}" class="alert alert-info">
-                No hay citas agendadas actualmente.
+            <div th:if="${citasPorFecha.isEmpty()}" style="text-align: center; padding: 2rem; color: #666;">
+                <i class="fas fa-calendar-times" style="font-size: 2rem; opacity: 0.3; margin-bottom: 0.5rem;"></i>
+                <p>No hay otras citas agendadas</p>
             </div>
             
-            <div th:each="entry : ${citasPorFecha}" class="fecha-grupo">
-                <div class="fecha-titulo">
-                    📅 <span th:text="${#dates.format(entry.key, 'EEEE, dd/MM/yyyy')}"></span>
-                    (<span th:text="${entry.value.size()}"></span> cita<span th:if="${entry.value.size() > 1}">s</span>)
+            <div th:each="entry, iterStat : ${citasPorFecha}" th:if="${iterStat.index < 3}" style="margin-bottom: 1rem;">
+                <div style="font-weight: bold; color: #0F4C75; margin-bottom: 0.5rem; font-size: 0.9rem;">
+                    <i class="fas fa-calendar-day"></i>
+                    <span th:text="${#dates.format(entry.key, 'dd/MM/yyyy')}"></span>
                 </div>
                 <div th:each="cita : ${entry.value}" class="cita-item">
-                    🕐 <strong th:text="${cita.hora}"></strong> - 
-                    <span th:text="${cita.cita}"></span>
+                    <div class="cita-item-icon">
+                        <i class="fas fa-stethoscope"></i>
+                    </div>
+                    <div style="flex: 1;">
+                        <div style="font-weight: bold; color: #0F4C75;" th:text="${cita.hora}">08:00</div>
+                        <div style="font-size: 0.85rem; color: #666;" th:text="${cita.cita}">Especialidad</div>
+                    </div>
                 </div>
+            </div>
+            
+            <div th:if="${citasPorFecha.size() > 3}" style="text-align: center; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #BBE1FA;">
+                <small style="color: #666;">
+                    <i class="fas fa-info-circle"></i> Mostrando las próximas 3 citas
+                </small>
             </div>
         </div>
     </div>
@@ -276,73 +470,6 @@
         tomorrow.setDate(tomorrow.getDate() + 1);
         const minDate = tomorrow.toISOString().split('T')[0];
         fechaInput.setAttribute('min', minDate);
-
-        // Cargar médicos disponibles
-        async function cargarMedicos() {
-            const especialidad = document.getElementById('cita').value;
-            const fecha = document.getElementById('fecha').value;
-            const hora = document.getElementById('hora').value;
-            const medicoGroup = document.getElementById('medicoGroup');
-            const medicoSelect = document.getElementById('idMedico');
-            const medicoInfo = document.getElementById('medicoInfo');
-
-            if (!especialidad || !fecha || !hora) {
-                medicoGroup.style.display = 'none';
-                return;
-            }
-
-            try {
-                const response = await fetch(`/agendamientos/medicos-por-especialidad?especialidad=${encodeURIComponent(especialidad)}&fecha=${fecha}&hora=${hora}`);
-                const medicos = await response.json();
-
-                medicoSelect.innerHTML = '<option value="">Seleccione un médico</option>';
-                
-                if (medicos.length === 0) {
-                    medicoSelect.innerHTML = '<option value="">No hay médicos disponibles para esta especialidad</option>';
-                    medicoInfo.textContent = 'No hay médicos registrados en esta especialidad';
-                    medicoInfo.style.color = '#c00';
-                } else {
-                    let hayDisponibles = false;
-                    medicos.forEach(medico => {
-                        const option = document.createElement('option');
-                        option.value = medico.id;
-                        
-                        if (medico.disponible) {
-                            option.textContent = `${medico.nombre} ✓ Disponible`;
-                            option.style.color = '#059669';
-                            option.style.fontWeight = 'bold';
-                            hayDisponibles = true;
-                        } else {
-                            option.textContent = `${medico.nombre} ✗ Ocupado (ya tiene cita a esta hora)`;
-                            option.style.color = '#999';
-                            option.disabled = true;
-                        }
-                        
-                        medicoSelect.appendChild(option);
-                    });
-
-                    if (hayDisponibles) {
-                        medicoInfo.textContent = '✓ Hay médicos disponibles para este horario';
-                        medicoInfo.style.color = '#059669';
-                        medicoInfo.style.fontWeight = 'bold';
-                    } else {
-                        medicoInfo.textContent = '✗ Todos los médicos están ocupados en este horario. Por favor seleccione otra hora.';
-                        medicoInfo.style.color = '#c00';
-                        medicoInfo.style.fontWeight = 'bold';
-                    }
-                }
-
-                medicoGroup.style.display = 'block';
-            } catch (error) {
-                console.error('Error al cargar médicos:', error);
-                medicoInfo.textContent = 'Error al cargar médicos. Intente nuevamente.';
-                medicoInfo.style.color = '#c00';
-            }
-        }
-
-        // Agregar eventos para recargar médicos cuando cambien los filtros
-        document.getElementById('cita').addEventListener('change', cargarMedicos);
-        document.getElementById('fecha').addEventListener('change', cargarMedicos);
     </script>
 </body>
 </html>

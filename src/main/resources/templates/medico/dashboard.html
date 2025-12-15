@@ -7,13 +7,13 @@
     <title>Dashboard Médico - Cita Ya</title>
     <style>
         * {
-            font-family: arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
         body {
-            background-color: #f8f9fa;
+            background-color: #f7f8fa;
             padding-top: 100px;
         }
         header {
@@ -49,6 +49,11 @@
             align-items: center;
             gap: 0.5rem;
             font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .profile_button:hover {
+            background-color: #047857;
+            transform: translateY(-2px);
         }
         .dropdown_content {
             display: none;
@@ -75,119 +80,274 @@
         .dropdown_item:hover {
             background: #f1f1f1;
         }
-        .welcome_section {
-            background: linear-gradient(135deg, #059669, #10b981);
-            color: white;
-            padding: 2rem;
-            border-radius: 1rem;
-            text-align: center;
-            margin-bottom: 2rem;
+        .container_main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 3rem;
         }
-        .welcome_title {
+        
+        /* Perfil del Médico Mejorado */
+        .doctor_profile_card {
+            background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            border: 1px solid #d1fae5;
+        }
+        .doctor_avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #059669, #10b981);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 2.5rem;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+            flex-shrink: 0;
+        }
+        .doctor_info {
+            flex: 1;
+        }
+        .doctor_name {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1f2937;
             margin-bottom: 0.5rem;
         }
+        .doctor_specialty {
+            font-size: 1.1rem;
+            color: #059669;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .doctor_meta {
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+        
+        /* Tarjetas de Estadísticas Mejoradas */
         .stats_container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 1.5rem;
-            margin: 2rem 0;
+            margin-bottom: 2.5rem;
         }
         .stat_card {
             background: white;
-            padding: 1.5rem;
-            border-radius: 1rem;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
         }
-        .stat_card.success {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
+        .stat_card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
         }
-        .stat_card.info {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            color: white;
+        .stat_card.success::before {
+            background: linear-gradient(90deg, #10b981, #059669);
         }
-        .stat_card.warning {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-            color: white;
+        .stat_card.info::before {
+            background: linear-gradient(90deg, #3b82f6, #2563eb);
+        }
+        .stat_card.warning::before {
+            background: linear-gradient(90deg, #f59e0b, #d97706);
+        }
+        .stat_card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+            border-color: #e5e7eb;
+        }
+        .stat_icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .stat_card.success .stat_icon {
+            color: #10b981;
+        }
+        .stat_card.info .stat_icon {
+            color: #3b82f6;
+        }
+        .stat_card.warning .stat_icon {
+            color: #f59e0b;
         }
         .stat_number {
             font-size: 2.5rem;
             font-weight: bold;
             margin-bottom: 0.5rem;
+            color: #1f2937;
         }
-        .container_main {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
+        .stat_label {
+            font-size: 1rem;
+            color: #6b7280;
+            font-weight: 500;
         }
-        .show {
-            display: block !important;
+        
+        /* Barra de Acciones Mejorada */
+        .action_bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+            flex-wrap: wrap;
         }
-        .card {
+        .action_btn {
+            padding: 0.9rem 1.5rem;
+            border-radius: 12px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .action_btn.primary {
+            background: linear-gradient(135deg, #059669, #10b981);
+            color: white;
+        }
+        .action_btn.primary:hover {
+            background: linear-gradient(135deg, #047857, #059669);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+        }
+        .action_btn.secondary {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+        }
+        .action_btn.secondary:hover {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+        .action_btn.tertiary {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white;
+        }
+        .action_btn.tertiary:hover {
+            background: linear-gradient(135deg, #7c3aed, #6d28d9);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+        
+        /* Sección de Próximas Citas Mejorada */
+        .citas_card {
             background: white;
-            border-radius: 1rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             padding: 2rem;
             margin-bottom: 2rem;
         }
-        .card h3 {
-            color: #059669;
-            margin-bottom: 1rem;
+        .citas_header {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e5e7eb;
         }
-        .citas-list {
+        .citas_header_icon {
+            font-size: 1.8rem;
+        }
+        .citas_header_title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #1f2937;
+        }
+        .citas_list {
             list-style: none;
         }
-        .cita-item {
-            padding: 1rem;
-            border-bottom: 1px solid #e5e7eb;
+        .cita_item {
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            background: #f9fafb;
+            border-left: 4px solid #059669;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            transition: all 0.3s ease;
         }
-        .cita-item:last-child {
-            border-bottom: none;
+        .cita_item:hover {
+            background: #f0fdf4;
+            transform: translateX(5px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
-        .cita-info {
+        .cita_info {
             flex: 1;
         }
-        .cita-fecha {
+        .cita_datetime {
             font-weight: bold;
             color: #059669;
-        }
-        .cita-paciente {
-            color: #6b7280;
-            margin-top: 0.25rem;
-        }
-        .btn {
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            text-decoration: none;
-            display: inline-block;
-            font-weight: 500;
-        }
-        .btn-primary {
-            background-color: #059669;
-            color: white;
-        }
-        .btn-primary:hover {
-            background-color: #047857;
-        }
-        .empty-state {
-            text-align: center;
-            padding: 2rem;
-            color: #6b7280;
-        }
-        .nav-links {
+            font-size: 1.05rem;
+            margin-bottom: 0.5rem;
             display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
-            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.5rem;
         }
+        .cita_patient {
+            color: #1f2937;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+        .cita_type {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+        .cita_btn {
+            padding: 0.7rem 1.3rem;
+            border-radius: 8px;
+            background: #059669;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .cita_btn:hover {
+            background: #047857;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+        }
+        .empty_state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #9ca3af;
+        }
+        .empty_state_icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        .empty_state_text {
+            font-size: 1.1rem;
+        }
+        
+        .show {
+            display: block !important;
+        }
+        
         .alert {
             padding: 1rem 1.5rem;
-            border-radius: 0.5rem;
+            border-radius: 12px;
             margin-bottom: 1.5rem;
             display: flex;
             align-items: center;
@@ -202,6 +362,23 @@
             background: #fee2e2;
             color: #991b1b;
             border: 1px solid #fca5a5;
+        }
+        
+        @media (max-width: 768px) {
+            .doctor_profile_card {
+                flex-direction: column;
+                text-align: center;
+            }
+            .stats_container {
+                grid-template-columns: 1fr;
+            }
+            .action_bar {
+                flex-direction: column;
+            }
+            .action_btn {
+                width: 100%;
+                justify-content: center;
+            }
         }
     </style>
 </head>
@@ -219,8 +396,8 @@
                 <a th:href="@{/medico/dashboard/perfil}" class="dropdown_item">Ver Mi Perfil</a>
                 <a th:href="@{/medico/dashboard/perfil/editar}" class="dropdown_item">Editar Perfil</a>
                 <hr style="margin:0;">
-                <form th:action="@{/logout}" method="get" style="margin:0;">
-                    <button type="submit" class="dropdown_item">Cerrar Sesión</button>
+                <form th:action="@{/logout}" method="GET" style="margin:0;">
+                    <button type="submit" class="dropdown_item" style="color: red;">Cerrar Sesión</button>
                 </form>
             </div>
         </div>
@@ -236,53 +413,86 @@
         <strong>✗ Error:</strong> <span th:text="${error}"></span>
     </div>
 
-    <div class="welcome_section">
-        <h1 class="welcome_title">Dr. <span th:text="${medico.nombre + ' ' + medico.apellido}">Usuario</span></h1>
-        <p th:text="${medico.especialidad}">Especialidad</p>
+    <!-- Perfil del Médico Mejorado -->
+    <div class="doctor_profile_card">
+        <div class="doctor_avatar">
+            <span th:text="${#strings.substring(medico.nombre, 0, 1) + #strings.substring(medico.apellido, 0, 1)}">DR</span>
+        </div>
+        <div class="doctor_info">
+            <div class="doctor_name">Dr. <span th:text="${medico.nombre + ' ' + medico.apellido}">Usuario</span></div>
+            <div class="doctor_specialty" th:text="${medico.especialidad}">Especialidad</div>
+            <div class="doctor_meta">📍 Última actualización: hace 2 horas</div>
+        </div>
     </div>
 
+    <!-- Tarjetas de Estadísticas Mejoradas -->
     <div class="stats_container">
         <div class="stat_card success">
+            <div class="stat_icon"></div>
             <div class="stat_number" th:text="${citasDelDia}">0</div>
-            <div>Citas del Día</div>
+            <div class="stat_label">Citas del Día</div>
         </div>
         <div class="stat_card info">
+            <div class="stat_icon"></div>
             <div class="stat_number" th:text="${citasDelMes}">0</div>
-            <div>Citas del Mes</div>
+            <div class="stat_label">Citas del Mes</div>
         </div>
         <div class="stat_card warning">
+            <div class="stat_icon"></div>
             <div class="stat_number" th:text="${totalPacientes}">0</div>
-            <div>Total Pacientes</div>
+            <div class="stat_label">Total Pacientes</div>
         </div>
     </div>
 
-    <div class="nav-links">
-        <a th:href="@{/agendamientos/nuevo}" class="btn btn-primary">➕ Agendar Cita</a>
-        <a th:href="@{/medico/dashboard/citas}" class="btn btn-primary">📅 Ver Todas Mis Citas</a>
-        <a th:href="@{/medico/dashboard/pacientes}" class="btn btn-primary">👥 Ver Mis Pacientes</a>
-        <a th:href="@{/medico/dashboard/historias-clinicas}" class="btn btn-primary">📋 Historias Clínicas</a>
-        <a th:href="@{/medico/dashboard/buscar-paciente}" class="btn btn-primary">🔍 Buscar Paciente</a>
+    <!-- Barra de Acciones Mejorada -->
+    <div class="action_bar">
+        <a th:href="@{/agendamientos/nuevo}" class="action_btn primary">
+            Agendar Cita
+        </a>
+        <a th:href="@{/medico/dashboard/citas}" class="action_btn secondary">
+            Ver Todas Mis Citas
+        </a>
+        <a th:href="@{/medico/dashboard/pacientes}" class="action_btn secondary">
+            Ver Mis Pacientes
+        </a>
+        <a th:href="@{/medico/dashboard/historias-clinicas}" class="action_btn tertiary">
+            Historias Clínicas
+        </a>
+        <a th:href="@{/medico/dashboard/buscar-paciente}" class="action_btn tertiary">
+            Buscar Paciente
+        </a>
     </div>
 
-    <div class="card">
-        <h3>Próximas Citas</h3>
-        <ul class="citas-list" th:if="${!#lists.isEmpty(proximasCitas)}">
-            <li class="cita-item" th:each="cita : ${proximasCitas}">
-                <div class="cita-info">
-                    <div class="cita-fecha">
-                        <span th:text="${#dates.format(cita.fecha, 'dd/MM/yyyy')}">Fecha</span> - 
+    <!-- Sección de Próximas Citas Mejorada -->
+    <div class="citas_card">
+        <div class="citas_header">
+            <span class="citas_header_icon"></span>
+            <h2 class="citas_header_title">Próximas Citas</h2>
+        </div>
+        
+        <ul class="citas_list" th:if="${!#lists.isEmpty(proximasCitas)}">
+            <li class="cita_item" th:each="cita : ${proximasCitas}">
+                <div class="cita_info">
+                    <div class="cita_datetime">
+                        <span th:text="${#dates.format(cita.fecha, 'dd/MM/yyyy')}">Fecha</span> – 
                         <span th:text="${cita.hora}">Hora</span>
                     </div>
-                    <div class="cita-paciente">
-                        <strong th:text="${cita.paciente.nombre + ' ' + cita.paciente.apellido}">Paciente</strong> - 
+                    <div class="cita_patient">
+                        <span th:text="${cita.paciente.nombre + ' ' + cita.paciente.apellido}">Paciente</span>
+                    </div>
+                    <div class="cita_type">
                         <span th:text="${cita.cita}">Tipo de cita</span>
                     </div>
                 </div>
-                <a th:href="@{/medico/dashboard/citas/{id}(id=${cita.idAgendamiento})}" class="btn btn-primary">Ver Detalle</a>
+                <a th:href="@{/medico/dashboard/citas/{id}(id=${cita.idAgendamiento})}" class="cita_btn">
+                    Ver Detalle
+                </a>
             </li>
         </ul>
-        <div class="empty-state" th:if="${#lists.isEmpty(proximasCitas)}">
-            <p>No tienes citas programadas próximamente.</p>
+        
+        <div class="empty_state" th:if="${#lists.isEmpty(proximasCitas)}">
+            <div class="empty_state_icon"></div>
+            <p class="empty_state_text">No tienes citas programadas próximamente.</p>
         </div>
     </div>
 </div>

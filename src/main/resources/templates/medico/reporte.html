@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte de Médicos - Cita Ya</title>
+    <link rel="stylesheet" th:href="@{/Assets/css/reporte.css}">
+    <style>
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            justify-content: center;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+        
+        .btn-success {
+            background-color: #10b981;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: #059669;
+        }
+        
+        .btn-secondary {
+            background-color: #6b7280;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #4b5563;
+        }
+        
+        .btn-primary {
+            background-color: #3b82f6;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2563eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="content-wrap">
+        <header>
+            <img th:src="@{/Assets/IMG/logo.png}" alt="Logo Cita Ya">
+            <div class="info">
+                <br>
+                <p>Sistema de Gestión de Citas Médicas</p>
+            </div>
+            <div class="fecha">
+                <p><strong>Fecha:</strong> <span th:text="${#temporals.format(T(java.time.LocalDate).now(), 'dd/MM/yyyy')}"></span></p>
+            </div>
+        </header>
+
+        <h2>Reporte de Médicos</h2>
+        
+        <!-- Botones de acción -->
+        <div class="action-buttons">
+            <button class="btn btn-success" onclick="window.print()">Descargar PDF</button>
+            <a th:href="@{/medicos}" class="btn btn-secondary">Volver al Listado</a>
+            <a th:href="@{/layouts/administrador}" class="btn btn-primary">Dashboard</a>
+        </div>
+
+        <div class="tabla-container">
+            <table th:if="${medicos.size() > 0}">
+                <thead>
+                    <tr>
+                        <th style="width:5%;">ID</th>
+                        <th style="width:15%;">Documento</th>
+                        <th style="width:20%;">Nombre</th>
+                        <th style="width:15%;">Especialidad</th>
+                        <th style="width:10%;">Género</th>
+                        <th style="width:15%;">Teléfono</th>
+                        <th style="width:20%;">Correo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="medico : ${medicos}">
+                        <td th:text="${medico.idMedico}"></td>
+                        <td th:text="${medico.tipoDoc} + ' ' + ${medico.numeroDoc}"></td>
+                        <td th:text="${medico.nombre} + ' ' + ${medico.apellido}"></td>
+                        <td th:text="${medico.especialidad}"></td>
+                        <td th:text="${medico.genero}"></td>
+                        <td th:text="${medico.telefono != null ? medico.telefono : 'N/A'}"></td>
+                        <td th:text="${medico.correo}"></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p th:if="${medicos.size() == 0}" style="text-align: center; padding: 20px; color: #999;">
+                No se encontraron médicos
+            </p>
+        </div>
+
+        <div class="footer-stats">
+            <div>Total registros: <strong th:text="${medicos.size()}"></strong></div>
+            <div>Generado por: <strong>Cita Ya</strong></div>
+        </div>
+    </div>
+</body>
+</html>

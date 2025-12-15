@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" th:href="@{/Assets/css/index.css}">
 </head>
+
 <body>
     <header>
         <div class="container_header">
@@ -30,19 +32,48 @@
 
     <section id="Inicio">
         <div class="carousel-container">
-            <div class="carousel-slide slide-1 active">
-                <h1>Bienvenido a Cita Ya</h1>
-                <p>Tu salud es nuestra prioridad. Agenda tu cita médica de forma rápida y sencilla con los mejores especialistas.</p>
+            <div class="carousel-slide active" style="background-image: url('/Assets/img/Crsl1.jpg');">
+                <div class="carousel-overlay"></div>
+                <div class="carousel-content">
+                    <h1>Bienvenido a Cita Ya</h1>
+                    <p>Tu salud es nuestra prioridad. Agenda tu cita médica de forma rápida y sencilla con los mejores
+                        especialistas.</p>
+                </div>
             </div>
-            
-            <div class="carousel-slide slide-2">
-                <h1>Atención Médica de Calidad</h1>
-                <p>Conectamos pacientes con profesionales de la salud altamente calificados en todas las especialidades.</p>
+
+            <div class="carousel-slide" style="background-image: url('/Assets/img/crsl2.jpg');">
+                <div class="carousel-overlay"></div>
+                <div class="carousel-content">
+                    <h1>Atención Médica de Calidad</h1>
+                    <p>Conectamos pacientes con profesionales de la salud altamente calificados en todas las
+                        especialidades.</p>
+                </div>
             </div>
-            
-            <div class="carousel-slide slide-3">
-                <h1>Gestión Inteligente de Salud</h1>
-                <p>Plataforma completa para la gestión de citas, historiales clínicos y seguimiento médico personalizado.</p>
+
+            <div class="carousel-slide" style="background-image: url('/Assets/img/crsl3.jpg');">
+                <div class="carousel-overlay"></div>
+                <div class="carousel-content">
+                    <h1>Gestión Inteligente de Salud</h1>
+                    <p>Plataforma completa para la gestión de citas, historiales clínicos y seguimiento médico
+                        personalizado.</p>
+                </div>
+            </div>
+
+            <div class="carousel-slide" style="background-image: url('/Assets/img/crsl4.jpg');">
+                <div class="carousel-overlay"></div>
+                <div class="carousel-content">
+                    <h1>Profesionales Certificados</h1>
+                    <p>Nuestro equipo médico cuenta con la más alta capacitación y experiencia en cada especialidad.</p>
+                </div>
+            </div>
+
+            <div class="carousel-slide" style="background-image: url('/Assets/img/crsl5.jpg');">
+                <div class="carousel-overlay"></div>
+                <div class="carousel-content">
+                    <h1>Tecnología al Servicio de tu Salud</h1>
+                    <p>Sistema moderno y seguro para el manejo de tu información médica y seguimiento de tratamientos.
+                    </p>
+                </div>
             </div>
 
             <button class="carousel-arrow arrow-left" onclick="changeSlide(-1);">
@@ -56,6 +87,8 @@
                 <span class="indicator active" onclick="goToSlide(0);"></span>
                 <span class="indicator" onclick="goToSlide(1);"></span>
                 <span class="indicator" onclick="goToSlide(2);"></span>
+                <span class="indicator" onclick="goToSlide(3);"></span>
+                <span class="indicator" onclick="goToSlide(4);"></span>
             </div>
         </div>
     </section>
@@ -65,46 +98,52 @@
             <h1 class="h1_servicios">Nuestros Servicios</h1>
             <div class="container_box">
                 <div class="box">
-                    <div class="icono">
-                        <i class="fas fa-stethoscope"></i>
+                    <div class="imagen-servicio">
+                        <img th:src="@{/Assets/img/gnrl1.jpg}" alt="Consulta General">
                     </div>
                     <h3 class="h3-servicios">Consulta General</h3>
-                    <p class="p-servicios">Evaluación médica completa para diagnóstico y tratamiento de enfermedades comunes, chequeos preventivos y orientación en salud.</p>
+                    <p class="p-servicios">Evaluación médica completa para diagnóstico y tratamiento de enfermedades
+                        comunes, chequeos preventivos y orientación en salud.</p>
                 </div>
                 <div class="box">
-                    <div class="icono">
-                        <i class="fas fa-bone"></i>
+                    <div class="imagen-servicio">
+                        <img th:src="@{/Assets/img/ortp.jpg}" alt="Ortopedia">
                     </div>
                     <h3 class="h3-servicios">Ortopedia</h3>
-                    <p class="p-servicios">Tratamiento especializado de lesiones y enfermedades del sistema musculoesquelético, incluyendo huesos, articulaciones y músculos.</p>
+                    <p class="p-servicios">Tratamiento especializado de lesiones y enfermedades del sistema
+                        musculoesquelético, incluyendo huesos, articulaciones y músculos.</p>
                 </div>
                 <div class="box">
-                    <div class="icono">
-                        <i class="fas fa-brain"></i>
+                    <div class="imagen-servicio">
+                        <img th:src="@{/Assets/img/ps.jpg}" alt="Psicología">
                     </div>
                     <h3 class="h3-servicios">Psicología</h3>
-                    <p class="p-servicios">Atención profesional en salud mental con terapias personalizadas para mejorar tu bienestar emocional y calidad de vida.</p>
+                    <p class="p-servicios">Atención profesional en salud mental con terapias personalizadas para mejorar
+                        tu bienestar emocional y calidad de vida.</p>
                 </div>
                 <div class="box">
-                    <div class="icono">
-                        <i class="fas fa-heartbeat"></i>
+                    <div class="imagen-servicio">
+                        <img th:src="@{/Assets/img/crd.jpg}" alt="Cardiología">
                     </div>
                     <h3 class="h3-servicios">Cardiología</h3>
-                    <p class="p-servicios">Prevención, diagnóstico y tratamiento de enfermedades cardiovasculares con tecnología de punta y especialistas certificados.</p>
+                    <p class="p-servicios">Prevención, diagnóstico y tratamiento de enfermedades cardiovasculares con
+                        tecnología de punta y especialistas certificados.</p>
                 </div>
                 <div class="box">
-                    <div class="icono">
-                        <i class="fas fa-baby"></i>
+                    <div class="imagen-servicio">
+                        <img th:src="@{/Assets/img/pdtr.jpg}" alt="Pediatría">
                     </div>
                     <h3 class="h3-servicios">Pediatría</h3>
-                    <p class="p-servicios">Cuidado integral de la salud infantil desde el nacimiento hasta la adolescencia, con enfoque en prevención y desarrollo.</p>
+                    <p class="p-servicios">Cuidado integral de la salud infantil desde el nacimiento hasta la
+                        adolescencia, con enfoque en prevención y desarrollo.</p>
                 </div>
                 <div class="box">
-                    <div class="icono">
-                        <i class="fas fa-hand-sparkles"></i>
+                    <div class="imagen-servicio">
+                        <img th:src="@{/Assets/img/derm.jpg}" alt="Dermatología">
                     </div>
                     <h3 class="h3-servicios">Dermatología</h3>
-                    <p class="p-servicios">Diagnóstico y tratamiento de enfermedades de la piel, cabello y uñas, con procedimientos estéticos y terapéuticos.</p>
+                    <p class="p-servicios">Diagnóstico y tratamiento de enfermedades de la piel, cabello y uñas, con
+                        procedimientos estéticos y terapéuticos.</p>
                 </div>
             </div>
         </div>
@@ -114,10 +153,21 @@
         <div class="container_nosotros">
             <div class="box_nosotros-h1-p">
                 <h1 class="h1-nosotros">Sobre Nosotros</h1>
-                <p class="p-nosotros"><em>Cita Ya</em> es una solución integral orientada al sector salud, diseñada para optimizar los procesos clínicos y administrativos de clínicas, hospitales y centros médicos. Nuestro enfoque combina la experiencia médica con el respaldo de herramientas tecnológicas especializadas, permitiendo una gestión eficiente de citas, historiales clínicos, personal médico, camas hospitalarias, recursos e insumos. Trabajamos con estándares de calidad y confidencialidad en el manejo de la información del paciente, cumpliendo con normativas legales y protocolos de seguridad. Contamos con un equipo interdisciplinario de profesionales en salud, tecnología y gestión que se encarga de garantizar un servicio confiable, accesible y adaptable a las necesidades particulares de cada institución. Con <em>Cita Ya</em>, buscamos no solo mejorar la atención al paciente, sino también apoyar al personal médico y administrativo en la toma de decisiones basadas en datos, reduciendo errores y aumentando la eficiencia operativa.</p>
+                <p class="p-nosotros"><em>Cita Ya</em> Cita Ya es un sistema creado para mejorar y simplificar la
+                    gestión dentro de clínicas, hospitales y centros médicos. Nuestra plataforma integra en un solo
+                    lugar la administración de citas, el control de historiales clínicos, la gestión del personal, el
+                    registro de pacientes y la organización de las agendas de los médicos.
+
+                    El objetivo principal es ofrecer una herramienta confiable y fácil de usar que permita a las
+                    instituciones de salud optimizar sus procesos diarios. Cita Ya ayuda a reducir tiempos, mejorar la
+                    atención al paciente y brindar al personal médico y administrativo una experiencia más ordenada y
+                    eficiente.
+
+                    Gracias a su diseño adaptable, el sistema se ajusta a las necesidades de cada centro médico,
+                    garantizando un flujo de trabajo más claro y una gestión clínica mucho más efectiva.</p>
             </div>
             <div class="box_nosotros-img">
-                <img class="img-nosotros" th:src="@{/Assets/img/nosotro.png}" alt="Sobre Nosotros">
+                <img class="img-nosotros" th:src="@{/Assets/img/medicos.jpg}" alt="Sobre Nosotros">
             </div>
         </div>
     </section>
@@ -180,10 +230,10 @@
         function showSlide(index) {
             slides.forEach(slide => slide.classList.remove('active'));
             indicators.forEach(indicator => indicator.classList.remove('active'));
-            
+
             if (index >= slides.length) currentSlide = 0;
             if (index < 0) currentSlide = slides.length - 1;
-            
+
             slides[currentSlide].classList.add('active');
             indicators[currentSlide].classList.add('active');
         }
@@ -208,7 +258,7 @@
 
         function resetAutoSlide() {
             clearInterval(autoSlideInterval);
-            autoSlideInterval = setInterval(autoSlide, 10000);
+            autoSlideInterval = setInterval(autoSlide, 5000);
         }
 
         function toggleMenu() {
@@ -224,7 +274,8 @@
         });
 
         // Iniciar carrusel automático
-        autoSlideInterval = setInterval(autoSlide, 10000);
+        autoSlideInterval = setInterval(autoSlide, 5000);
     </script>
 </body>
+
 </html>

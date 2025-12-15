@@ -322,11 +322,11 @@
 
     <main class="main-content py-4">
         <div class="container">
-        <h1>👁️ Detalle del Historial Clínico</h1>
+        <h1>Detalle del Historial Clínico</h1>
         
         <!-- Información del Paciente -->
         <div class="info-section">
-            <h2>👤 Información del Paciente</h2>
+            <h2>Información del Paciente</h2>
             <div class="info-row">
                 <div class="info-label">Nombre Completo:</div>
                 <div class="info-value" th:text="${historia.paciente != null ? historia.paciente.nombre + ' ' + historia.paciente.apellido : 'N/A'}">Paciente</div>
@@ -343,7 +343,7 @@
         
         <!-- Información del Médico -->
         <div class="info-section">
-            <h2>👨‍⚕️ Información del Médico</h2>
+            <h2>Información del Médico</h2>
             <div class="info-row">
                 <div class="info-label">Nombre Completo:</div>
                 <div class="info-value" th:text="${historia.medico != null ? historia.medico.nombre + ' ' + historia.medico.apellido : 'N/A'}">Médico</div>
@@ -356,7 +356,7 @@
         
         <!-- Fechas -->
         <div class="info-section">
-            <h2>📅 Fechas</h2>
+            <h2>Fechas</h2>
             <div class="info-row">
                 <div class="info-label">Fecha de Creación:</div>
                 <div class="info-value" th:text="${historia.fechaCreacion != null ? #dates.format(historia.fechaCreacion, 'dd/MM/yyyy') : 'N/A'}">01/01/2024</div>
@@ -369,7 +369,7 @@
         
         <!-- Antecedentes -->
         <div class="info-section">
-            <h2>📋 Antecedentes</h2>
+            <h2>Antecedentes</h2>
             <div class="text-content" th:if="${historia.antecedentes != null and !historia.antecedentes.isEmpty()}" 
                  th:text="${historia.antecedentes}">
                 Antecedentes médicos...
@@ -393,7 +393,7 @@
         
         <!-- Tratamiento -->
         <div class="info-section">
-            <h2>💊 Tratamiento</h2>
+            <h2>Tratamiento</h2>
             <div class="text-content" th:if="${historia.tratamiento != null and !historia.tratamiento.isEmpty()}" 
                  th:text="${historia.tratamiento}">
                 Tratamiento prescrito...
@@ -405,7 +405,7 @@
         
         <!-- Observaciones -->
         <div class="info-section">
-            <h2>📝 Observaciones</h2>
+            <h2>Observaciones</h2>
             <div class="text-content" th:if="${historia.observaciones != null and !historia.observaciones.isEmpty()}" 
                  th:text="${historia.observaciones}">
                 Observaciones adicionales...

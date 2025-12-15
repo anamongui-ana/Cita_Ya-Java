@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte de Agendamientos - Cita Ya</title>
+    <link rel="stylesheet" th:href="@{/Assets/css/reporte.css}">
+</head>
+<body>
+    <div class="content-wrap">
+        <header>
+            <img th:src="@{/Assets/IMG/logo.png}" alt="Logo Cita Ya">
+            <div class="info">
+                <br>
+                <p>Sistema de Gestión de Citas Médicas</p>
+            </div>
+            <div class="fecha">
+                <p><strong>Fecha:</strong> <span th:text="${#temporals.format(T(java.time.LocalDate).now(), 'dd/MM/yyyy')}"></span></p>
+            </div>
+        </header>
+
+        <h2>Reporte de Agendamientos</h2>
+
+        <div class="tabla-container">
+            <table th:if="${agendamientos.size() > 0}">
+                <thead>
+                    <tr>
+                        <th style="width:5%;">ID</th>
+                        <th style="width:15%;">Paciente</th>
+                        <th style="width:15%;">Médico</th>
+                        <th style="width:15%;">Tipo de Cita</th>
+                        <th style="width:10%;">Fecha</th>
+                        <th style="width:8%;">Hora</th>
+                        <th style="width:12%;">Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="agendamiento : ${agendamientos}">
+                        <td th:text="${agendamiento.idAgendamiento}"></td>
+                        <td th:text="${agendamiento.paciente != null ? agendamiento.paciente.nombre + ' ' + agendamiento.paciente.apellido : 'N/A'}"></td>
+                        <td th:text="${agendamiento.medico != null ? agendamiento.medico.nombre + ' ' + agendamiento.medico.apellido : 'Sin asignar'}"></td>
+                        <td th:text="${agendamiento.cita}"></td>
+                        <td th:text="${#dates.format(agendamiento.fecha, 'dd/MM/yyyy')}"></td>
+                        <td th:text="${agendamiento.hora}"></td>
+                        <td th:text="${agendamiento.estado}"></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p th:if="${agendamientos.size() == 0}" style="text-align: center; padding: 20px; color: #999;">
+                No se encontraron agendamientos registrados
+            </p>
+        </div>
+
+        <div class="footer-stats">
+            <div>Total registros: <strong th:text="${agendamientos.size()}"></strong></div>
+            <div>Generado por: <strong>Cita Ya</strong></div>
+        </div>
+    </div>
+</body>
+</html>

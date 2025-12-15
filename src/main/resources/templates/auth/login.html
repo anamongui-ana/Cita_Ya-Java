@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image" th:href="@{/Assets/img/logoti.png}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" th:href="@{/Assets/css/login.css}">
     <title>Cita Ya - Iniciar Sesión</title>
 </head>
@@ -50,19 +51,20 @@
                         <label class="text" for="clave">Contraseña</label>
                     </div>
 
-                    <div class="input">
+                    <div class="input-password-container" style="position: relative; width: 100%;">
                         <input type="password" id="clave" name="contrasena" 
-                               placeholder="••••••••" required>
+                               placeholder="••••••••" required
+                               style="width: 100%; padding: 1rem; padding-right: 3rem; border-radius: .6rem; border: .1rem solid #aaa; background-color: #eee; font-size: 1.05rem; outline: none;">
+                        <span class="toggle-password" onclick="togglePassword()" 
+                              style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); cursor: pointer; color: #0F4C75; font-size: 1.4rem; z-index: 100;">
+                            <i id="eyeIcon" class="fas fa-eye"></i>
+                        </span>
                     </div>
 
                     <!-- Botón -->
                     <button type="submit" class="login_button">Iniciar Sesión</button>
 
                     <!-- Links -->
-                    <div class="cuenta">
-                        <a th:href="@{/restablecer}">¿Olvidaste tu contraseña?</a>
-                    </div>
-
                     <div class="no-cuenta">
                         <p>¿No tienes cuenta?
                             <a th:href="@{/registro}">Regístrate</a>
@@ -99,6 +101,23 @@
      style="background:#e6ffe6; color:#090; padding:10px; border-radius:6px; margin-bottom:12px;">
     <p>✓ ¡Registro exitoso! Ahora puedes iniciar sesión</p>
 </div>
+
+<script>
+function togglePassword() {
+    const passwordInput = document.getElementById('clave');
+    const eyeIcon = document.getElementById('eyeIcon');
+    
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        eyeIcon.classList.remove('fa-eye');
+        eyeIcon.classList.add('fa-eye-slash');
+    } else {
+        passwordInput.type = 'password';
+        eyeIcon.classList.remove('fa-eye-slash');
+        eyeIcon.classList.add('fa-eye');
+    }
+}
+</script>
 </body>
 </html>
 

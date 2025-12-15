@@ -13,25 +13,82 @@ import proyecto.conexiondb.JPA.Repository.AdministradorRepository;
 
 import jakarta.servlet.http.HttpSession;
 
+/**
+ * CONTROLADOR DE LOGIN - Maneja la autenticación de usuarios en el sistema
+ * 
+ * Este controlador gestiona:
+ * - Mostrar el formulario de login
+ * - Procesar credenciales de login (documento + contraseña)
+ * - Autenticar usuarios de los 3 tipos: Pacientes, Médicos, Administradores
+ * - Crear sesiones de usuario autenticado
+ * - Cerrar sesión (logout)
+ * - Endpoints de debug para desarrollo
+ * 
+ * FLUJO DE AUTENTICACIÓN:
+ * 1. Usuario ingresa número de documento y contraseña
+ * 2. Sistema busca en las 3 tablas (administradores, médicos, pacientes)
+ * 3. Si encuentra coincidencia, valida la contraseña
+ * 4. Si es correcta, crea sesión y redirige al dashboard correspondiente
+ * 5. Si no, muestra mensaje de error
+ * 
+ * NOTA: Las contraseñas se almacenan en texto plano (no recomendado para producción)
+ */
 @Controller
 public class LoginController {
 
+    // =============== INYECCIÓN DE REPOSITORIOS ===============
+    
+    /**
+     * Repositorio para acceder a la tabla de pacientes
+     */
     @Autowired
     private PacienteRepository pacienteRepository;
     
+    /**
+     * Repositorio para acceder a la tabla de médicos
+     */
     @Autowired
     private MedicoRepository medicoRepository;
     
+    /**
+     * Repositorio para acceder a la tabla de administradores
+     */
     @Autowired
     private AdministradorRepository administradorRepository;
 
-    // Mostrar login
+    // =============== MOSTRAR FORMULARIO DE LOGIN ===============
+    
+    /**
+     * ENDPOINT: GET /login
+     * 
+     * Muestra la página de inicio de sesión
+     * Accesible para usuarios no autenticados
+     */
     @GetMapping("/login")
     public String mostrarLogin() {
         return "auth/inicioSesion";
     }
 
-    // Procesar login
+    // =============== PROCESAR AUTENTICACIÓN ===============
+    
+    /**
+     * ENDPOINT: POST /login
+     * 
+     * Procesa las credenciales de login y autentica al usuario
+     * 
+     * PROCESO DE AUTENTICACIÓN:
+     * 1. Valida que los campos no estén vacíos
+     * 2. Busca el usuario por número de documento en las 3 tablas
+     * 3. Verifica la contraseña (comparación de texto plano)
+     * 4. Si es correcta, crea la sesión y redirige al dashboard
+     * 5. Si no, muestra mensaje de error
+     * 
+     * @param numeroDoc Número de documento del usuario
+     * @param contrasena Contraseña en texto plano
+     * @param model Modelo para pasar datos a la vista
+     * @param session Sesión HTTP para almacenar datos del usuario autenticado
+     * @return Redirección al dashboard correspondiente o vuelta al login con error
+     */
     @PostMapping("/login")
     public String procesarLogin(
             @RequestParam("numerodoc") String numeroDoc,
@@ -39,12 +96,15 @@ public class LoginController {
             Model model,
             HttpSession session) {
 
-        // Validar que los campos no estén vacíos
+        // =============== VALIDACIONES DE ENTRADA ===============
+        
+        // Validar que el número de documento no esté vacío
         if (numeroDoc == null || numeroDoc.trim().isEmpty()) {
             model.addAttribute("error", "El número de documento es requerido.");
             return "auth/inicioSesion";
         }
 
+        // Validar que la contraseña no esté vacía
         if (contrasena == null || contrasena.trim().isEmpty()) {
             model.addAttribute("error", "La contraseña es requerida.");
             return "auth/inicioSesion";
@@ -52,14 +112,21 @@ public class LoginController {
 
         System.out.println("Intentando login con documento: " + numeroDoc);
 
-        // Buscar en Administradores
+        // =============== BÚSQUEDA EN TABLA ADMINISTRADORES ===============
+        
+        /**
+         * PRIORIDAD 1: Buscar en administradores
+         * Los administradores tienen acceso completo al sistema
+         */
         Administrador administrador = administradorRepository.findByNumeroDoc(numeroDoc);
         if (administrador != null) {
             System.out.println("Administrador encontrado: " + administrador.getNombre());
             System.out.println("Contraseña BD: [" + administrador.getContraseña() + "]");
             System.out.println("Contraseña ingresada: [" + contrasena + "]");
             
+            // Verificar contraseña (comparación de texto plano)
             if (administrador.getContraseña() != null && administrador.getContraseña().trim().equals(contrasena.trim())) {
+                // CREAR SESIÓN DE ADMINISTRADOR
                 session.setAttribute("usuario", administrador);
                 session.setAttribute("tipoUsuario", "administrador");
                 session.setAttribute("nombreCompleto", administrador.getNombre() + " " + administrador.getApellido());
@@ -71,14 +138,21 @@ public class LoginController {
             }
         }
 
-        // Buscar en Médicos
+        // =============== BÚSQUEDA EN TABLA MÉDICOS ===============
+        
+        /**
+         * PRIORIDAD 2: Buscar en médicos
+         * Los médicos pueden gestionar sus citas y pacientes asignados
+         */
         Medico medico = medicoRepository.findByNumeroDoc(numeroDoc);
         if (medico != null) {
             System.out.println("Médico encontrado: " + medico.getNombre());
             System.out.println("Contraseña BD: [" + medico.getContraseña() + "]");
             System.out.println("Contraseña ingresada: [" + contrasena + "]");
             
+            // Verificar contraseña (comparación de texto plano)
             if (medico.getContraseña() != null && medico.getContraseña().trim().equals(contrasena.trim())) {
+                // CREAR SESIÓN DE MÉDICO
                 session.setAttribute("usuario", medico);
                 session.setAttribute("tipoUsuario", "medico");
                 session.setAttribute("nombreCompleto", medico.getNombre() + " " + medico.getApellido());
@@ -90,7 +164,12 @@ public class LoginController {
             }
         }
 
-        // Buscar en Pacientes
+        // =============== BÚSQUEDA EN TABLA PACIENTES ===============
+        
+        /**
+         * PRIORIDAD 3: Buscar en pacientes
+         * Los pacientes pueden agendar citas y ver su información personal
+         */
         Paciente paciente = pacienteRepository.findByNumeroDoc(numeroDoc);
         if (paciente != null) {
             System.out.println("=== PACIENTE ENCONTRADO ===");
@@ -103,7 +182,9 @@ public class LoginController {
             System.out.println("Contraseña ingresada (trimmed): [" + contrasena.trim() + "]");
             System.out.println("¿Son iguales? " + (paciente.getContrasena() != null && paciente.getContrasena().trim().equals(contrasena.trim())));
             
+            // Verificar contraseña (comparación de texto plano)
             if (paciente.getContrasena() != null && paciente.getContrasena().trim().equals(contrasena.trim())) {
+                // CREAR SESIÓN DE PACIENTE
                 session.setAttribute("usuario", paciente);
                 session.setAttribute("tipoUsuario", "paciente");
                 session.setAttribute("nombreCompleto", paciente.getNombre() + " " + paciente.getApellido());
@@ -116,16 +197,28 @@ public class LoginController {
             }
         }
 
-        // Si no se encuentra en ninguna tabla
+        // =============== USUARIO NO ENCONTRADO ===============
+        
+        // Si no se encuentra el documento en ninguna de las 3 tablas
         System.out.println("Usuario no encontrado en ninguna tabla");
         model.addAttribute("error", "El usuario no existe.");
         return "auth/inicioSesion";
     }
 
-    // Cerrar sesión
+    // =============== CERRAR SESIÓN ===============
+    
+    /**
+     * ENDPOINT: GET /logout
+     * 
+     * Cierra la sesión del usuario actual
+     * Invalida completamente la sesión HTTP y redirige al login
+     * 
+     * @param session Sesión HTTP a invalidar
+     * @return Redirección a la página de login
+     */
     @GetMapping("/logout")
     public String logout(HttpSession session) {
-        session.invalidate();
+        session.invalidate(); // Elimina todos los datos de la sesión
         return "redirect:/login";
     }
     

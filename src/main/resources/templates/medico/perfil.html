@@ -84,12 +84,13 @@
 </head>
 <body>
 <div class="container">
-    <a th:href="@{/medico/dashboard}" class="btn btn-back">← Volver al Dashboard</a>
+    <!-- Botón volver dinámico: si es admin va a /medicos, si es médico va a su dashboard -->
+    <a th:href="${session.tipoUsuario == 'administrador' ? '/medicos' : '/medico/dashboard'}" class="btn btn-back">← Volver</a>
     
     <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
     
     <div class="card">
-        <h2>Mi Perfil Profesional</h2>
+        <h2 th:text="${session.tipoUsuario == 'administrador' ? 'Perfil del Médico' : 'Mi Perfil Profesional'}">Perfil</h2>
         <div class="info-row">
             <div class="info-label">Nombre:</div>
             <div class="info-value" th:text="${medico.nombre}">Nombre</div>
@@ -128,7 +129,8 @@
         </div>
     </div>
 
-    <a th:href="@{/medico/dashboard/perfil/editar}" class="btn btn-edit">Editar Perfil</a>
+    <!-- Botón editar dinámico: si es admin va a /medicos/edit, si es médico va a su perfil/editar -->
+    <a th:href="${session.tipoUsuario == 'administrador' ? '/medicos/edit/' + medico.idMedico : '/medico/dashboard/perfil/editar'}" class="btn btn-edit">Editar Perfil</a>
 </div>
 </body>
 </html>

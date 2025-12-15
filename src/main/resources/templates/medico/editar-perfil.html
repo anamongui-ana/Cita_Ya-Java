@@ -100,13 +100,15 @@
 </head>
 <body>
 <div class="container">
-    <a th:href="@{/medico/dashboard/perfil}" class="btn btn-back">← Cancelar</a>
+    <!-- Botón cancelar dinámico: si viene del admin va a /medicos, si es médico va a su dashboard -->
+    <a th:href="${session.tipoUsuario == 'administrador' ? '/medicos' : '/medico/dashboard'}" class="btn btn-back">← Cancelar</a>
     
     <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
     
     <div class="card">
-        <h2>Editar Mi Perfil</h2>
-        <form th:action="@{/medico/dashboard/perfil/actualizar}" method="POST" th:object="${medico}">
+        <h2 th:text="${session.tipoUsuario == 'administrador' ? 'Editar Médico' : 'Editar Mi Perfil'}">Editar Perfil</h2>
+        <!-- Formulario dinámico: si es admin usa /medicos/update, si es médico usa /medico/dashboard/perfil/actualizar -->
+        <form th:action="${session.tipoUsuario == 'administrador' ? '/medicos/update/' + medico.idMedico : '/medico/dashboard/perfil/actualizar'}" method="POST" th:object="${medico}">
             <div class="form-group">
                 <label>Nombre *</label>
                 <input type="text" th:field="*{nombre}" required>
@@ -154,7 +156,7 @@
 
             <div style="margin-top: 2rem;">
                 <button type="submit" class="btn btn-save">Guardar Cambios</button>
-                <a th:href="@{/medico/dashboard/perfil}" class="btn btn-back">Cancelar</a>
+                <a th:href="${session.tipoUsuario == 'administrador' ? '/medicos' : '/medico/dashboard'}" class="btn btn-back">Cancelar</a>
             </div>
         </form>
     </div>

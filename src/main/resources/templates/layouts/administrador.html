@@ -50,7 +50,7 @@
         }
 
         .profile_button {
-            background-color: #059669;
+            background-color: #0F4C75;
             color: white;
             padding: 0.7rem 1.5rem;
             border: none;
@@ -66,7 +66,7 @@
         }
 
         .profile_button:hover {
-            background-color: #10b981;
+            background-color: #1a5a8a;
         }
 
         .dropdown_content {
@@ -101,52 +101,190 @@
             background-color: #f1f1f1;
         }
 
-        .admin-navbar {
-            background-color: #fff;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            padding: 0.8rem 1.5rem;
-            border-bottom: 3px solid #059669;
-            position: sticky;
-            top: 0;
-            z-index: 999;
+        /* Sección de Bienvenida */
+        .welcome-section {
+            background: linear-gradient(135deg, #ffffff 0%, #e8f5f0 100%);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            border: 2px solid #A8E6CF;
         }
 
-        .admin-navbar .navbar-nav {
+        .welcome-content {
             display: flex;
-            flex-direction: row;
+            justify-content: space-between;
             align-items: center;
-            gap: 0.5rem;
-            justify-content: center;
-            list-style: none;
+            gap: 2rem;
         }
 
-        .admin-navbar .nav-link {
-            color: #3b82f6;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-            padding: 0.6rem 1rem;
-            border-radius: 0.5rem;
+        .welcome-text {
+            flex: 1;
+        }
+
+        .dashboard-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #0F4C75;
+            margin-bottom: 1rem;
+        }
+
+        .welcome-message {
+            font-size: 1.1rem;
+            color: #4b5563;
+            line-height: 1.6;
+        }
+
+        .welcome-image-corner {
+            width: 200px;
+            height: 200px;
+            position: relative;
+        }
+
+        .corner-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            box-shadow: 0 8px 20px rgba(15, 76, 117, 0.3);
+            border: 5px solid white;
+        }
+
+        /* Carrusel */
+        .carousel-container {
+            margin-bottom: 2.5rem;
+        }
+
+        .carousel-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            margin: 0 auto;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        }
+
+        .carousel-track {
+            position: relative;
+            width: 100%;
+            height: 300px;
+        }
+
+        .carousel-slide {
+            display: none;
+            width: 100%;
+            height: 100%;
+        }
+
+        .carousel-slide.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .carousel-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.9);
+            color: #0F4C75;
+            border: none;
+            padding: 1rem 1.5rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 10;
             transition: all 0.3s ease;
-            white-space: nowrap;
+            border-radius: 8px;
+        }
+
+        .carousel-btn:hover {
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .carousel-btn.prev {
+            left: 20px;
+        }
+
+        .carousel-btn.next {
+            right: 20px;
+        }
+
+        .carousel-dots {
+            text-align: center;
+            padding: 1.5rem 0;
+        }
+
+        .dot {
+            height: 15px;
+            width: 15px;
+            margin: 0 8px;
+            background-color: #d1d5db;
+            border-radius: 50%;
+            display: inline-block;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .dot.active,
+        .dot:hover {
+            background-color: #0F4C75;
+            transform: scale(1.2);
+        }
+
+        /* Menú de Navegación Inline */
+        .admin-navbar-inline {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            padding: 2rem 1.5rem;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-link-inline {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 1.5rem 2.5rem;
+            border-radius: 16px;
             text-decoration: none;
+            color: white;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #0F4C75, #1a5a8a);
+            box-shadow: 0 6px 16px rgba(15, 76, 117, 0.4);
+            min-width: 160px;
         }
 
-        .admin-navbar .nav-link:hover {
-            background: #f0fdf4;
-            color: #059669;
-            transform: translateY(-2px);
+        .nav-link-inline:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 28px rgba(15, 76, 117, 0.5);
+            background: linear-gradient(135deg, #1a5a8a, #0F4C75);
         }
 
-        .admin-navbar .nav-link i {
+        .nav-link-inline i {
+            font-size: 2.5rem;
+        }
+
+        .nav-link-inline span {
             font-size: 1rem;
-            color: #059669;
-            transition: color 0.3s;
-        }
-
-        .admin-navbar .nav-link:hover i {
-            color: #10b981;
+            letter-spacing: 0.5px;
         }
 
         .container_main {
@@ -156,7 +294,7 @@
         }
 
         .welcome_section {
-            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            background: linear-gradient(135deg, #0F4C75 0%, #1a5a8a 100%);
             color: white;
             padding: 2rem;
             border-radius: 1rem;
@@ -194,7 +332,7 @@
 
         .card_title {
             font-size: 1.3rem;
-            color: #059669;
+            color: #0F4C75;
             font-weight: bold;
         }
 
@@ -212,11 +350,11 @@
 
         .info_label {
             font-weight: bold;
-            color: #059669;
+            color: #0F4C75;
         }
 
         .btn_primary {
-            background: #059669;
+            background: #0F4C75;
             color: white;
         }
 
@@ -237,9 +375,13 @@
         }
 
         .btn-primary {
-            background-color: #059669;
+            background-color: #0F4C75;
             color: #fff;
             text-decoration: none;
+        }
+        
+        .btn-primary:hover {
+            background-color: #1a5a8a;
         }
 
         .btn-secondary {
@@ -256,7 +398,7 @@
         .form_label {
             display: block;
             font-weight: bold;
-            color: #059669;
+            color: #0F4C75;
             margin-bottom: 0.5rem;
         }
 
@@ -299,7 +441,7 @@
 
         .modal_header {
             padding: 1.5rem;
-            background: linear-gradient(135deg, #059669, #10b981);
+            background: linear-gradient(135deg, #0F4C75, #1a5a8a);
             color: white;
             border-radius: 1rem 1rem 0 0;
             display: flex;
@@ -335,9 +477,9 @@
         }
 
         .alert-success {
-            background-color: #d1fae5;
-            color: #065f46;
-            border: 1px solid #6ee7b7;
+            background-color: #d4f4e7;
+            color: #0a5c3a;
+            border: 1px solid #A8E6CF;
         }
 
         .alert-danger {
@@ -395,54 +537,71 @@
         </div>
     </header>
 
-    <nav class="navbar navbar-expand-lg admin-navbar">
-        <div class="container">
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/pacientes}">
-                            <i class="fas fa-users me-1"></i>
-                            Pacientes
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/medicos}">
-                            <i class="fas fa-user-md me-1"></i>
-                            Médicos
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/agendamientos}">
-                            <i class="fas fa-calendar-alt me-1"></i>
-                            Citas
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/historiales}">
-                            <i class="fas fa-file-medical me-1"></i>
-                            Historiales
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/administradores}">
-                            <i class="fas fa-user-shield me-1"></i>
-                            Administradores
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
     <main class="main-content py-4">
         <div class="container">
-            <div class="welcome_section">
-                <h1 class="welcome_title">Panel de Administración</h1>
-                <p class="welcome_subtitle">Gestiona todos los aspectos del sistema médico</p>
+            <!-- Menú de Navegación - PRIMERO -->
+            <nav class="admin-navbar-inline">
+                <a class="nav-link-inline" th:href="@{/pacientes}">
+                    <i class="fas fa-users"></i>
+                    <span>Pacientes</span>
+                </a>
+                <a class="nav-link-inline" th:href="@{/medicos}">
+                    <i class="fas fa-user-md"></i>
+                    <span>Médicos</span>
+                </a>
+                <a class="nav-link-inline" th:href="@{/agendamientos}">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Citas</span>
+                </a>
+                <a class="nav-link-inline" th:href="@{/historiales}">
+                    <i class="fas fa-file-medical"></i>
+                    <span>Historiales</span>
+                </a>
+                <a class="nav-link-inline" th:href="@{/administradores}">
+                    <i class="fas fa-user-shield"></i>
+                    <span>Administradores</span>
+                </a>
+            </nav>
+
+            <!-- Sección de Bienvenida con Imagen en Esquina -->
+            <div class="welcome-section">
+                <div class="welcome-content">
+                    <div class="welcome-text">
+                        <h1 class="dashboard-title">🏥 Dashboard de Administración</h1>
+                        <p class="welcome-message">Bienvenido al panel de control. Desde aquí puedes gestionar todos los aspectos del sistema médico Cita Ya.</p>
+                    </div>
+                    <div class="welcome-image-corner">
+                        <img th:src="@{/Assets/img/bnAdm.jpg}" alt="Admin" class="corner-image">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Carrusel de Imágenes -->
+            <div class="carousel-container">
+                <div class="carousel-wrapper">
+                    <button class="carousel-btn prev" onclick="moveCarousel(-1)">❮</button>
+                    <div class="carousel-track">
+                        <div class="carousel-slide active">
+                            <img th:src="@{/Assets/img/adm1.jpg}" alt="Administración 1">
+                        </div>
+                        <div class="carousel-slide">
+                            <img th:src="@{/Assets/img/adm2.jpg}" alt="Administración 2">
+                        </div>
+                        <div class="carousel-slide">
+                            <img th:src="@{/Assets/img/adm3.jpg}" alt="Administración 3">
+                        </div>
+                        <div class="carousel-slide">
+                            <img th:src="@{/Assets/img/adm4.jpg}" alt="Administración 4">
+                        </div>
+                    </div>
+                    <button class="carousel-btn next" onclick="moveCarousel(1)">❯</button>
+                </div>
+                <div class="carousel-dots">
+                    <span class="dot active" onclick="currentSlide(0)"></span>
+                    <span class="dot" onclick="currentSlide(1)"></span>
+                    <span class="dot" onclick="currentSlide(2)"></span>
+                    <span class="dot" onclick="currentSlide(3)"></span>
+                </div>
             </div>
 
             <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
@@ -675,6 +834,46 @@
                 }
             });
         });
+
+        // Carrusel
+        let currentSlideIndex = 0;
+
+        function moveCarousel(direction) {
+            const slides = document.querySelectorAll('.carousel-slide');
+            const dots = document.querySelectorAll('.dot');
+            
+            slides[currentSlideIndex].classList.remove('active');
+            dots[currentSlideIndex].classList.remove('active');
+            
+            currentSlideIndex += direction;
+            
+            if (currentSlideIndex >= slides.length) {
+                currentSlideIndex = 0;
+            } else if (currentSlideIndex < 0) {
+                currentSlideIndex = slides.length - 1;
+            }
+            
+            slides[currentSlideIndex].classList.add('active');
+            dots[currentSlideIndex].classList.add('active');
+        }
+
+        function currentSlide(index) {
+            const slides = document.querySelectorAll('.carousel-slide');
+            const dots = document.querySelectorAll('.dot');
+            
+            slides[currentSlideIndex].classList.remove('active');
+            dots[currentSlideIndex].classList.remove('active');
+            
+            currentSlideIndex = index;
+            
+            slides[currentSlideIndex].classList.add('active');
+            dots[currentSlideIndex].classList.add('active');
+        }
+
+        // Auto-play del carrusel
+        setInterval(() => {
+            moveCarousel(1);
+        }, 5000);
     </script>
 </body>
 

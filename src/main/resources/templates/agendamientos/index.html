@@ -5,31 +5,475 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Citas Médicas - Panel Administrativo</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" th:href="@{/Assets/CSS/table.css}">
+    
     <style>
-        * { font-family: arial, sans-serif; margin: 0; padding: 0; box-sizing: border-box; }
-        body { background-color: #f8f9fa; padding-top: 100px; }
-        header { position: fixed; top: 0; width: 100%; z-index: 1000; background-color: #fff; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); }
-        .container_header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; }
-        .logo { width: 5rem; height: 5rem; position: relative; left: 6rem; }
-        .profile_dropdown { position: relative; display: inline-block; }
-        .profile_button { background-color: #059669; color: white; padding: 0.7rem 1.5rem; border: none; border-radius: 0.5rem; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 0.5rem; transition: all 0.2s; position: relative; right: 6rem; }
-        .profile_button:hover { background-color: #10b981; }
-        .dropdown_content { display: none; position: absolute; right: 6rem; background-color: white; min-width: 200px; box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2); z-index: 1001; border-radius: 0.5rem; overflow: hidden; }
-        .dropdown_content.show { display: block; }
-        .dropdown_item { color: #333; padding: 12px 16px; text-decoration: none; display: block; transition: background-color 0.2s; cursor: pointer; background: #fff; border: none; width: 100%; }
-        .dropdown_item:hover { background-color: #f1f1f1; }
-        .admin-navbar { background-color: #fff; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); padding: 0.8rem 1.5rem; border-bottom: 3px solid #059669; position: sticky; top: 0; z-index: 999; }
-        .admin-navbar .navbar-nav { display: flex; flex-direction: row; align-items: center; gap: 0.5rem; justify-content: center; list-style: none; }
-        .admin-navbar .nav-link { color: #3b82f6; font-weight: 600; display: flex; align-items: center; gap: 0.4rem; padding: 0.6rem 1rem; border-radius: 0.5rem; transition: all 0.3s ease; white-space: nowrap; text-decoration: none; }
-        .admin-navbar .nav-link:hover, .admin-navbar .nav-link.active { background: #f0fdf4; color: #059669; transform: translateY(-2px); }
-        .admin-navbar .nav-link i { font-size: 1rem; color: #059669; transition: color 0.3s; }
-        .admin-navbar .nav-link:hover i { color: #10b981; }
-        .container { max-width: 1400px; margin: 2rem auto; padding: 0 2rem; }
-        .alert { padding: 1rem; margin-bottom: 1rem; border-radius: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
-        .alert-success { background-color: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
-        .alert-danger { background-color: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
-        .btn-close { margin-left: auto; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: inherit; }
+        * {
+            font-family: arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #f3f4f6;
+            padding-top: 100px;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .container_header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+
+        .logo {
+            width: 5rem;
+            height: 5rem;
+            position: relative;
+            left: 6rem;
+        }
+
+        .profile_dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .profile_button {
+            background-color: #0F4C75;
+            color: white;
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+            position: relative;
+            right: 6rem;
+        }
+
+        .profile_button:hover {
+            background-color: #1a5a8a;
+        }
+
+        .dropdown_content {
+            display: none;
+            position: absolute;
+            right: 6rem;
+            background-color: white;
+            min-width: 200px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            z-index: 1001;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+
+        .dropdown_content.show {
+            display: block;
+        }
+
+        .dropdown_item {
+            color: #333;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.2s;
+            cursor: pointer;
+            background: #fff;
+            border: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .dropdown_item:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Menú de Navegación Inline */
+        .admin-navbar {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            padding: 2rem 1.5rem;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .admin-navbar .navbar-nav {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 1.5rem;
+            justify-content: center;
+            list-style: none;
+            flex-wrap: wrap;
+        }
+
+        .admin-navbar .nav-link {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 1.5rem 2.5rem;
+            border-radius: 16px;
+            text-decoration: none;
+            color: white;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #0F4C75, #1a5a8a);
+            box-shadow: 0 6px 16px rgba(15, 76, 117, 0.4);
+            min-width: 160px;
+        }
+
+        .admin-navbar .nav-link:hover,
+        .admin-navbar .nav-link.active {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 28px rgba(15, 76, 117, 0.5);
+            background: linear-gradient(135deg, #1a5a8a, #0F4C75);
+            color: white;
+        }
+
+        .admin-navbar .nav-link i {
+            font-size: 2.5rem;
+            color: white;
+        }
+
+        .admin-navbar .nav-link span {
+            font-size: 1rem;
+            letter-spacing: 0.5px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        .main-content {
+            padding: 2rem 0;
+        }
+
+        /* Encabezado de Página */
+        .page-header {
+            background: linear-gradient(135deg, #0F4C75 0%, #1a5a8a 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(15, 76, 117, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .page-header-icon {
+            font-size: 3rem;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 1rem;
+            border-radius: 12px;
+        }
+
+        .page-header-content h1 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .page-header-content p {
+            margin: 0.5rem 0 0 0;
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+
+        /* Tarjetas de Estadísticas */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border-left: 4px solid #0F4C75;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+        }
+
+        .stat-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card-title {
+            font-size: 0.875rem;
+            color: #6b7280;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-card-icon {
+            font-size: 1.5rem;
+            color: #0F4C75;
+        }
+
+        .stat-card-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #0F4C75;
+            margin: 0;
+        }
+
+        .stat-card-subtitle {
+            font-size: 0.875rem;
+            color: #9ca3af;
+            margin-top: 0.25rem;
+        }
+
+        .alert {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .alert-success {
+            background-color: #d4f4e7;
+            color: #0a5c3a;
+            border: 1px solid #A8E6CF;
+        }
+
+        .alert-danger {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+
+        .btn-close {
+            margin-left: auto;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: inherit;
+        }
+
+        .btn-new {
+            background-color: #A8E6CF;
+            color: #0F4C75;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 700;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(168, 230, 207, 0.3);
+        }
+
+        .btn-new:hover {
+            background-color: #8dd9b8;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(168, 230, 207, 0.4);
+        }
+
+        .btn-report {
+            background-color: #0F4C75;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 700;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(15, 76, 117, 0.3);
+        }
+
+        .btn-report:hover {
+            background-color: #1a5a8a;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(15, 76, 117, 0.4);
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e5e7eb;
+            overflow: hidden;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e8f5f0 100%);
+            padding: 1.25rem 1.5rem;
+            border-bottom: 2px solid #A8E6CF;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .card-header strong {
+            color: #0F4C75;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .card-header i {
+            color: #0F4C75;
+            font-size: 1.25rem;
+        }
+
+        .card-body {
+            padding: 0;
+            overflow-x: auto;
+        }
+
+        /* Estilos para la tabla */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 0;
+        }
+
+        .table thead {
+            background: linear-gradient(135deg, #0F4C75 0%, #1a5a8a 100%);
+            color: white;
+        }
+
+        .table thead th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 700;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .table tbody tr {
+            border-bottom: 1px solid #e5e7eb;
+            transition: background-color 0.2s;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f9fafb;
+        }
+
+        .table tbody td {
+            padding: 1rem;
+            color: #374151;
+        }
+
+        .table tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        /* Botones de acción en la tabla */
+        .btn-info, .btn-warning, .btn-danger, .btn-success {
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+            margin-right: 0.25rem;
+        }
+
+        .btn-info {
+            background-color: #0F4C75;
+            color: white;
+        }
+
+        .btn-info:hover {
+            background-color: #1a5a8a;
+            transform: translateY(-1px);
+        }
+
+        .btn-warning {
+            background-color: #f59e0b;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background-color: #d97706;
+            transform: translateY(-1px);
+        }
+
+        .btn-danger {
+            background-color: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #dc2626;
+            transform: translateY(-1px);
+        }
+
+        .btn-success {
+            background-color: #A8E6CF;
+            color: #0F4C75;
+        }
+
+        .btn-success:hover {
+            background-color: #8dd9b8;
+            transform: translateY(-1px);
+        }
+
+        .btn-sm {
+            font-size: 0.8rem;
+            padding: 0.35rem 0.7rem;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .d-flex {
+            display: flex;
+        }
+
+        .gap-2 {
+            gap: 0.5rem;
+        }
+
+        .mb-3 {
+            margin-bottom: 1.5rem;
+        }
+
+        .mt-3 {
+            margin-top: 1.5rem;
+        }
     </style>
 </head>
 <body>
@@ -43,8 +487,8 @@
                     <span th:unless="${session.nombreCompleto}">Admin Usuario</span>
                 </button>
                 <div class="dropdown_content" id="profileDropdown">
-                    <button class="dropdown_item">Ver Mi Perfil</button>
-                    <button class="dropdown_item">Editar Perfil</button>
+                    <button class="dropdown_item" onclick="openProfileModal()">Ver Mi Perfil</button>
+                    <button class="dropdown_item" onclick="openEditModal()">Editar Perfil</button>
                     <hr style="margin: 0;">
                     <form method="POST" th:action="@{/logout}" style="margin: 0;">
                         <button type="submit" class="dropdown_item">Cerrar Sesión</button>
@@ -54,109 +498,180 @@
         </div>
     </header>
 
-    <nav class="navbar navbar-expand-lg admin-navbar">
-        <div class="container">
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item"><a class="nav-link" th:href="@{/pacientes}"><i class="fas fa-users me-1"></i>Pacientes</a></li>
-                    <li class="nav-item"><a class="nav-link" th:href="@{/medicos}"><i class="fas fa-user-md me-1"></i>Médicos</a></li>
-                    <li class="nav-item"><a class="nav-link active" th:href="@{/agendamientos}"><i class="fas fa-calendar-alt me-1"></i>Citas</a></li>
-                    <li class="nav-item"><a class="nav-link" th:href="@{/historiales}"><i class="fas fa-file-medical me-1"></i>Historiales</a></li>
-                    <li class="nav-item"><a class="nav-link" th:href="@{/administradores}"><i class="fas fa-user-shield me-1"></i>Administradores</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
     <main class="main-content py-4">
         <div class="container">
-            <div th:if="${success}" class="alert alert-success alert-dismissible fade show">
+            <!-- Menú de Navegación -->
+            <nav class="admin-navbar">
+                <a class="nav-link" th:href="@{/pacientes}">
+                    <i class="fas fa-users"></i>
+                    <span>Pacientes</span>
+                </a>
+                <a class="nav-link" th:href="@{/medicos}">
+                    <i class="fas fa-user-md"></i>
+                    <span>Médicos</span>
+                </a>
+                <a class="nav-link active" th:href="@{/agendamientos}">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Citas</span>
+                </a>
+                <a class="nav-link" th:href="@{/historiales}">
+                    <i class="fas fa-file-medical"></i>
+                    <span>Historiales</span>
+                </a>
+                <a class="nav-link" th:href="@{/administradores}">
+                    <i class="fas fa-user-shield"></i>
+                    <span>Administradores</span>
+                </a>
+            </nav>
+
+            <!-- Encabezado de Página -->
+            <div class="page-header">
+                <div class="page-header-icon">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <div class="page-header-content">
+                    <h1>Gestión de Citas Médicas</h1>
+                    <p>Administra y consulta todas las citas médicas programadas en el sistema</p>
+                </div>
+            </div>
+
+            <!-- Tarjetas de Estadísticas -->
+            <div class="stats-container">
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <span class="stat-card-title">Total Citas</span>
+                        <i class="fas fa-calendar-alt stat-card-icon"></i>
+                    </div>
+                    <p class="stat-card-value" th:text="${totalCitas != null ? totalCitas : (agendamientos != null ? agendamientos.size() : 0)}">0</p>
+                    <p class="stat-card-subtitle">Registradas en el sistema</p>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <span class="stat-card-title">Citas Hoy</span>
+                        <i class="fas fa-calendar-day stat-card-icon"></i>
+                    </div>
+                    <p class="stat-card-value" th:text="${citasHoy != null ? citasHoy : '—'}">—</p>
+                    <p class="stat-card-subtitle">Programadas para hoy</p>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <span class="stat-card-title">Esta Semana</span>
+                        <i class="fas fa-calendar-week stat-card-icon"></i>
+                    </div>
+                    <p class="stat-card-value" th:text="${citasSemana != null ? citasSemana : '—'}">—</p>
+                    <p class="stat-card-subtitle">Próximas 7 días</p>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <span class="stat-card-title">Este Mes</span>
+                        <i class="fas fa-calendar-check stat-card-icon"></i>
+                    </div>
+                    <p class="stat-card-value" th:text="${citasMes != null ? citasMes : '—'}">—</p>
+                    <p class="stat-card-subtitle">Citas del mes actual</p>
+                </div>
+            </div>
+
+            <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
                 <i class="fas fa-check-circle me-2"></i>
                 <span th:text="${success}"></span>
-                <button type="button" class="btn-close" onclick="this.parentElement.style.display='none'">&times;</button>
+                <button type="button" class="btn-close"
+                    onclick="this.parentElement.style.display='none'">&times;</button>
             </div>
 
-            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
                 <i class="fas fa-exclamation-circle me-2"></i>
                 <span th:text="${error}"></span>
-                <button type="button" class="btn-close" onclick="this.parentElement.style.display='none'">&times;</button>
+                <button type="button" class="btn-close"
+                    onclick="this.parentElement.style.display='none'">&times;</button>
             </div>
-
-            <h1>Citas Médicas</h1>
 
             <div class="mb-3 d-flex gap-2">
                 <!-- Botón para Administradores -->
                 <a th:if="${tipoUsuario == 'administrador'}" th:href="@{/agendamientos/create}" class="btn-new">
-                    <i class="fas fa-plus me-1"></i>Crear Nueva Cita
+                    <i class="fas fa-plus"></i>
+                    Crear Nueva Cita
                 </a>
                 
                 <!-- Botón para Pacientes -->
                 <a th:if="${tipoUsuario == 'paciente'}" th:href="@{/agendamientos/nuevo}" class="btn-new">
-                    <i class="fas fa-plus me-1"></i>Agendar Cita
+                    <i class="fas fa-plus"></i>
+                    Agendar Cita
                 </a>
                 
                 <!-- Botón de reporte solo para administradores -->
                 <a th:href="@{/agendamientos/reporte}" target="_blank" class="btn-report" th:if="${tipoUsuario == 'administrador'}">
-                    <i class="fas fa-file-pdf me-1"></i>Generar Reporte PDF
+                    <i class="fas fa-file-pdf"></i>
+                    Generar Reporte PDF
                 </a>
-                                
             </div>
 
-            <table class="table mt-3">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Tipo de Cita</th>
-                        <th>Fecha</th>
-                        <th>Hora</th>
-                        <th>Paciente</th>
-                        <th>Médico</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:if="${agendamientos == null or agendamientos.isEmpty()}">
-                        <td colspan="7" class="text-center"><em>No hay citas registradas</em></td>
-                    </tr>
-                    <tr th:each="a : ${agendamientos}">
-                        <td th:text="${a.idAgendamiento}">1</td>
-                        <td th:text="${a.cita}">Consulta General</td>
-                        <td th:text="${a.fecha != null ? #dates.format(a.fecha, 'dd/MM/yyyy') : 'N/A'}">01/01/2024</td>
-                        <td th:text="${a.hora}">10:00</td>
-                        <td>
-                            <span th:if="${a.paciente != null}" th:text="${a.paciente.nombre + ' ' + a.paciente.apellido}">Paciente</span>
-                            <span th:unless="${a.paciente != null}">Sin paciente</span>
-                        </td>
-                        <td>
-                            <span th:if="${a.medico != null}" th:text="${a.medico.nombre + ' ' + a.medico.apellido}">Médico</span>
-                            <span th:unless="${a.medico != null}">Sin médico</span>
-                        </td>
-                        <td>
-                            <!-- Botones para Administrador -->
-                            <div th:if="${tipoUsuario == 'administrador'}">
-                                <a th:href="@{/agendamientos/{id}(id=${a.idAgendamiento})}" class="btn btn-info btn-sm">Ver</a>
-                                <a th:href="@{/agendamientos/editar/{id}(id=${a.idAgendamiento})}" class="btn btn-warning btn-sm">Editar</a>
-                                <form th:action="@{/agendamientos/eliminar/{id}(id=${a.idAgendamiento})}" method="POST" style="display:inline;">
-                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar esta cita?')">Eliminar</button>
-                                </form>
-                            </div>
-                            
-                            <!-- Botones para Paciente -->
-                            <div th:if="${tipoUsuario == 'paciente'}">
-                                <a th:href="@{/agendamientos/editar/{id}(id=${a.idAgendamiento})}" class="btn btn-warning btn-sm">Editar</a>
-                                <form th:action="@{/agendamientos/eliminar/{id}(id=${a.idAgendamiento})}" method="POST" style="display:inline;">
-                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Cancelar esta cita?')">Cancelar</button>
-                                </form>
-                            </div>
-                            
-                            <!-- Botones para Médico -->
-                            <div th:if="${tipoUsuario == 'medico'}">
-                                <a th:href="@{/agendamientos/{id}(id=${a.idAgendamiento})}" class="btn btn-info btn-sm">Ver Detalles</a>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <!-- tabla -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-table"></i>
+                    <strong>Lista de Citas Médicas</strong>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Tipo de Cita</th>
+                                <th>Fecha</th>
+                                <th>Hora</th>
+                                <th>Paciente</th>
+                                <th>Médico</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${agendamientos == null or agendamientos.isEmpty()}">
+                                <td colspan="7" class="text-center"><em>No hay citas registradas</em></td>
+                            </tr>
+                            <tr th:each="a : ${agendamientos}">
+                                <td th:text="${a.idAgendamiento}">1</td>
+                                <td th:text="${a.cita}">Consulta General</td>
+                                <td th:text="${a.fecha != null ? #dates.format(a.fecha, 'dd/MM/yyyy') : 'N/A'}">01/01/2024</td>
+                                <td th:text="${a.hora}">10:00</td>
+                                <td>
+                                    <span th:if="${a.paciente != null}" th:text="${a.paciente.nombre + ' ' + a.paciente.apellido}">Paciente</span>
+                                    <span th:unless="${a.paciente != null}">Sin paciente</span>
+                                </td>
+                                <td>
+                                    <span th:if="${a.medico != null}" th:text="${a.medico.nombre + ' ' + a.medico.apellido}">Médico</span>
+                                    <span th:unless="${a.medico != null}">Sin médico</span>
+                                </td>
+                                <td>
+                                    <!-- Botones para Administrador -->
+                                    <div th:if="${tipoUsuario == 'administrador'}">
+                                        <a th:href="@{/agendamientos/{id}(id=${a.idAgendamiento})}" class="btn btn-info btn-sm">Ver</a>
+                                        <a th:href="@{/agendamientos/editar/{id}(id=${a.idAgendamiento})}" class="btn btn-warning btn-sm">Editar</a>
+                                        <form th:action="@{/agendamientos/eliminar/{id}(id=${a.idAgendamiento})}" method="POST" style="display:inline;">
+                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar esta cita?')">Eliminar</button>
+                                        </form>
+                                    </div>
+                                    
+                                    <!-- Botones para Paciente -->
+                                    <div th:if="${tipoUsuario == 'paciente'}">
+                                        <a th:href="@{/agendamientos/editar/{id}(id=${a.idAgendamiento})}" class="btn btn-warning btn-sm">Editar</a>
+                                        <form th:action="@{/agendamientos/eliminar/{id}(id=${a.idAgendamiento})}" method="POST" style="display:inline;">
+                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Cancelar esta cita?')">Cancelar</button>
+                                        </form>
+                                    </div>
+                                    
+                                    <!-- Botones para Médico -->
+                                    <div th:if="${tipoUsuario == 'medico'}">
+                                        <a th:href="@{/agendamientos/{id}(id=${a.idAgendamiento})}" class="btn btn-info btn-sm">Ver Detalles</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </main>
 

@@ -19,15 +19,54 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * CONTROLADOR DEL DASHBOARD MÉDICO - Gestiona todas las funcionalidades del panel médico
+ * 
+ * Este controlador maneja:
+ * - Dashboard principal con estadísticas
+ * - Gestión de citas (ver, filtrar, cambiar estados)
+ * - Lista de pacientes atendidos
+ * - Búsqueda de pacientes
+ * - Visualización de historias clínicas
+ * - Actualización automática de estados de citas
+ * 
+ * RUTAS PRINCIPALES:
+ * - /medico/dashboard - Dashboard principal
+ * - /medico/dashboard/citas - Gestión de citas
+ * - /medico/dashboard/pacientes - Lista de pacientes
+ * - /medico/dashboard/buscar-paciente - Búsqueda de pacientes
+ * 
+ * SEGURIDAD: Todos los endpoints verifican que el usuario sea un médico logueado
+ */
 @Controller
 @RequestMapping("/medico/dashboard")
 public class MedicoDashboardController {
 
+    // =============== INYECCIÓN DE DEPENDENCIAS ===============
+    
+    /**
+     * Repositorio para operaciones con agendamientos/citas
+     */
     private final AgendamientoRepository agendamientoRepository;
+    
+    /**
+     * Repositorio para operaciones con médicos
+     */
     private final MedicoRepository medicoRepository;
+    
+    /**
+     * Repositorio para operaciones con historias clínicas
+     */
     private final proyecto.conexiondb.JPA.Repository.HistoriaClinicaRepository historiaClinicaRepository;
+    
+    /**
+     * Repositorio para operaciones con pacientes
+     */
     private final proyecto.conexiondb.JPA.Repository.PacienteRepository pacienteRepository;
 
+    /**
+     * Constructor con inyección de dependencias
+     */
     public MedicoDashboardController(AgendamientoRepository agendamientoRepository,
                                      MedicoRepository medicoRepository,
                                      proyecto.conexiondb.JPA.Repository.HistoriaClinicaRepository historiaClinicaRepository,
@@ -38,25 +77,49 @@ public class MedicoDashboardController {
         this.pacienteRepository = pacienteRepository;
     }
 
+    // =============== DASHBOARD PRINCIPAL ===============
+    
+    /**
+     * ENDPOINT: GET /medico/dashboard
+     * 
+     * Muestra el dashboard principal del médico con:
+     * - Estadísticas de citas (del día, del mes, total pacientes)
+     * - Lista de próximas citas
+     * - Accesos rápidos a funcionalidades principales
+     * 
+     * FUNCIONALIDADES AUTOMÁTICAS:
+     * - Actualiza estados de citas automáticamente
+     * - Calcula estadísticas en tiempo real
+     * - Muestra solo citas futuras en "próximas citas"
+     * 
+     * @param session Sesión HTTP para obtener el médico logueado
+     * @param model Modelo para pasar datos a la vista
+     * @return Vista del dashboard médico
+     */
     @GetMapping
     public String dashboard(HttpSession session, Model model) {
+        // VALIDACIÓN DE SEGURIDAD: Verificar que hay un médico logueado
         Medico medico = obtenerMedicoSesion(session);
         if (medico == null) {
             return "redirect:/login";
         }
 
-        // Actualizar estados de citas antes de mostrar
+        // ACTUALIZACIÓN AUTOMÁTICA: Actualizar estados de citas antes de mostrar estadísticas
         actualizarEstadosCitas(medico);
 
-        // Calcular estadísticas
+        // =============== CÁLCULO DE ESTADÍSTICAS ===============
+        
+        // Estadística 1: Citas programadas para HOY
         Date hoy = Date.valueOf(LocalDate.now());
         long citasDelDia = agendamientoRepository.countByMedicoAndFechaAndEstado(medico, hoy, "Programada");
         
+        // Estadística 2: Total de citas del MES ACTUAL
         LocalDate ahora = LocalDate.now();
         long citasDelMes = agendamientoRepository.countByMedicoAndMesAndAnio(
             medico, ahora.getMonthValue(), ahora.getYear()
         );
         
+        // Estadística 3: Citas completadas este mes (para mostrar productividad)
         long citasCompletadasMes = agendamientoRepository.countByMedicoAndMesAndAnioAndEstado(
             medico, ahora.getMonthValue(), ahora.getYear(), "Completada"
         );
@@ -297,7 +360,7 @@ public class MedicoDashboardController {
             medicoForm.getApellido() == null || medicoForm.getApellido().trim().isEmpty() ||
             medicoForm.getCorreo() == null || medicoForm.getCorreo().trim().isEmpty()) {
             redirectAttrs.addFlashAttribute("error", "Los campos nombre, apellido y correo son obligatorios");
-            return "redirect:/medico/dashboard/perfil/editar";
+            return "redirect:/medico/dashboard";
         }
 
         // Actualizar datos básicos
@@ -311,7 +374,7 @@ public class MedicoDashboardController {
         if (contrasenaNueva != null && !contrasenaNueva.isEmpty()) {
             if (contrasenaActual == null || !contrasenaActual.equals(medico.getContraseña())) {
                 redirectAttrs.addFlashAttribute("error", "La contraseña actual es incorrecta");
-                return "redirect:/medico/dashboard/perfil/editar";
+                return "redirect:/medico/dashboard";
             }
             medico.setContraseña(contrasenaNueva);
         }
@@ -323,7 +386,7 @@ public class MedicoDashboardController {
         session.setAttribute("nombreCompleto", medico.getNombre() + " " + medico.getApellido());
 
         redirectAttrs.addFlashAttribute("success", "Perfil actualizado exitosamente");
-        return "redirect:/medico/dashboard/perfil";
+        return "redirect:/medico/dashboard";
     }
 
     @GetMapping("/historias-clinicas")
@@ -504,7 +567,9 @@ public class MedicoDashboardController {
         String tipoUsuario = (String) session.getAttribute("tipoUsuario");
         
         if (usuario instanceof Medico && "medico".equals(tipoUsuario)) {
-            return (Medico) usuario;
+            Medico medicoSesion = (Medico) usuario;
+            // Recargar desde la base de datos para asegurar que tenemos los datos actualizados
+            return medicoRepository.findById(medicoSesion.getIdMedico()).orElse(medicoSesion);
         }
         return null;
     }

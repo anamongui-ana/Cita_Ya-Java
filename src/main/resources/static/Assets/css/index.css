@@ -47,13 +47,13 @@ header {
 }
 
 .nav_li-a:hover {
-    color: #059669;
+    color: #0F4C75;
 }
 
 .button_login {
     color: #fff;
     text-decoration: none;
-    background-color: #059669;
+    background-color: #0F4C75;
     border-radius: 0.5rem;
     padding: 0.7rem 1.5rem;
     font-weight: bold;
@@ -61,7 +61,8 @@ header {
 }
 
 .button_login:hover {
-    background-color: #10b981;
+    background-color: #BBE1FA;
+    color: #0F4C75;
 }
 
 .menu-toggle {
@@ -101,29 +102,36 @@ header {
     flex-direction: column;
     padding: 2rem;
     text-align: center;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 .carousel-slide.active {
     opacity: 1;
 }
 
-.slide-1 {
-    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+.carousel-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1;
 }
 
-.slide-2 {
-    background: linear-gradient(135deg, #059669 0%, #10b981 100%);
-}
-
-.slide-3 {
-    background: linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%);
+.carousel-content {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
 }
 
 .carousel-slide h1 {
     color: #fff;
     font-size: 3.5rem;
     margin-bottom: 1.5rem;
-    text-shadow: 2px 2px 20px rgba(0, 0, 0, 0.3);
+    text-shadow: 2px 2px 20px rgba(0, 0, 0, 0.5);
 }
 
 .carousel-slide p {
@@ -132,6 +140,7 @@ header {
     margin-bottom: 0;
     max-width: 600px;
     line-height: 2rem;
+    text-shadow: 1px 1px 10px rgba(0, 0, 0, 0.5);
 }
 
 .carousel-indicators {
@@ -198,7 +207,7 @@ header {
     font-size: 3rem;
     text-align: center;
     margin: 4rem 0;
-    color: #1e3a8a;
+    color: #0F4C75;
     position: relative;
 }
 
@@ -210,7 +219,7 @@ header {
     transform: translateX(-50%);
     width: 100px;
     height: 4px;
-    background: linear-gradient(90deg, #059669, #10b981);
+    background: #A8E6CF;
     border-radius: 2px;
 }
 
@@ -233,45 +242,29 @@ header {
     background: #fff;
 }
 
-.icono {
-    font-size: 2.5rem;
-    width: 5rem;
-    height: 5rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 50%;
-    color: #fff;
+.imagen-servicio {
+    width: 100%;
+    height: 200px;
     margin-bottom: 1.5rem;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.box:nth-child(1) .icono {
-    background: linear-gradient(135deg, #3b82f6, #2563eb);
+.imagen-servicio img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
 }
 
-.box:nth-child(2) .icono {
-    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-}
-
-.box:nth-child(3) .icono {
-    background: linear-gradient(135deg, #ec4899, #db2777);
-}
-
-.box:nth-child(4) .icono {
-    background: linear-gradient(135deg, #ef4444, #dc2626);
-}
-
-.box:nth-child(5) .icono {
-    background: linear-gradient(135deg, #f59e0b, #d97706);
-}
-
-.box:nth-child(6) .icono {
-    background: linear-gradient(135deg, #10b981, #059669);
+.box:hover .imagen-servicio img {
+    transform: scale(1.1);
 }
 
 .h3-servicios {
     margin: 1rem 0;
-    color: #1e3a8a;
+    color: #0F4C75;
     font-size: 1.5rem;
     font-weight: 600;
 }
@@ -301,7 +294,7 @@ header {
 .h1-nosotros {
     font-size: 3rem;
     margin-bottom: 2rem;
-    color: #1e3a8a;
+    color: #0F4C75;
     position: relative;
 }
 
@@ -312,7 +305,7 @@ header {
     left: 0;
     width: 100px;
     height: 4px;
-    background: linear-gradient(90deg, #059669, #10b981);
+    background: #A8E6CF;
     border-radius: 2px;
 }
 
@@ -338,7 +331,7 @@ header {
 
 /* Footer */
 footer {
-    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+    background: #0F4C75;
     padding: 3rem 5%;
     color: #fff;
 }

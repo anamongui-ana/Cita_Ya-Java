@@ -5,7 +5,7 @@
 body {
 	font-family: arial, sans-serif;
 	margin: 0;
-	background: linear-gradient(to right, #059669, #50aff7);
+	background: linear-gradient(135deg, #A8E6CF, #BBE1FA);
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -18,6 +18,9 @@ body {
 	width: 60rem;
 	overflow: hidden;
 	margin: 2rem;
+	position: relative;
+	z-index: 1;
+	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
 }
 
 .apartado_1 {
@@ -37,8 +40,12 @@ body {
 .label {
 	color: #222;
 	font-weight: 520;
-	padding: 3rem 0 .5rem 0;
+	padding: 1.5rem 0 .5rem 0;
 	font-size: 1.25rem;
+}
+
+.label:first-of-type {
+	padding-top: 3rem;
 }
 
 .input input {
@@ -55,11 +62,57 @@ body {
 	border: .1rem solid #00f;
 }
 
+/* Estilos para el contenedor de contraseña con ojito */
+.input-password-container {
+	position: relative;
+	width: 100%;
+}
+
+.input-password-container input {
+	width: 100%;
+	padding: 1rem;
+	padding-right: 3rem;
+	border-radius: .6rem;
+	border: .1rem solid #aaa;
+	background-color: #eee;
+	font-size: 1.05rem;
+	outline: none;
+}
+
+.input-password-container input:focus {
+	border: .1rem solid #0F4C75;
+}
+
+.toggle-password {
+	position: absolute;
+	right: 1rem;
+	top: 50%;
+	transform: translateY(-50%);
+	cursor: pointer;
+	color: #0F4C75;
+	font-size: 1.3rem;
+	transition: color 0.3s ease;
+	z-index: 100;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 2rem;
+	height: 2rem;
+}
+
+.toggle-password:hover {
+	color: #3B7EA1;
+}
+
+.toggle-password i {
+	pointer-events: none;
+}
+
 button {
 	width: 45%;
 	margin-top: 2rem;
 	padding: 1rem;
-	background-color: #1e3a8a;
+	background-color: #0F4C75;
 	color: #fff;
 	font-size: 1.2rem;
 	border: none;
@@ -69,7 +122,8 @@ button {
 }
 
 button:hover {
-	background-color: #2247b1;
+	background-color: #BBE1FA;
+	color: #0F4C75;
 }
 
 .cuenta {
@@ -80,7 +134,7 @@ button:hover {
 
 .cuenta a {
 	font-size: 1.15rem;
-	color: #1e3a8a;
+	color: #0F4C75;
 	text-decoration: none;
 }
 
@@ -96,9 +150,8 @@ button:hover {
 }
 .no-cuenta a {
 	font-size: 1.15rem;
-	color: #1e3a8a;
+	color: #0F4C75;
 	text-decoration: none;
-
 }
 
 .apartado_2 {
@@ -107,8 +160,34 @@ button:hover {
 	align-items: center;
 	flex-direction: column;
 	width: 30rem;
-	background-color: #059669;
 	padding: 4rem;
+	position: relative;
+	overflow: hidden;
+}
+
+.apartado_2::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-image: url('/Assets/img/login.jpg');
+	background-size: cover;
+	background-position: center;
+	filter: blur(5px);
+	z-index: 0;
+}
+
+.apartado_2::after {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: linear-gradient(135deg, rgba(15, 76, 117, 0.85), rgba(59, 126, 161, 0.85));
+	z-index: 1;
 }
 
 .emoji-icon {
@@ -121,6 +200,8 @@ button:hover {
 	height: 7rem;
 	font-size: 5rem;
 	margin-top: 1rem;
+	position: relative;
+	z-index: 2;
 }
 
 .emoji-icon img {
@@ -130,6 +211,8 @@ button:hover {
 .h1-info {
 	color: #fff;
 	margin-top: 1rem;
+	position: relative;
+	z-index: 2;
 }
 
 .P-info {
@@ -137,10 +220,14 @@ button:hover {
 	text-align: center;
 	font-weight: lighter;
 	margin-top: 1rem;
+	position: relative;
+	z-index: 2;
 }
 
 .p-info {
 	margin-top: 2rem;
+	position: relative;
+	z-index: 2;
 }
 
 .p-info p {

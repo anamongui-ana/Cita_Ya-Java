@@ -17,14 +17,46 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+  Gestiona todas las operaciones relacionadas con citas médicas
+ * 
+ Este controlador maneja:
+  Listado de citas (filtrado por tipo de usuario)
+  Creación de nuevas citas (con validaciones de disponibilidad)
+  Edición y actualización de citas existentes
+  Cancelación/eliminación de citas
+  Verificación de disponibilidad de médicos
+  Generación de reportes de agendamientos
+ROLES Y PERMISOS
+  Administradores Acceso total a todas las citas
+  Médicos Solo sus propias citas + pueden crear citas para pacientes
+  Pacientes:Solo sus propias citas
+ */
 @Controller
 @RequestMapping("/agendamientos")
 public class AgendamientoController {
 
+    // === INYECCIÓN DE DEPENDENCIAS =====
+    
+    /**
+     * Repositorio para operaciones CRUD de agendamientos
+     */
     private final AgendamientoRepository agendamientoRepository;
+    
+    /**
+     Repositorio para operaciones con pacientes
+     */
     private final PacienteRepository pacienteRepository;
+    
+    /**
+     * Repositorio para operaciones con médicos
+     */
     private final proyecto.conexiondb.JPA.Repository.MedicoRepository medicoRepository;
 
+    /**
+     * Constructor con inyección de dependencias
+     * Spring automáticamente inyecta los repositorios necesarios
+     */
     public AgendamientoController(AgendamientoRepository agendamientoRepository,
             PacienteRepository pacienteRepository,
             proyecto.conexiondb.JPA.Repository.MedicoRepository medicoRepository) {
@@ -33,18 +65,33 @@ public class AgendamientoController {
         this.medicoRepository = medicoRepository;
     }
 
+    // ==== LISTADO DE AGENDAMIENTOS =====
+    
+    /**
+      
+      Lista los agendamientos según el tipo de usuario logueado
+    Administradores: Ven TODAS las citas del sistema
+    Pacientes: Solo ven SUS propias citas
+    Médicos: Solo ven las citas asignadas a ellos
+      
+     Verifica que el usuario esté logueado antes de mostrar datos
+     */
     @GetMapping
     public String listar(Model model, HttpSession session) {
+        // Obtener información del usuario desde la sesión
         Object usuario = session.getAttribute("usuario");
         String tipoUsuario = (String) session.getAttribute("tipoUsuario");
         
+        // Redirigir al login si no hay usuario logueado
         if (usuario == null) {
             return "redirect:/login";
         }
         
         List<Agendamiento> agendamientos;
         
-        // Si es administrador, mostrar todas las citas
+        // FILTRADO POR TIPO DE USUARIO
+        
+        // ADMINISTRADORES: Acceso completo a todas las citas del sistema
         if ("administrador".equals(tipoUsuario)) {
             agendamientos = agendamientoRepository.findAll();
         } 
@@ -100,12 +147,10 @@ public class AgendamientoController {
         Object usuario = session.getAttribute("usuario");
         String tipoUsuario = (String) session.getAttribute("tipoUsuario");
         
-        // Verificar que sea un paciente
-        if (usuario == null || !"paciente".equals(tipoUsuario)) {
+        // Permitir acceso a pacientes y médicos
+        if (usuario == null || (!("paciente".equals(tipoUsuario) || "medico".equals(tipoUsuario)))) {
             return "redirect:/login";
         }
-        
-        Paciente paciente = (Paciente) usuario;
         
         try {
             // Obtener solo las citas que tienen médico asignado
@@ -117,11 +162,22 @@ public class AgendamientoController {
             model.addAttribute("agendamiento", new Agendamiento());
             model.addAttribute("citasPorFecha", citasPorFecha);
             model.addAttribute("fechaMinima", LocalDate.now().plusDays(1).toString());
+            model.addAttribute("tipoUsuario", tipoUsuario);
+            
+            // Si es médico, agregar lista de todos los pacientes para búsqueda
+            if ("medico".equals(tipoUsuario)) {
+                model.addAttribute("pacientes", pacienteRepository.findAll());
+            }
         } catch (Exception e) {
             // Si hay error al cargar citas, continuar sin mostrarlas
             model.addAttribute("agendamiento", new Agendamiento());
             model.addAttribute("citasPorFecha", new java.util.HashMap<>());
             model.addAttribute("fechaMinima", LocalDate.now().plusDays(1).toString());
+            model.addAttribute("tipoUsuario", tipoUsuario);
+            
+            if ("medico".equals(tipoUsuario)) {
+                model.addAttribute("pacientes", pacienteRepository.findAll());
+            }
         }
         
         return "agendamientos/create";
@@ -234,17 +290,36 @@ public class AgendamientoController {
                          @RequestParam("fecha") String fechaStr,
                          @RequestParam("hora") String hora,
                          @RequestParam("idMedico") Long idMedico,
+                         @RequestParam(value = "idPaciente", required = false) Long idPaciente,
                          HttpSession session,
                          RedirectAttributes redirectAttrs) {
         Object usuario = session.getAttribute("usuario");
         String tipoUsuario = (String) session.getAttribute("tipoUsuario");
         
-        // Verificar que sea un paciente
-        if (usuario == null || !"paciente".equals(tipoUsuario)) {
+        // Verificar que sea un paciente o médico
+        if (usuario == null || (!("paciente".equals(tipoUsuario) || "medico".equals(tipoUsuario)))) {
             return "redirect:/login";
         }
         
-        Paciente paciente = (Paciente) usuario;
+        Paciente paciente = null;
+        
+        // Si es paciente, usar el paciente de la sesión
+        if ("paciente".equals(tipoUsuario)) {
+            paciente = (Paciente) usuario;
+        }
+        // Si es médico, debe proporcionar el idPaciente
+        else if ("medico".equals(tipoUsuario)) {
+            if (idPaciente == null) {
+                redirectAttrs.addFlashAttribute("error", "Debe seleccionar un paciente para agendar la cita.");
+                return "redirect:/agendamientos/nuevo";
+            }
+            paciente = pacienteRepository.findById(idPaciente)
+                .orElse(null);
+            if (paciente == null) {
+                redirectAttrs.addFlashAttribute("error", "Paciente no encontrado.");
+                return "redirect:/agendamientos/nuevo";
+            }
+        }
         
         try {
             // Convertir la fecha de String a java.sql.Date
@@ -282,8 +357,14 @@ public class AgendamientoController {
             
             agendamientoRepository.save(agendamiento);
             
-            redirectAttrs.addFlashAttribute("success", "Cita agendada exitosamente con " + medico.getNombre() + " " + medico.getApellido());
-            return "redirect:/Layouts/paciente";
+            redirectAttrs.addFlashAttribute("success", "Cita agendada exitosamente para " + paciente.getNombre() + " " + paciente.getApellido() + " con " + medico.getNombre() + " " + medico.getApellido());
+            
+            // Redirigir según el tipo de usuario
+            if ("paciente".equals(tipoUsuario)) {
+                return "redirect:/Layouts/paciente";
+            } else {
+                return "redirect:/medico/dashboard/citas";
+            }
             
         } catch (Exception e) {
             redirectAttrs.addFlashAttribute("error", "Error al agendar la cita. Por favor intente nuevamente.");
@@ -464,7 +545,14 @@ public class AgendamientoController {
             }
         });
         
-        return "redirect:/agendamientos";
+        // Redirigir según el tipo de usuario
+        if ("paciente".equals(tipoUsuario)) {
+            return "redirect:/Layouts/paciente";
+        } else if ("medico".equals(tipoUsuario)) {
+            return "redirect:/medico/dashboard/citas";
+        } else {
+            return "redirect:/agendamientos";
+        }
     }
     
     @GetMapping("/{id}")

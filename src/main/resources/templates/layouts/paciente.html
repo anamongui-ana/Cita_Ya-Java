@@ -6,32 +6,47 @@
     <title>Dashboard Paciente - Cita Ya</title>
     <link rel="icon" type="image" th:href="@{/Assets/img/logoti.png}">
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
-            font-family: arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
         body {
-            background-color: #f8f9fa;
-            padding-top: 100px;
+            background: linear-gradient(135deg, #BBE1FA 0%, #FFFFFF 100%);
+            padding-top: 90px;
+            min-height: 100vh;
         }
         header {
-            position: fixed; top: 0; width: 100%; background: #fff;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1); z-index: 1000;
+            position: fixed; top: 0; width: 100%; background: #FFFFFF;
+            box-shadow: 0 2px 10px rgba(15, 76, 117, 0.1); z-index: 1000;
         }
         .container_header {
             display: flex; justify-content: space-between;
             align-items: center; padding: 1rem 2rem;
         }
-        .logo { width: 4rem; height: 4rem; }
+        .logo { 
+            width: 4rem; 
+            height: 4rem; 
+            object-fit: contain;
+            transition: transform 0.3s ease;
+        }
+        .logo:hover {
+            transform: scale(1.05);
+        }
 
         .profile_dropdown { position: relative; display: inline-block; }
         .profile_button {
-            background-color: #059669; color: white; padding: 0.7rem 1.5rem;
+            background-color: #0F4C75; color: white; padding: 0.7rem 1.5rem;
             border: none; border-radius: 0.5rem; cursor: pointer;
             display: flex; align-items: center; gap: 0.5rem; font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+        .profile_button:hover {
+            background-color: #A8E6CF;
+            color: #0F4C75;
         }
         .dropdown_content {
             display: none; position: absolute; right: 0;
@@ -43,50 +58,224 @@
         .dropdown_item:hover { background: #f1f1f1; }
 
         .welcome_section {
-            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            background: linear-gradient(135deg, #0F4C75, #3B7EA1);
             color: white; padding: 2rem; border-radius: 1rem; text-align: center;
+            box-shadow: 0 4px 15px rgba(15, 76, 117, 0.3);
         }
         .welcome_title { font-size: 2.5rem; margin-bottom: 0.5rem; }
         .stats_container {
-            display: grid; grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
-            gap: 1.5rem; margin: 2rem 0;
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.2rem; 
+            margin: 2rem 0;
         }
         .stat_card {
-            background: white; padding: 1.5rem; border-radius: 1rem;
-            text-align: center; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background: white; 
+            padding: 1.5rem; 
+            border-radius: 1rem;
+            text-align: center; 
+            box-shadow: 0 4px 6px rgba(15, 76, 117, 0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .stat_card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #0F4C75, #BBE1FA);
+        }
+        .stat_card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(15, 76, 117, 0.25);
+        }
+        .stat_card i {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            opacity: 0.8;
         }
         .stat_card.primary {
-            background: linear-gradient(135deg, #3b82f6, #1e40af);
-            color: white;
+            border-left: 4px solid #0F4C75;
+        }
+        .stat_card.primary i {
+            color: #0F4C75;
         }
         .stat_card.success {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
+            border-left: 4px solid #A8E6CF;
+        }
+        .stat_card.success i {
+            color: #059669;
+        }
+        .stat_card.warning {
+            border-left: 4px solid #fbbf24;
+        }
+        .stat_card.warning i {
+            color: #f59e0b;
+        }
+        .stat_card.info {
+            border-left: 4px solid #BBE1FA;
+        }
+        .stat_card.info i {
+            color: #3B7EA1;
+        }
+        .stat_label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.5rem;
+        }
+        .stat_highlight {
+            font-size: 1.1rem;
+            color: #0F4C75;
+            font-weight: bold;
+            margin-top: 0.3rem;
         }
         .content_grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;
+            display: grid; 
+            grid-template-columns: 70% 30%; 
+            gap: 2rem;
+        }
+        @media (max-width: 1024px) {
+            .content_grid {
+                grid-template-columns: 1fr;
+            }
+            .stats_container {
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            }
+        }
+        @media (max-width: 768px) {
+            .container_main {
+                padding: 1rem;
+            }
+            .welcome_title {
+                font-size: 1.5rem !important;
+                text-align: center;
+            }
+            .welcome_section > div {
+                flex-direction: column;
+                text-align: center !important;
+            }
+            .welcome_section > div > div:last-child {
+                text-align: center !important;
+            }
+            .stat_number {
+                font-size: 2rem;
+            }
+            .stat_card i {
+                font-size: 2rem;
+            }
+            .table {
+                font-size: 0.8rem;
+                display: block;
+                overflow-x: auto;
+            }
+            .table th, .table td {
+                padding: 0.4rem;
+            }
+            .cita_info {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .card_header h3 {
+                font-size: 1rem;
+            }
+            .profile_button {
+                padding: 0.5rem 0.8rem;
+                font-size: 0.85rem;
+            }
+        }
+        .empty_state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #666;
+        }
+        .empty_state i {
+            font-size: 4rem;
+            opacity: 0.2;
+            margin-bottom: 1rem;
         }
         .card {
             background: white; border-radius: 1rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px rgba(15, 76, 117, 0.1);
+            border: 1px solid #BBE1FA;
         }
         .card_header {
             padding: 1.5rem; display: flex; justify-content: space-between;
-            align-items: center; border-bottom: 1px solid #e2e8f0;
+            align-items: center; border-bottom: 2px solid #BBE1FA;
+            background: linear-gradient(to right, #FFFFFF, #BBE1FA);
+        }
+        .card_header h3 {
+            color: #0F4C75;
         }
         .table { width: 100%; border-collapse: collapse; }
-        .table th, .table td {
-            padding: 0.8rem; border-bottom: 1px solid #e2e8f0;
+        .table th {
+            padding: 0.8rem; border-bottom: 2px solid #BBE1FA;
+            background-color: #F0F8FF;
+            color: #0F4C75;
+            font-weight: bold;
         }
-        .status_badge { padding: 0.3rem 0.8rem; border-radius: 1rem; color: white; }
-        .warning { background: #fbbf24; }
-        .info { background: #3b82f6; }
-        .secondary { background: #6b7280; }
+        .table td {
+            padding: 0.8rem; border-bottom: 1px solid #BBE1FA;
+        }
+        .table tbody tr:hover {
+            background-color: #F0F8FF;
+        }
+        .status_badge { 
+            padding: 0.4rem 0.9rem; 
+            border-radius: 1rem; 
+            color: white; 
+            font-size: 0.85rem; 
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        .status_badge.programada { background: #3b82f6; }
+        .status_badge.hoy { background: #10b981; animation: pulse 2s infinite; }
+        .status_badge.completada { background: #6b7280; }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .cita_info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .cita_icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #BBE1FA, #0F4C75);
+            color: white;
+            font-size: 0.9rem;
+        }
+        .tiempo_restante {
+            font-size: 0.75rem;
+            color: #059669;
+            font-weight: bold;
+            margin-top: 0.2rem;
+        }
         .container_main { max-width: 1200px; margin: 0 auto; padding: 2rem; }
         .stat_number { font-size: 2.5rem; font-weight: bold; margin-bottom: 0.5rem; }
         .card_body { padding: 1rem; }
-        .history_card { padding: 1rem; border-bottom: 1px solid #e2e8f0; }
+        .history_card { 
+            padding: 1rem; 
+            border-bottom: 1px solid #BBE1FA;
+            transition: background-color 0.3s ease;
+        }
+        .history_card:hover {
+            background-color: #F0F8FF;
+        }
         .history_card:last-child { border-bottom: none; }
+        .history_card strong {
+            color: #0F4C75;
+        }
         .show { display: block !important; }
     </style>
 </head>
@@ -116,81 +305,153 @@
 
 <div class="container_main">
     <div class="welcome_section">
-        <h1 class="welcome_title">¡Bienvenido, <span th:text="${session.nombreCompleto}">Usuario</span>!</h1>
-        <p>Tu panel de salud personal</p>
+        <div style="display: flex; align-items: center; justify-content: center; gap: 1.5rem; flex-wrap: wrap;">
+            <div style="width: 80px; height: 80px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
+                <i class="fas fa-user" style="font-size: 2.5rem; color: #0F4C75;"></i>
+            </div>
+            <div style="text-align: left;">
+                <h1 class="welcome_title" style="margin-bottom: 0.3rem;">
+                    ¡Bienvenido, <span th:text="${session.nombreCompleto}">Usuario</span>!
+                </h1>
+                <p style="font-size: 1.1rem; opacity: 0.9;">
+                    <i class="fas fa-heartbeat"></i> Tu panel de salud personal
+                </p>
+            </div>
+        </div>
     </div>
 
     <div class="stats_container">
+        <!-- Total de Citas -->
         <div class="stat_card primary">
+            <i class="fas fa-calendar-check"></i>
             <div class="stat_number" th:text="${totalCitas != null ? totalCitas : 0}">0</div>
-            <div>Mis Citas Médicas</div>
+            <div class="stat_label">Citas Médicas</div>
         </div>
 
+        <!-- Próxima Cita -->
+        <div class="stat_card warning">
+            <i class="fas fa-clock"></i>
+            <div th:if="${citas != null and !citas.isEmpty()}">
+                <div class="stat_highlight" 
+                     th:with="proximaCita=${citas.stream().filter(c -> c.fecha.toLocalDate().isAfter(T(java.time.LocalDate).now()) or c.fecha.toLocalDate().isEqual(T(java.time.LocalDate).now())).findFirst().orElse(null)}"
+                     th:if="${proximaCita != null}">
+                    <div th:text="${#dates.format(proximaCita.fecha, 'dd/MM')}">--/--</div>
+                    <div style="font-size: 0.9rem; margin-top: 0.2rem;" th:text="${proximaCita.hora}">--:--</div>
+                </div>
+                <div th:unless="${proximaCita != null}" style="color: #999;">Sin citas</div>
+            </div>
+            <div th:unless="${citas != null and !citas.isEmpty()}" style="color: #999;">--/--</div>
+            <div class="stat_label">Próxima Cita</div>
+        </div>
+
+        <!-- Historias Clínicas -->
         <div class="stat_card success">
+            <i class="fas fa-file-medical"></i>
             <div class="stat_number" th:text="${totalHistoriales != null ? totalHistoriales : 0}">0</div>
-            <div>Historias Clínicas</div>
+            <div class="stat_label">Historias Clínicas</div>
+        </div>
+
+        <!-- Última Consulta -->
+        <div class="stat_card info">
+            <i class="fas fa-stethoscope"></i>
+            <div th:if="${historiales != null and !historiales.isEmpty()}">
+                <div class="stat_highlight" th:text="${#dates.format(historiales[0].fechaAtencion, 'dd/MM/yyyy')}">--/--/----</div>
+                <div style="font-size: 0.8rem; color: #666; margin-top: 0.2rem;" 
+                     th:if="${historiales[0].medico != null}"
+                     th:text="${historiales[0].medico.especialidad}">Especialidad</div>
+            </div>
+            <div th:unless="${historiales != null and !historiales.isEmpty()}" style="color: #999;">Sin consultas</div>
+            <div class="stat_label">Última Consulta</div>
         </div>
     </div>
 
     <div class="content_grid">
         <div class="card">
             <div class="card_header">
-                <h3>Mis Citas</h3>
-                <a th:href="@{/agendamientos/nuevo}" class="profile_button" style="padding: 5px 10px; text-decoration: none;">+ Agendar</a>
+                <h3><i class="fas fa-calendar-alt"></i> Mis Citas</h3>
+                <a th:href="@{/agendamientos/nuevo}" class="profile_button" 
+                   style="padding: 0.6rem 1.2rem; text-decoration: none; font-size: 0.9rem;">
+                    <i class="fas fa-plus-circle"></i> Agendar Cita
+                </a>
             </div>
 
             <div class="card_body">
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Fecha</th>
-                            <th>Hora</th>
-                            <th>Médico</th>
-                            <th>Especialidad</th>
-                            <th>Estado</th>
+                            <th style="width: 100px;">Fecha</th>
+                            <th style="width: 80px;">Hora</th>
+                            <th>Médico / Especialidad</th>
+                            <th style="width: 120px;">Estado</th>
                             <th style="width: 180px;">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr th:if="${citas == null or citas.isEmpty()}">
-                            <td colspan="6" style="text-align: center; padding: 2rem;">
-                                <p style="color: #666;">No tienes citas agendadas</p>
-                                <a th:href="@{/agendamientos/nuevo}" class="profile_button" style="margin-top: 1rem; display: inline-block;">
-                                    Agendar mi primera cita
+                            <td colspan="5" class="empty_state">
+                                <i class="fas fa-calendar-times"></i>
+                                <p style="font-size: 1.1rem; margin-bottom: 1rem;">No tienes citas agendadas</p>
+                                <a th:href="@{/agendamientos/nuevo}" class="profile_button" 
+                                   style="margin-top: 1rem; display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none;">
+                                    <i class="fas fa-plus-circle"></i> Agendar mi primera cita
                                 </a>
                             </td>
                         </tr>
                         <tr th:each="cita : ${citas}">
-                            <td th:text="${#dates.format(cita.fecha, 'dd/MM/yyyy')}">12/12/2025</td>
-                            <td th:text="${cita.hora}">08:00</td>
-                            <td th:text="${cita.medico != null ? 'Dr. ' + cita.medico.nombre + ' ' + cita.medico.apellido : 'No asignado'}">Dr. Nombre</td>
-                            <td th:text="${cita.cita}">Consulta General</td>
                             <td>
-                                <span class="status_badge warning" 
+                                <strong th:text="${#dates.format(cita.fecha, 'dd/MM/yyyy')}">12/12/2025</strong>
+                                <div class="tiempo_restante" 
+                                     th:if="${cita.fecha.toLocalDate().isAfter(T(java.time.LocalDate).now())}"
+                                     th:with="dias=${T(java.time.temporal.ChronoUnit).DAYS.between(T(java.time.LocalDate).now(), cita.fecha.toLocalDate())}"
+                                     th:text="${dias == 0 ? 'Hoy' : (dias == 1 ? 'Mañana' : 'En ' + dias + ' días')}">
+                                    En X días
+                                </div>
+                            </td>
+                            <td><strong th:text="${cita.hora}">08:00</strong></td>
+                            <td>
+                                <div class="cita_info">
+                                    <div class="cita_icon">
+                                        <i class="fas fa-user-md"></i>
+                                    </div>
+                                    <div>
+                                        <div style="font-weight: bold; color: #0F4C75;" 
+                                             th:text="${cita.medico != null ? 'Dr. ' + cita.medico.nombre + ' ' + cita.medico.apellido : 'No asignado'}">
+                                            Dr. Nombre
+                                        </div>
+                                        <div style="font-size: 0.85rem; color: #666;" th:text="${cita.cita}">Especialidad</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="status_badge programada" 
                                       th:if="${cita.fecha.toLocalDate().isAfter(T(java.time.LocalDate).now())}">
-                                    Programada
+                                    <i class="fas fa-calendar"></i> Programada
                                 </span>
-                                <span class="status_badge info" 
+                                <span class="status_badge hoy" 
                                       th:if="${cita.fecha.toLocalDate().isEqual(T(java.time.LocalDate).now())}">
-                                    Hoy
+                                    <i class="fas fa-bell"></i> Hoy
                                 </span>
-                                <span class="status_badge secondary" 
+                                <span class="status_badge completada" 
                                       th:if="${cita.fecha.toLocalDate().isBefore(T(java.time.LocalDate).now())}">
-                                    Completada
+                                    <i class="fas fa-check"></i> Completada
                                 </span>
                             </td>
                             <td>
                                 <div th:if="${cita.fecha.toLocalDate().isAfter(T(java.time.LocalDate).now()) or cita.fecha.toLocalDate().isEqual(T(java.time.LocalDate).now())}" 
                                      style="display: flex; gap: 0.5rem; justify-content: center;">
                                     <a th:href="@{/agendamientos/editar/{id}(id=${cita.idAgendamiento})}"
-                                       style="background: #f59e0b; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 0.3rem; cursor: pointer; font-size: 0.85rem; text-decoration: none; display: inline-block;">
+                                       style="background: #A8E6CF; color: #0F4C75; border: none; padding: 0.4rem 0.8rem; border-radius: 0.3rem; cursor: pointer; font-size: 0.85rem; text-decoration: none; display: inline-block; font-weight: bold; transition: background 0.3s ease;"
+                                       onmouseover="this.style.background='#0F4C75'; this.style.color='white';"
+                                       onmouseout="this.style.background='#A8E6CF'; this.style.color='#0F4C75';">
                                         Editar
                                     </a>
                                     <form th:action="@{/agendamientos/eliminar/{id}(id=${cita.idAgendamiento})}"
                                           method="POST"
                                           style="display:inline; margin: 0;">
                                         <button type="submit"
-                                                style="background: #dc2626; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 0.3rem; cursor: pointer; font-size: 0.85rem;"
+                                                style="background: #dc2626; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 0.3rem; cursor: pointer; font-size: 0.85rem; font-weight: bold; transition: background 0.3s ease;"
+                                                onmouseover="this.style.background='#991b1b';"
+                                                onmouseout="this.style.background='#dc2626';"
                                                 onclick="return confirm('¿Está seguro de cancelar esta cita?')">
                                             Cancelar
                                         </button>
@@ -206,21 +467,39 @@
 
         <div class="card">
             <div class="card_header">
-                <h3>Historial Clínico</h3>
+                <h3><i class="fas fa-notes-medical"></i> Historial Clínico</h3>
             </div>
 
             <div class="card_body">
-                <div th:if="${historiales == null or historiales.isEmpty()}" style="text-align: center; padding: 2rem; color: #666;">
+                <div th:if="${historiales == null or historiales.isEmpty()}" 
+                     style="text-align: center; padding: 2rem; color: #666;">
+                    <i class="fas fa-folder-open" style="font-size: 3rem; opacity: 0.3; margin-bottom: 1rem;"></i>
                     <p>No tienes historiales clínicos registrados</p>
                 </div>
                 <div class="history_card" th:each="historial : ${historiales}">
-                    <strong th:text="${#dates.format(historial.fechaAtencion, 'dd/MM/yyyy')}">10/10/2025</strong>
-                    <p>
-                        <span th:text="${historial.diagnostico}">Diagnóstico</span>
-                        <span th:if="${historial.medico != null}">
-                            - Dr. <span th:text="${historial.medico.nombre + ' ' + historial.medico.apellido}">Médico</span>
-                        </span>
-                    </p>
+                    <div style="display: flex; align-items: start; gap: 1rem;">
+                        <div class="cita_icon" style="flex-shrink: 0;">
+                            <i class="fas fa-file-medical-alt"></i>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                                <strong style="color: #0F4C75; font-size: 1rem;" 
+                                        th:text="${#dates.format(historial.fechaAtencion, 'dd/MM/yyyy')}">10/10/2025</strong>
+                                <span style="background: #A8E6CF; color: #0F4C75; padding: 0.2rem 0.6rem; border-radius: 0.5rem; font-size: 0.75rem; font-weight: bold;">
+                                    <i class="fas fa-check-circle"></i> Atendido
+                                </span>
+                            </div>
+                            <p style="color: #333; margin-bottom: 0.3rem;">
+                                <strong>Diagnóstico:</strong> <span th:text="${historial.diagnostico}">Diagnóstico</span>
+                            </p>
+                            <p style="color: #666; font-size: 0.9rem;" th:if="${historial.medico != null}">
+                                <i class="fas fa-user-md"></i> Dr. <span th:text="${historial.medico.nombre + ' ' + historial.medico.apellido}">Médico</span>
+                                <span th:if="${historial.medico.especialidad != null}">
+                                    - <span th:text="${historial.medico.especialidad}">Especialidad</span>
+                                </span>
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

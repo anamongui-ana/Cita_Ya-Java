@@ -24,13 +24,13 @@ public class MedicoController {
     @GetMapping
     public String listar(Model model) {
         model.addAttribute("medicos", medicoRepository.findAll(Sort.by(Sort.Direction.DESC, "idMedico")));
-        return "medicos/index";
+        return "medico/lista-medicos";
     }
 
     @GetMapping("/create")
     public String mostrarFormularioCrear(Model model) {
         model.addAttribute("medico", new Medico());
-        return "medicos/create";
+        return "medico/editar-perfil";
     }
 
     @PostMapping("/store")
@@ -45,7 +45,7 @@ public class MedicoController {
         Optional<Medico> medicoOpt = medicoRepository.findById(id);
         if (medicoOpt.isPresent()) {
             model.addAttribute("medico", medicoOpt.get());
-            return "medicos/show";
+            return "medico/perfil";
         } else {
             redirectAttrs.addFlashAttribute("error", "Médico no encontrado");
             return "redirect:/medicos";
@@ -57,7 +57,7 @@ public class MedicoController {
         Optional<Medico> medicoOpt = medicoRepository.findById(id);
         if (medicoOpt.isPresent()) {
             model.addAttribute("medico", medicoOpt.get());
-            return "medicos/edit";
+            return "medico/editar-perfil";
         } else {
             redirectAttrs.addFlashAttribute("error", "Médico no encontrado");
             return "redirect:/medicos";
@@ -105,6 +105,6 @@ public class MedicoController {
     @GetMapping("/reporte")
     public String reporte(Model model) {
         model.addAttribute("medicos", medicoRepository.findAll(Sort.by(Sort.Direction.ASC, "especialidad")));
-        return "medicos/reporte";
+        return "medico/reporte";
     }
 }

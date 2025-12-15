@@ -6,68 +6,184 @@
     <title>Historia Clínica del Paciente</title>
     <style>
         * {
-            font-family: arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
         body {
-            background-color: #f8f9fa;
-            padding: 2rem;
+            background-color: #f7f8fa;
+            padding: 2.5rem;
         }
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
         }
+        
+        /* Botones Mejorados */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
         .btn {
-            padding: 0.75rem 1.5rem;
+            padding: 0.8rem 1.6rem;
             border: none;
-            border-radius: 0.5rem;
+            border-radius: 10px;
             cursor: pointer;
-            font-weight: 500;
+            font-weight: 600;
             text-decoration: none;
-            display: inline-block;
-            margin-right: 0.5rem;
-            margin-bottom: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
         }
         .btn-back {
-            background-color: #3b82f6;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
             color: white;
+            box-shadow: 0 3px 10px rgba(59, 130, 246, 0.3);
+        }
+        .btn-back:hover {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
         }
         .btn-new {
-            background-color: #059669;
+            background: linear-gradient(135deg, #059669, #10b981);
             color: white;
+            box-shadow: 0 3px 10px rgba(5, 150, 105, 0.3);
         }
+        .btn-new:hover {
+            background: linear-gradient(135deg, #047857, #059669);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(5, 150, 105, 0.4);
+        }
+        /* Card del Paciente Mejorado */
         .patient-info {
+            background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
+            padding: 2rem;
+            border-radius: 16px;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+            border: 2px solid #d1fae5;
+        }
+        .patient-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        .patient-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #059669, #10b981);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+        }
+        .patient-title {
+            flex: 1;
+        }
+        .patient-title h2 {
+            color: #1f2937;
+            font-size: 1.8rem;
+            margin-bottom: 0.3rem;
+        }
+        .patient-subtitle {
+            color: #6b7280;
+            font-size: 0.95rem;
+        }
+        .patient-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        .patient-detail-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.8rem;
             background: white;
-            padding: 1.5rem;
-            border-radius: 1rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
         }
-        .patient-info h2 {
+        .patient-detail-item strong {
+            color: #374151;
+            font-size: 0.9rem;
+        }
+        .patient-detail-item span {
             color: #059669;
-            margin-bottom: 1rem;
+            font-weight: 600;
         }
+        /* Título de Sección */
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 3px solid #8b5cf6;
+        }
+        .section-title-icon {
+            font-size: 1.8rem;
+        }
+        .section-title h1 {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #1f2937;
+        }
+        
+        /* Cards de Historia Mejorados */
         .historia-card {
             background: white;
-            border-radius: 1rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            border-left: 4px solid #059669;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-left: 6px solid #059669;
+            transition: all 0.3s ease;
+        }
+        .historia-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
         }
         .historia-card.otro-medico {
             border-left-color: #6b7280;
-            background-color: #f9fafb;
+            background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+        }
+        .historia-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f3f4f6;
+        }
+        .historia-fecha {
+            color: #374151;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        .historia-medico {
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin-top: 0.3rem;
         }
         .badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 0.25rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.4rem 0.9rem;
+            border-radius: 20px;
             font-size: 0.85rem;
-            font-weight: 500;
-            margin-left: 0.5rem;
+            font-weight: 600;
         }
         .badge-success {
             background-color: #d1fae5;
@@ -75,93 +191,151 @@
         }
         .badge-secondary {
             background-color: #e5e7eb;
-            color: #374151;
-        }
-        .historia-fecha {
-            color: #6b7280;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
+            color: #4b5563;
         }
         .historia-section {
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
         }
         .historia-section h4 {
-            color: #374151;
-            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #1f2937;
+            margin-bottom: 0.8rem;
+            font-size: 1.05rem;
+            font-weight: 700;
         }
         .historia-section p {
-            color: #6b7280;
-            line-height: 1.6;
+            color: #4b5563;
+            line-height: 1.8;
+            padding: 1rem;
+            background: #f9fafb;
+            border-radius: 8px;
+            border-left: 3px solid #e5e7eb;
         }
+        .historia-section.diagnostico p {
+            background: #fef3c7;
+            border-left-color: #f59e0b;
+            font-weight: 600;
+            color: #92400e;
+            font-size: 1.05rem;
+        }
+        /* Estado Vacío */
         .empty-state {
             text-align: center;
-            padding: 3rem;
-            color: #6b7280;
+            padding: 4rem 2rem;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
         }
-        .alert {
-            padding: 1rem;
-            border-radius: 0.5rem;
+        .empty-state-icon {
+            font-size: 4rem;
             margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        .empty-state-text {
+            color: #6b7280;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Alertas */
+        .alert {
+            padding: 1.2rem 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-weight: 600;
         }
         .alert-success {
             background-color: #d1fae5;
             color: #065f46;
-            border: 1px solid #059669;
+            border: 2px solid #6ee7b7;
         }
     </style>
 </head>
 <body>
 <div class="container">
-    <a th:href="@{/medico/dashboard/pacientes}" class="btn btn-back">← Volver a Pacientes</a>
-    <a th:href="@{/medico/dashboard/pacientes/{id}/historia/nueva(id=${paciente.idPaciente})}" class="btn btn-new">+ Nueva Historia Clínica</a>
+    <div class="action-buttons">
+        <a th:href="@{/medico/dashboard/pacientes}" class="btn btn-back">Volver a Pacientes</a>
+        <a th:href="@{/medico/dashboard/pacientes/{id}/historia/nueva(id=${paciente.idPaciente})}" class="btn btn-new">Nueva Historia Clínica</a>
+    </div>
     
-    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${success}" class="alert alert-success">
+        <span th:text="${success}"></span>
+    </div>
     
     <div class="patient-info">
-        <h2>Historia Clínica de: <span th:text="${paciente.nombre + ' ' + paciente.apellido}">Nombre</span></h2>
-        <p><strong>Documento:</strong> <span th:text="${paciente.tipoDoc + ' ' + paciente.numeroDoc}">Doc</span></p>
-        <p><strong>Teléfono:</strong> <span th:text="${paciente.telefono}">Tel</span></p>
+        <div class="patient-header">
+            <div class="patient-icon"></div>
+            <div class="patient-title">
+                <h2>Historia Clínica: <span th:text="${paciente.nombre + ' ' + paciente.apellido}">Nombre</span></h2>
+                <p class="patient-subtitle">Expediente médico completo del paciente</p>
+            </div>
+        </div>
+        <div class="patient-details">
+            <div class="patient-detail-item">
+                <strong>Documento:</strong> <span th:text="${paciente.tipoDoc + ' ' + paciente.numeroDoc}">Doc</span>
+            </div>
+            <div class="patient-detail-item">
+                <strong>Teléfono:</strong> <span th:text="${paciente.telefono}">Tel</span>
+            </div>
+        </div>
     </div>
 
-    <h1>Registros de Historia Clínica</h1>
+    <div class="section-title">
+        <span class="section-title-icon"></span>
+        <h1>Registros de Historia Clínica</h1>
+    </div>
 
     <div th:if="${!#lists.isEmpty(historias)}">
         <div class="historia-card" 
              th:each="historia : ${historias}"
              th:classappend="${historia.medico.idMedico != medico.idMedico} ? 'otro-medico' : ''">
-            <div class="historia-fecha">
-                <strong>Fecha de Atención:</strong> <span th:text="${#dates.format(historia.fechaAtencion, 'dd/MM/yyyy')}">Fecha</span> | 
-                <strong>Atendido por:</strong> Dr. <span th:text="${historia.medico.nombre + ' ' + historia.medico.apellido}">Médico</span>
-                <span th:if="${historia.medico.especialidad != null}"> - <span th:text="${historia.medico.especialidad}">Especialidad</span></span>
-                <span class="badge badge-success" th:if="${historia.medico.idMedico == medico.idMedico}">Tu registro</span>
-                <span class="badge badge-secondary" th:if="${historia.medico.idMedico != medico.idMedico}">Otro médico</span>
+            <div class="historia-header">
+                <div>
+                    <div class="historia-fecha">
+                        <strong>Registro del</strong> <span th:text="${#dates.format(historia.fechaAtencion, 'dd/MM/yyyy')}">Fecha</span>
+                    </div>
+                    <div class="historia-medico">
+                        <strong>Atendido por:</strong> Dr. <span th:text="${historia.medico.nombre + ' ' + historia.medico.apellido}">Médico</span>
+                        <span th:if="${historia.medico.especialidad != null}"> — <span th:text="${historia.medico.especialidad}">Especialidad</span></span>
+                    </div>
+                </div>
+                <div>
+                    <span class="badge badge-success" th:if="${historia.medico.idMedico == medico.idMedico}">Tu registro</span>
+                    <span class="badge badge-secondary" th:if="${historia.medico.idMedico != medico.idMedico}">Otro médico</span>
+                </div>
             </div>
             
             <div class="historia-section" th:if="${historia.antecedentes != null && !historia.antecedentes.isEmpty()}">
-                <h4>Antecedentes:</h4>
+                <h4>Antecedentes</h4>
                 <p th:text="${historia.antecedentes}">Antecedentes</p>
             </div>
             
-            <div class="historia-section">
-                <h4>Diagnóstico:</h4>
-                <p th:text="${historia.diagnostico}">Diagnóstico</p>
+            <div class="historia-section diagnostico">
+                <h4>Diagnóstico</h4>
+                <p><span th:text="${historia.diagnostico}">Diagnóstico</span></p>
             </div>
 
             <div class="historia-section">
-                <h4>Tratamiento:</h4>
-                <p th:text="${historia.tratamiento}">Tratamiento</p>
+                <h4>Tratamiento</h4>
+                <p th:text="${historia.tratamiento != null && !historia.tratamiento.isEmpty() ? historia.tratamiento : '(no registrado)'}">Tratamiento</p>
             </div>
 
             <div class="historia-section" th:if="${historia.observaciones != null && !historia.observaciones.isEmpty()}">
-                <h4>Observaciones:</h4>
+                <h4>Observaciones</h4>
                 <p th:text="${historia.observaciones}">Observaciones</p>
             </div>
         </div>
     </div>
 
     <div class="empty-state" th:if="${#lists.isEmpty(historias)}">
-        <p>No hay registros de historia clínica para este paciente.</p>
-        <p>Puedes crear uno haciendo clic en el botón "Nueva Historia Clínica".</p>
+        <div class="empty-state-icon"></div>
+        <p class="empty-state-text">No hay registros de historia clínica para este paciente.</p>
+        <p class="empty-state-text">Puedes crear uno haciendo clic en el botón "Nueva Historia Clínica".</p>
     </div>
 </div>
 </body>
